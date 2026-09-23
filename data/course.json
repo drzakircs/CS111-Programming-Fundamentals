@@ -9,8 +9,7 @@
         "First C++ program and compilation"
       ],
       "clo": "CLO-01",
-      "assessment": "Orientation / reading activity",
-      "material": "materials/week-01.html"
+      "assessment": "Orientation / reading activity"
     },
     {
       "week": 2,
@@ -21,8 +20,7 @@
         "Type conversion, I/O and debugging"
       ],
       "clo": "CLO-01 / CLO-02",
-      "assessment": "Assignment 1 issued",
-      "material": "materials/week-02.html"
+      "assessment": "Assignment 1 issued"
     },
     {
       "week": 3,
@@ -33,8 +31,7 @@
         "Logical operators, menus, validation and switch"
       ],
       "clo": "CLO-02",
-      "assessment": "Quiz 1",
-      "material": "materials/week-03.html"
+      "assessment": "Quiz 1"
     },
     {
       "week": 4,
@@ -45,8 +42,7 @@
         "Sentinels and nested loops"
       ],
       "clo": "CLO-02",
-      "assessment": "Assignment 1 due",
-      "material": "materials/week-04.html"
+      "assessment": "Assignment 1 due"
     },
     {
       "week": 5,
@@ -57,8 +53,7 @@
         "Return values and menu-driven programs"
       ],
       "clo": "CLO-02",
-      "assessment": "Assignment 2 issued",
-      "material": "materials/week-05.html"
+      "assessment": "Assignment 2 issued"
     },
     {
       "week": 6,
@@ -69,8 +64,7 @@
         "Recursion and recursive vs iterative solutions"
       ],
       "clo": "CLO-02",
-      "assessment": "Quiz 2",
-      "material": "materials/week-06.html"
+      "assessment": "Quiz 2"
     },
     {
       "week": 7,
@@ -81,8 +75,7 @@
         "Arrays as function arguments and safety"
       ],
       "clo": "CLO-02 / CLO-03",
-      "assessment": "Assignment 2 due",
-      "material": "materials/week-07.html"
+      "assessment": "Assignment 2 due"
     },
     {
       "week": 8,
@@ -93,8 +86,7 @@
         "3-D arrays, parallel arrays and mid review"
       ],
       "clo": "CLO-01 / CLO-02 / CLO-03",
-      "assessment": "Protected mid-semester preparation",
-      "material": "materials/week-08.html"
+      "assessment": "Protected mid-semester preparation"
     },
     {
       "week": 9,
@@ -105,8 +97,7 @@
         "Bubble sort and insertion sort"
       ],
       "clo": "CLO-03",
-      "assessment": "Assignment 3 issued",
-      "material": "materials/week-09.html"
+      "assessment": "Assignment 3 issued"
     },
     {
       "week": 10,
@@ -117,8 +108,7 @@
         "Pointers as function parameters"
       ],
       "clo": "CLO-02 / CLO-03",
-      "assessment": "Quiz 3",
-      "material": "materials/week-10.html"
+      "assessment": "Quiz 3"
     },
     {
       "week": 11,
@@ -129,8 +119,7 @@
         "Introduction to STL vector"
       ],
       "clo": "CLO-03",
-      "assessment": "Assignment 3 due",
-      "material": "materials/week-11.html"
+      "assessment": "Assignment 3 due"
     },
     {
       "week": 12,
@@ -141,8 +130,7 @@
         "Arrays / nested structures and enum"
       ],
       "clo": "CLO-03 / CLO-04",
-      "assessment": "Assignment 4 issued",
-      "material": "materials/week-12.html"
+      "assessment": "Assignment 4 issued"
     },
     {
       "week": 13,
@@ -153,8 +141,7 @@
         "Introduction to file handling"
       ],
       "clo": "CLO-03 / CLO-04",
-      "assessment": "Quiz 4",
-      "material": "materials/week-13.html"
+      "assessment": "Quiz 4"
     },
     {
       "week": 14,
@@ -165,8 +152,7 @@
         "Files with arrays, vectors and structures"
       ],
       "clo": "CLO-03 / CLO-04",
-      "assessment": "Assignment 4 due",
-      "material": "materials/week-14.html"
+      "assessment": "Assignment 4 due"
     },
     {
       "week": 15,
@@ -176,9 +162,8 @@
         "Problem solving and debugging",
         "Comprehensive review and final preparation"
       ],
-      "clo": "CLO-01–04",
-      "assessment": "No continuous assessment",
-      "material": "materials/week-15.html"
+      "clo": "CLO-01\u201304",
+      "assessment": "No continuous assessment"
     }
   ]
 }

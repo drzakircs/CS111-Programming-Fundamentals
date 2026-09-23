@@ -1,3 +1,6 @@
+---
+layout: null
+---
 <!doctype html>
 <html lang="en">
 <head>
@@ -93,6 +96,7 @@
         <div>
           <span class="section-kicker">Teaching Plan</span>
           <h2>15-Week Weekly Plan</h2>
+          <p class="section-intro">HTML files placed in the <code>materials/</code> folder are detected automatically and listed under the matching week based on the week number in the filename.</p>
         </div>
         <label class="search-box">
           <span class="sr-only">Search weeks</span>
@@ -107,7 +111,7 @@
         <span class="section-kicker">HTML Material</span>
         <h2>Embedded Material Viewer</h2>
         <p class="section-intro">
-          Select any available week above. Its HTML file will open here without leaving the course portal.
+          Select any listed material above. The HTML file will open here without leaving the course portal.
         </p>
       </div>
       <div class="viewer-toolbar">
@@ -134,6 +138,17 @@
     </div>
   </footer>
 
+  <script>
+    // GitHub Pages/Jekyll discovers HTML files in /materials at build time.
+    // This avoids a GitHub API request for normal student visits.
+    window.CS111_MATERIALS = [
+      {% for file in site.static_files %}
+        {% if file.path contains '/materials/' and file.extname == '.html' %}
+          { "name": {{ file.name | jsonify }}, "path": {{ file.path | relative_url | jsonify }} },
+        {% endif %}
+      {% endfor %}
+    ];
+  </script>
   <script src="assets/js/app.js"></script>
 </body>
 </html>
