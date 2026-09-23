@@ -166,7 +166,10 @@ function renderWeeks(items) {
     </article>
   `).join('');
 
-  requestAnimationFrame(setupMaterialNameScrolling);
+  requestAnimationFrame(() => {
+    setupMaterialNameScrolling();
+    setTimeout(setupMaterialNameScrolling, 150);
+  });
 
   document.querySelectorAll('.view-material').forEach(btn => {
     btn.addEventListener('click', () => {

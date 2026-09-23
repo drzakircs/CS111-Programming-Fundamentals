@@ -165,10 +165,14 @@ iframe { width: 100%; height: 74vh; min-height: 620px; border: 0; display: none;
 .materials-heading small { color: var(--muted); font-weight: 650; }
 .material-list { display: grid; gap: 7px; }
 .material-item {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 10px;
   align-items: center;
-  justify-content: space-between;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
   border: 1px solid var(--line);
   background: #fbfcfd;
   border-radius: 10px;
@@ -188,7 +192,8 @@ iframe { width: 100%; height: 74vh; min-height: 620px; border: 0; display: none;
 .material-title-viewport {
   position: relative;
   display: block;
-  flex: 1 1 auto;
+  width: 100%;
+  max-width: 100%;
   min-width: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -217,7 +222,14 @@ iframe { width: 100%; height: 74vh; min-height: 620px; border: 0; display: none;
   font-size: .72rem;
   font-weight: 850;
 }
-.material-actions { display: flex; gap: 5px; flex: 0 0 auto; }
+.material-actions {
+  display: flex;
+  gap: 5px;
+  flex: 0 0 auto;
+  min-width: max-content;
+  position: relative;
+  z-index: 2;
+}
 .btn-small { padding: 6px 8px; border-radius: 8px; font-size: .76rem; }
 .materials-empty small strong { color: var(--muted); font-weight: 750; }
 .materials-empty code, .section-intro code {
@@ -228,8 +240,11 @@ iframe { width: 100%; height: 74vh; min-height: 620px; border: 0; display: none;
 }
 
 @media (max-width: 620px) {
-  .material-item { align-items: stretch; flex-direction: column; }
+  .material-item { grid-template-columns: 1fr; align-items: stretch; }
   .material-title-viewport { width: 100%; }
   .material-actions { width: 100%; }
   .material-actions .btn { flex: 1; }
 }
+
+/* Hide any legacy explanatory text under empty weeks. */
+.materials-empty > *:not(.materials-heading) { display: none !important; }
