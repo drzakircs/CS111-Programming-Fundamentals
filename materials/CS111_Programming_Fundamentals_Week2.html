@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CS111 Programming Fundamentals — Week 2 Interactive Slide Deck</title>
+<style>
+:root{
+  --navy:#0a2a43;--blue:#0868a8;--cyan:#08a8df;--ink:#102436;--muted:#5b7182;--paper:#f6fbfe;--card:#ffffff;--line:#cfe0ec;--green:#14856b;--purple:#6d50c6;--amber:#b87500;--bad:#b84444;--good:#16845f;--shadow:0 16px 44px rgba(15,52,82,.15);
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;font-family:Inter,Segoe UI,Arial,sans-serif;background:#dfeaf2;color:var(--ink);overflow:hidden}
+button,input{font:inherit}button{cursor:pointer}
+#shell{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;padding:12px;background:radial-gradient(circle at 12% 8%,rgba(8,168,223,.13),transparent 28%),radial-gradient(circle at 88% 92%,rgba(8,104,168,.13),transparent 30%),#e5eef5}
+#stage{position:relative;width:min(calc(100vw - 24px),calc((100vh - 24px)*16/9));height:min(calc(100vh - 24px),calc((100vw - 24px)*9/16));background:var(--paper);box-shadow:var(--shadow);overflow:hidden;border:1px solid #bfd3e0;outline:none}
+.slide{position:absolute;inset:0;padding:42px 58px 62px;display:none;flex-direction:column;background:linear-gradient(90deg,rgba(8,104,168,.025) 1px,transparent 1px),linear-gradient(rgba(8,104,168,.025) 1px,transparent 1px),var(--paper);background-size:36px 36px}
+.slide.active{display:flex}
+.slide::before{content:"";position:absolute;left:0;right:0;top:0;height:9px;background:linear-gradient(90deg,var(--cyan),var(--blue))}
+.slide[data-session="2"]::before{background:linear-gradient(90deg,#b196ff,var(--purple))}
+.slide[data-session="3"]::before{background:linear-gradient(90deg,#66d9b4,var(--green))}
+.dark{background:radial-gradient(circle at 78% 18%,rgba(61,196,242,.20),transparent 28%),linear-gradient(135deg,#06223c,#0b3a63 72%,#0a4f78);color:white}
+.s2dark{background:radial-gradient(circle at 80% 18%,rgba(170,144,255,.18),transparent 30%),linear-gradient(135deg,#241b49,#4a378c 75%,#5b45a7);color:white}
+.s3dark{background:radial-gradient(circle at 80% 18%,rgba(91,224,181,.18),transparent 30%),linear-gradient(135deg,#0a3228,#126049 75%,#167357);color:white}
+.logo{position:absolute;right:44px;top:28px;width:72px;height:72px;object-fit:contain;opacity:.96}
+h1,h2,h3,p{margin-top:0}h1{font-size:clamp(50px,4.45vw,82px);line-height:1.02;letter-spacing:-.035em;margin-bottom:22px}h2{font-size:clamp(38px,3.05vw,58px);line-height:1.08;letter-spacing:-.025em;margin-bottom:18px;color:var(--navy)}h3{font-size:clamp(28px,1.9vw,38px);line-height:1.12;margin-bottom:10px;color:var(--navy)}.dark h2,.dark h3,.s2dark h2,.s2dark h3,.s3dark h2,.s3dark h3{color:white}
+p,li,.body{font-size:clamp(24px,1.62vw,31px);line-height:1.28}.small{font-size:clamp(22px,1.24vw,26px);line-height:1.30}.tiny{font-size:clamp(18px,1.05vw,22px)}.lead{font-size:clamp(31px,2.3vw,44px);line-height:1.22}.muted{color:var(--muted)}.dark .muted,.s2dark .muted,.s3dark .muted{color:#d0dfeb}
+.kicker{font-size:clamp(23px,1.35vw,28px);font-weight:950;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);margin-bottom:10px}[data-session="2"] .kicker{color:var(--purple)}[data-session="3"] .kicker{color:var(--green)}.dark .kicker{color:#9de8ff}.s2dark .kicker{color:#d5c8ff}.s3dark .kicker{color:#b7f2df}
+.center{align-items:center;justify-content:center;text-align:center}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px;min-height:0}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;min-height:0}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;min-height:0}.split{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:stretch;min-height:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:21px 24px;box-shadow:0 8px 24px rgba(17,55,85,.08);min-width:0}.card p,.card li{font-size:clamp(22px,1.42vw,28px)}.dark .card,.s2dark .card,.s3dark .card{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.18);box-shadow:none}
+.fill-slide>.grid2,.fill-slide>.grid3,.fill-slide>.grid4,.fill-slide>.split,.fill-slide>.flow{flex:1;align-content:center}.fill-slide>.grid2>.card,.fill-slide>.grid3>.card,.fill-slide>.grid4>.card{display:flex;flex-direction:column;justify-content:center}
+.icon{font-size:clamp(42px,3.4vw,64px);line-height:1;margin-bottom:9px}.big{font-size:clamp(54px,4.4vw,84px);font-weight:950;line-height:1;color:var(--cyan)}.accent{color:var(--cyan)}.pill{display:inline-flex;align-items:center;gap:8px;padding:9px 15px;border-radius:999px;background:#e7f6fc;border:1px solid #b9e5f5;font-size:clamp(21px,1.22vw,25px);font-weight:850;color:var(--navy)}.dark .pill,.s2dark .pill,.s3dark .pill{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.2);color:white}
+.highlight{border-left:8px solid var(--cyan);background:#edf9fe;border-radius:14px;padding:16px 20px}[data-session="2"] .highlight{border-color:#9f84ec;background:#f3f0ff}[data-session="3"] .highlight{border-color:#56c99f;background:#eefaf6}.dark .highlight,.s2dark .highlight,.s3dark .highlight{background:rgba(255,255,255,.08)}
+.clean{margin:0;padding-left:1.1em}.clean li{margin:.18em 0}
+.code{font-family:Cascadia Code,Consolas,monospace;background:#071825;color:#ecf8ff;border-radius:16px;padding:20px 23px;font-size:clamp(22px,1.43vw,28px);line-height:1.42;white-space:pre-wrap;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05)}.code .hl{background:#254b60;color:#fff6bf;border-radius:6px;padding:1px 4px}.code .bad{background:#5d1f2b;color:#ffd7de;border-radius:6px;padding:1px 4px}
+.mem{display:flex;gap:18px;align-items:center;justify-content:center;flex-wrap:wrap}.box{border:3px solid #9ccfe4;background:white;border-radius:16px;padding:14px 18px;min-width:150px;text-align:center;box-shadow:0 8px 18px rgba(20,65,98,.08)}.box b{display:block;color:var(--navy);font-size:clamp(26px,1.55vw,32px)}.box span{font-size:clamp(22px,1.25vw,26px);color:var(--muted)}.box.active{border-color:#f0b43d;background:#fff7dc}.box.good{border-color:#38ad7d;background:#e7f8f0}.arrow{font-size:48px;color:var(--cyan);font-weight:950}
+.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:17px;align-items:stretch}.step{position:relative;background:white;border:2px solid var(--line);border-radius:17px;padding:20px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:175px}.step:not(:last-child)::after{content:"→";position:absolute;right:-27px;top:50%;transform:translateY(-50%);font-size:37px;color:var(--cyan);font-weight:950}.step b{font-size:clamp(25px,1.55vw,31px);color:var(--navy)}.step span{font-size:clamp(20px,1.18vw,25px);color:var(--muted);margin-top:6px;line-height:1.25}
+.qwrap{perspective:1200px;min-height:245px}.qcard{width:100%;height:100%;min-height:245px;position:relative;transform-style:preserve-3d;transition:transform .55s ease;cursor:pointer;outline:none}.qcard.flipped{transform:rotateY(180deg)}.qface{position:absolute;inset:0;backface-visibility:hidden;border-radius:20px;padding:28px 30px;display:flex;flex-direction:column;justify-content:center;border:2px solid #f1c46e;background:linear-gradient(135deg,#fffdf4,#fff6d8);box-shadow:0 12px 26px rgba(118,83,10,.12)}.qback{transform:rotateY(180deg);border-color:#75cda9;background:linear-gradient(135deg,#f3fff9,#e2f9ef)}.qlabel{font-size:clamp(20px,1.15vw,24px);font-weight:950;letter-spacing:.08em;text-transform:uppercase;color:#986000;margin-bottom:10px}.qback .qlabel{color:#126948}.qtext{font-size:clamp(31px,2.2vw,42px);line-height:1.18;font-weight:850;color:var(--navy)}.ans{font-size:clamp(25px,1.62vw,32px);line-height:1.28}.flipcue{position:absolute;right:18px;bottom:12px;font-size:24px;font-weight:950;line-height:1;color:#8e6b15;opacity:.72}.qback .flipcue{color:#167152}.single-question .qwrap{min-height:390px;flex:1;margin-top:12px;max-height:500px}.single-question .qcard{min-height:390px}.single-question .qface{padding:38px 46px}.single-question .qtext{font-size:clamp(40px,2.85vw,54px)}.single-question .ans{font-size:clamp(31px,2.0vw,38px)}
+.demo-controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.action{border:1px solid #b8d2e2;background:white;color:var(--navy);border-radius:10px;padding:10px 15px;font-size:clamp(22px,1.25vw,26px);font-weight:850}.action.primary{background:var(--blue);color:white;border-color:var(--blue)}.action.s2{background:var(--purple);color:white;border-color:var(--purple)}.action.s3{background:var(--green);color:white;border-color:var(--green)}.status{margin-top:14px;padding:13px 15px;border-radius:12px;background:#edf5fa;border:1px dashed #b8d0df;font-size:clamp(22px,1.25vw,27px);min-height:58px;line-height:1.25}
+.choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:8px}.choice{min-height:110px;border:2px solid var(--line);border-radius:16px;background:white;color:var(--ink);padding:15px 18px;font-size:clamp(22px,1.28vw,27px);font-weight:800;text-align:left;line-height:1.20}.choice:hover,.choice:focus-visible{border-color:#65c6e8;transform:translateY(-2px)}.choice.correct{background:#e9f8f1;border-color:#55b58a}.choice.wrong{background:#fff0f0;border-color:#d77979}
+.trace{display:grid;grid-template-columns:1.15fr .85fr;gap:22px;align-items:stretch}.vargrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.varcell{background:white;border:2px solid #c8dceb;border-radius:15px;padding:14px;text-align:center}.varcell b{font-size:clamp(25px,1.45vw,30px);color:var(--navy)}.varcell span{display:block;font-size:clamp(22px,1.22vw,26px);color:var(--muted)}.varcell.active{border-color:#f0b43d;background:#fff7dc}
+.table{width:100%;border-collapse:collapse;background:white;border-radius:16px;overflow:hidden;box-shadow:0 8px 20px rgba(17,55,85,.07)}.table th,.table td{border:1px solid #d4e4ee;padding:12px 15px;text-align:left;font-size:clamp(22px,1.28vw,27px);line-height:1.22}.table th{background:#123d61;color:white}.table td:first-child{font-weight:850;color:var(--navy)}
+.footer{position:absolute;left:58px;right:58px;bottom:20px;display:flex;justify-content:space-between;align-items:center;font-size:15px;color:#6e8191;gap:14px}.dark .footer,.s2dark .footer,.s3dark .footer{color:#c8dae6}.counter{font-variant-numeric:tabular-nums}.clock{font-variant-numeric:tabular-nums;font-weight:800;letter-spacing:.02em;white-space:nowrap}.remote-ready{font-size:13px;opacity:.78;white-space:nowrap}.note{position:absolute;left:58px;right:58px;bottom:54px;padding:10px 13px;border-radius:11px;background:#fff5c7;border:1px solid #e7cb66;color:#4d3b00;font-size:18px;display:none;z-index:20}.note.show{display:block}.controls{position:fixed;right:22px;bottom:16px;display:flex;gap:7px;z-index:50;opacity:.18;transition:opacity .25s ease}.controls:hover,.controls:focus-within{opacity:1}.ctrl{width:43px;height:43px;border-radius:50%;border:1px solid rgba(8,42,70,.16);background:rgba(255,255,255,.12);display:grid;place-items:center;color:var(--navy);font-size:19px;font-weight:900;box-shadow:none;backdrop-filter:blur(5px)}.controls:hover .ctrl,.ctrl:focus-visible{background:rgba(255,255,255,.96);border-color:#9ecfe3}#noteBtn{width:32px;height:32px;font-family:Georgia,serif;font-style:italic;font-size:20px}.progress{position:fixed;bottom:0;left:0;right:0;height:6px;background:rgba(6,42,70,.12);z-index:45}.progress>div{height:100%;background:linear-gradient(90deg,var(--cyan),var(--blue));width:0;transition:width .2s}
+.overlay{position:fixed;inset:0;z-index:80;background:rgba(4,20,34,.95);display:none;overflow:auto;padding:34px}.overlay.open{display:block}.overlay-inner{max-width:1250px;margin:auto;color:white}.overlay h2{color:white}.ovgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.ov{border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);color:white;padding:14px;border-radius:13px;text-align:left;min-height:82px}.ov small{display:block;color:#94ddf5;margin-bottom:4px}.close{float:right;border:0;background:white;color:var(--navy);border-radius:9px;padding:8px 12px;font-weight:900}.helpbox{background:white;color:var(--ink);border-radius:18px;padding:26px;max-width:860px;margin:60px auto}.helpbox h2{color:var(--navy)}.helpgrid{display:grid;grid-template-columns:170px 1fr;gap:12px 18px;font-size:22px}kbd{background:#edf4f8;border:1px solid #b7cad7;border-bottom-width:3px;border-radius:6px;padding:3px 8px;font-weight:850}.timerpanel{position:fixed;right:20px;top:20px;z-index:70;background:white;border:1px solid #bed3e0;border-radius:14px;padding:15px;width:280px;box-shadow:0 10px 30px rgba(16,51,78,.18);display:none}.timerpanel.open{display:block}.timerdigits{font-size:42px;font-weight:950;color:var(--navy);text-align:center;font-variant-numeric:tabular-nums;margin:8px 0}.timerbtns{display:flex;gap:7px;flex-wrap:wrap;justify-content:center}.timerbtns button{border:1px solid #bfd2df;background:#f5fafc;border-radius:8px;padding:7px 10px;font-weight:800;color:var(--navy)}
+@keyframes titleIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}@keyframes softPop{0%{opacity:0;transform:translateY(18px) scale(.985)}70%{opacity:1;transform:translateY(-2px) scale(1.005)}100%{opacity:1;transform:translateY(0) scale(1)}}
+.slide.active>.kicker,.slide.active>h1,.slide.active>h2{animation:titleIn .42s cubic-bezier(.2,.8,.2,1) both}.reveal-step{opacity:0;transform:translateY(18px) scale(.985);pointer-events:none;visibility:hidden}.reveal-step.revealed{visibility:visible;pointer-events:auto;animation:softPop .42s cubic-bezier(.2,.8,.2,1) both}
+@media(max-width:1100px){#shell{padding:0}#stage{width:100vw;height:100vh;max-width:none;max-height:none}.slide{padding:34px 38px 58px;overflow:auto}.grid3,.grid4,.choice-grid{grid-template-columns:1fr 1fr}.grid2,.split,.trace{grid-template-columns:1fr}.flow{grid-template-columns:1fr}.step:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-30px;transform:translateX(-50%)}.footer{left:38px;right:38px}.note{left:38px;right:38px}.ovgrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:680px){.slide{padding:28px 22px 58px}.grid3,.grid4,.choice-grid{grid-template-columns:1fr}.footer{left:22px;right:22px}.note{left:22px;right:22px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}.reveal-step{transform:none}}
+@media print{body{overflow:visible;background:white}#shell{display:block;padding:0;background:white}#stage{width:100%;height:auto;box-shadow:none;border:0;overflow:visible}.slide{position:relative;display:flex!important;page-break-after:always;width:100%;height:56.25vw;max-height:100vh;overflow:hidden}.reveal-step{visibility:visible!important;opacity:1!important;transform:none!important}.controls,.progress,.overlay,.timerpanel,.note{display:none!important}}
+</style>
+</head>
+<body>
+<div id="shell"><main id="stage" tabindex="0">
+
+<section class="slide dark center" data-session="0" data-title="Week 2 Welcome">
+  <img class="logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAxUlEQVR4nO3BMQEAAADCoPVPbQhfoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOA1v9QAATX68/0AAAAASUVORK5CYII=" alt="Air University logo" />
+  <div class="kicker">CS111 · Programming Fundamentals</div>
+  <h1>Week 2</h1>
+  <p class="lead"><b>Data, Expressions, Input/Output & Debugging</b></p>
+  <p class="lead muted"><b>BS Cyber Security · 1st Semester · C++</b></p>
+  <div class="grid3" style="width:100%;margin-top:18px">
+    <div class="card"><div class="icon">📦</div><h3>Store Data</h3><p>Variables, literals, identifiers, data types and scope.</p></div>
+    <div class="card"><div class="icon">🧮</div><h3>Process Data</h3><p>Operators, expressions, assignment and precedence.</p></div>
+    <div class="card"><div class="icon">🧭</div><h3>Trace & Debug</h3><p>I/O, conversions, hand tracing and common errors.</p></div>
+  </div>
+  <p class="small muted" style="margin-top:20px"><b>Dr. Zakir Khan · Assistant Professor</b><br/>Department of Computer Science · Air University Aerospace &amp; Aviation Campus, Kamra</p>
+  <div class="note">Opening cue: Tell students that Week 1 taught how a program is written and translated. Week 2 explains how a program stores, manipulates, receives and displays data.</div>
+</section>
+
+<section class="slide fill-slide" data-session="0" data-title="Week 2 Session Map">
+  <div class="kicker">Week 2 structure</div>
+  <h2>Three connected theory sessions</h2>
+  <div class="grid3">
+    <div class="card"><div class="icon">📦</div><h3>Session 04</h3><p><b>Variables, Literals & Data Types</b></p><p>How programs store information and choose suitable types.</p></div>
+    <div class="card"><div class="icon">🧮</div><h3>Session 05</h3><p><b>Operators & Expressions</b></p><p>How programs compute, update and combine values.</p></div>
+    <div class="card"><div class="icon">🛠️</div><h3>Session 06</h3><p><b>Type Conversion, I/O & Debugging</b></p><p>How data moves, changes type, and how we trace mistakes.</p></div>
+  </div>
+  <div class="highlight" style="margin-top:18px"><p style="margin:0"><b>Teaching focus:</b> understand the logic first, then read and write small C++ fragments.</p></div>
+</section>
+
+<section class="slide fill-slide" data-session="0" data-title="Week 1 Bridge">
+  <div class="kicker">Bridge from Week 1</div>
+  <h2>What Week 1 gave us — and what Week 2 adds</h2>
+  <div class="split">
+    <div class="card"><h3>Already introduced</h3><ul class="clean"><li>What a program is</li><li>Problem → algorithm → flowchart</li><li>Input → Process → Output</li><li>First C++ program</li><li>Compilation idea</li><li>Basic <code>cout</code>/<code>cin</code> role</li></ul></div>
+    <div class="card"><h3>This week deepens</h3><ul class="clean"><li>Where input is stored</li><li>How values are named and typed</li><li>How calculations are evaluated</li><li>How output is formatted</li><li>How to trace and debug small code</li></ul></div>
+  </div>
+  <div class="highlight" style="margin-top:18px"><p style="margin:0"><b>Pending support from Week 1:</b> We briefly revisit IPO, first-program anatomy and <code>cout/cin</code> only where needed for Week 2 understanding.</p></div>
+</section>
+
+<!-- SESSION 1 -->
+<section class="slide dark center fill-slide" data-session="1" data-title="Session 04 Start">
+  <div class="kicker">Session 04</div>
+  <h1>Variables, Literals & Data Types</h1>
+  <div class="grid3" style="width:100%;margin-top:12px">
+    <div class="card"><div class="icon">📦</div><h3>Store</h3><p>Variables give names to values in memory.</p></div>
+    <div class="card"><div class="icon">🏷️</div><h3>Name</h3><p>Identifiers must follow language rules.</p></div>
+    <div class="card"><div class="icon">🧬</div><h3>Type</h3><p>Data type controls meaning, size and operations.</p></div>
+  </div>
+  <div class="note">Ask: “If a program receives a student age or a login attempt count, where does that value live while the program is running?”</div>
+</section>
+
+<section class="slide fill-slide" data-session="1" data-title="Human Idea Before Syntax">
+  <div class="kicker">Beginner-first idea</div>
+  <h2>Before syntax: a program needs named storage</h2>
+  <div class="flow">
+    <div class="step"><div class="icon">👤</div><b>Human fact</b><span>Age is 18</span></div>
+    <div class="step"><div class="icon">🏷️</div><b>Name it</b><span>age</span></div>
+    <div class="step"><div class="icon">📦</div><b>Store it</b><span>memory location</span></div>
+    <div class="step"><div class="icon">🧬</div><b>Type it</b><span>integer value</span></div>
+    <div class="step"><div class="icon">💻</div><b>Use it</b><span>calculate / display</span></div>
+  </div>
+  <div class="highlight" style="margin-top:18px"><p style="margin:0"><b>Formal term:</b> A variable is a named memory location used to store a value during program execution.</p></div>
+</section>
+
+<section class="slide single-question" data-session="1" data-title="Variable Question">
+  <div class="kicker">Ask students</div>
+  <h2>What does a variable really represent?</h2>
+  <div class="qwrap"><div class="qcard" role="button" tabindex="0"><div class="qface"><div class="qlabel">Predict</div><div class="qtext">If we write <code>int attempts = 3;</code>, what are the three important pieces of information?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans"><b>Data type:</b> <code>int</code><br/><b>Variable name:</b> <code>attempts</code><br/><b>Current value:</b> <code>3</code><br/>The program now has named storage for a whole-number value.</div><span class="flipcue">↻</span></div></div></div>
+</section>
+
+<section class="slide fill-slide" data-session="1" data-title="Memory Box Visualization">
+  <div class="kicker">Variable visualization</div>
+  <h2>Think of a variable as a labelled memory box</h2>
+  <div class="mem" style="flex:1">
+    <div class="box"><span>Data Type</span><b>int</b></div>
+    <div class="arrow">+</div>
+    <div class="box"><span>Name</span><b>attempts</b></div>
+    <div class="arrow">+</div>
+    <div class="box active"><span>Value</span><b>3</b></div>
+  </div>
+  <div class="code">int attempts = 3;</div>
+  <div class="highlight" style="margin-top:18px"><p style="margin:0">The name lets the program refer to the value later without remembering the physical memory address.</p></div>
+</section>
+
+<section class="slide" data-session="1" data-title="Interactive Variable State">
+  <div class="kicker">Interactive trace</div>
+  <h2>Watch assignment change the stored value</h2>
+  <div class="trace">
+    <div class="card"><div class="code" id="varCode">int attempts = 0;
+attempts = attempts + 1;
+attempts = attempts + 1;</div><div class="demo-controls"><button class="action primary" id="varNext" type="button">Next Step</button><button class="action" id="varReset" type="button">Reset</button></div></div>
+    <div class="card"><h3>Memory state</h3><div class="mem" style="justify-content:flex-start"><div class="box active"><span>attempts</span><b id="attemptVal">?</b></div></div><div class="status" id="varStatus">Press Next Step.</div></div>
+  </div>
+  <div class="note">Key misconception: assignment is not equality. It means evaluate the right side and store the result on the left side.</div>
+</section>
+
+<section class="slide fill-slide" data-session="1" data-title="Declaration Initialization Assignment">
+  <div class="kicker">Three related ideas</div>
+  <h2>Declaration, initialization and assignment</h2>
+  <div class="grid3">
+    <div class="card"><h3>Declaration</h3><div class="code">int age;</div><p>Tell C++ to create a variable named <code>age</code>.</p></div>
+    <div class="card"><h3>Initialization</h3><div class="code">int age = 18;</div><p>Create the variable and give its first value.</p></div>
+    <div class="card"><h3>Assignment</h3><div class="code">age = 20;</div><p>Replace the current value with a new value.</p></div>
+  </div>
+  <div class="highlight" style="margin-top:18px"><p style="margin:0"><b>Beginner rule:</b> initialize variables before using them.</p></div>
+</section>
+
+<section class="slide fill-slide" data-session="1" data-title="Literals">
+  <div class="kicker">Literals</div>
+  <h2>A literal is a fixed value written directly in code</h2>
+  <div class="grid4">
+    <div class="card center"><div class="big">10</div><h3>Integer literal</h3></div>
+    <div class="card center"><div class="big">3.14</div><h3>Floating literal</h3></div>
+    <div class="card center"><div class="big">'A'</div><h3>Character literal</h3></div>
+    <div class="card center"><div class="big">"Ali"</div><h3>String literal</h3></div>
+  </div>
+  <div class="highlight" style="margin-top:18px"><p style="margin:0">A literal has no variable name. It is directly placed in the program text.</p></div>
+</section>
+
+<section class="slide fill-slide" data-session="1" data-title="Identifiers">
+  <div class="kicker">Identifiers</div>
+  <h2>Identifier: the programmer-chosen name</h2>
+  <div class="split">
+    <div class="card"><h3>Valid identifier rules</h3><ul class="clean"><li>Can contain letters, digits and underscore.</li><li>Cannot start with a digit.</li><li>Cannot be a C++ keyword.</li><li>No spaces or special symbols.</li><li>Case-sensitive: <code>age</code> and <code>Age</code> differ.</li></ul></div>
+    <div class="card"><h3>Professional naming</h3><ul class="clean"><li>Use meaningful names.</li><li><code>failedAttempts</code> is better than <code>x</code>.</li><li>Use consistent style.</li><li>Avoid confusing abbreviations.</li></ul></div>
+  </div>
+</section>
+
+<section class="slide" data-session="1" data-title="Identifier Activity">
+  <div class="kicker">Interactive activity · Valid or invalid?</div>
+  <h2>Tap the identifiers and classify them</h2>
+  <div class="choice-grid" id="identifierGrid">
+    <button class="choice" data-good="true" data-msg="Valid: starts with a letter and uses letters only." type="button">userName</button>
+    <button class="choice" data-good="false" data-msg="Invalid: identifiers cannot start with a digit." type="button">2factor</button>
+    <button class="choice" data-good="false" data-msg="Invalid: hyphen is treated like a minus sign." type="button">login-count</button>
+    <button class="choice" data-good="true" data-msg="Valid: underscore is allowed." type="button">failed_attempts</button>
+    <button class="choice" data-good="false" data-msg="Invalid: int is a C++ keyword." type="button">int</button>
+    <button class="choice" data-good="false" data-msg="Invalid: spaces are not allowed." type="button">user age</button>
+  </div>
+  <div class="status" id="identifierStatus">Select an identifier to reveal the reasoning.</div>
+</section>
+
+<section class="slide fill-slide" data-session="1" data-title="Data Type Overview">
+  <div class="kicker">Data types</div>
+  <h2>A data type tells C++ how to interpret a value</h2>
+  <table class="table">
+    <tr><th>Type</th><th>Meaning</th><th>Example</th><th>Common use</th></tr>
+    <tr><td><code>int</code></td><td>Whole number</td><td><code>42</code></td><td>Counts, attempts, age</td></tr>
+    <tr><td><code>float</code> / <code>double</code></td><td>Decimal number</td><td><code>3.75</code></td><td>Average, percentage, measurement</td></tr>
+    <tr><td><code>char</code></td><td>Single character</td><td><code>'Y'</code></td><td>Grade, menu option</td></tr>
+    <tr><td><code>bool</code></td><td>True / false value</td><td><code>true</code></td><td>Security flag, status</td></tr>
+    <tr><td><code>string</code></td><td>Text sequence</td><td><code>"admin"</code></td><td>Name, username, message</td></tr>
+  </table>
+</section>
+
+<section class="slide single-question" data-session="1" data-title="Choose Data Type">
+  <div class="kicker">Ask students</div>
+  <h2>Choose the suitable data type</h2>
+  <div class="qwrap"><div class="qcard" role="button" tabindex="0"><div class="qface"><div class="qlabel">Predict</div><div class="qtext">Which C++ type is suitable for storing whether access is currently allowed?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans"><b><code>bool</code></b> is suitable because the value has only two logical states: <code>true</code> or <code>false</code>.<br/><br/>Example: <code>bool accessAllowed = false;</code></div><span class="flipcue">↻</span></div></div></div>
+</section>
+
+<section class="slide fill-slide" data-session="1" data-title="char string bool">
+  <div class="kicker">Common beginner confusion</div>
+  <h2><code>char</code>, <code>string</code> and <code>bool</code></h2>
+  <div class="grid3">
+    <div class="card"><h3><code>char</code></h3><p>Stores exactly one character.</p><div class="code">char grade = 'A';</div><p>Use single quotes.</p></div>
+    <div class="card"><h3><code>string</code></h3><p>Stores a sequence of characters.</p><div class="code">string user = "Ali";</div><p>Use double quotes.</p></div>
+    <div class="card"><h3><code>bool</code></h3><p>Stores logical truth.</p><div class="code">bool locked = true;</div><p>Use true or false.</p></div>
+  </div>
+</section>
+
+<section class="slide fill-slide" data-session="1" data-title="sizeof">
+  <div class="kicker">Size of a data type</div>
+  <h2><code>sizeof</code> helps us ask: how much memory?</h2>
+  <div class="split">
+    <div class="card"><h3>Concept</h3><p>Different data types may require different memory sizes.</p><p><code>sizeof</code> returns the size in bytes for a type or variable.</p></div>
+    <div class="card"><h3>C++ fragment</h3><div class="code">cout &lt;&lt; sizeof(int);
+cout &lt;&lt; sizeof(double);
+cout &lt;&lt; sizeof(char);</div><p class="small muted">Exact sizes can vary by system and compiler.</p></div>
+  </div>
+</section>
+
+<section class="slide fill-slide" data-session="1" data-title="Scope">
+  <div class="kicker">Scope</div>
+  <h2>Scope controls where a variable can be used</h2>
+  <div class="split">
+    <div class="card"><h3>Plain idea</h3><p>A variable is not necessarily visible everywhere in a program.</p><p>Its <b>scope</b> is the region where the name is recognized.</p></div>
+    <div class="code">int main() {
+    int attempts = 0;   // visible inside main
+    cout &lt;&lt; attempts;
+}
+// attempts is not visible here</div>
+  </div>
+  <div class="highlight" style="margin-top:18px"><p style="margin:0">For beginners: declare variables close to where they are needed and do not reuse confusing names.</p></div>
+</section>
+
+<section class="slide fill-slide" data-session="1" data-title="Named Constants">
+  <div class="kicker">Named constants</div>
+  <h2>Some values should not change</h2>
+  <div class="grid2">
+    <div class="card"><h3>Variable</h3><div class="code">int maxAttempts = 3;
+maxAttempts = 5;   // allowed</div><p>Value can change during execution.</p></div>
+    <div class="card"><h3>Named constant</h3><div class="code">const int MAX_ATTEMPTS = 3;
+// MAX_ATTEMPTS = 5;  // error</div><p>Value is fixed after declaration.</p></div>
+  </div>
+  <div class="highlight" style="margin-top:18px"><p style="margin:0"><b>Security example:</b> Use a constant for a policy limit such as maximum login attempts.</p></div>
+</section>
+
+<section class="slide" data-session="1" data-title="Session 04 Check">
+  <div class="kicker">Session 04 checkpoint</div><h2>Can students identify the basics?</h2>
+  <div class="grid2">
+    <div class="qwrap"><div class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Q1</div><div class="qtext">What is the difference between a variable and a literal?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans">A variable is named storage. A literal is a fixed value written directly in code.</div><span class="flipcue">↻</span></div></div></div>
+    <div class="qwrap"><div class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Q2</div><div class="qtext">Why is <code>2user</code> invalid as an identifier?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans">A C++ identifier cannot start with a digit. Use something like <code>user2</code> instead.</div><span class="flipcue">↻</span></div></div></div>
+  </div>
+</section>
+
+<!-- SESSION 2 -->
+<section class="slide s2dark center fill-slide" data-session="2" data-title="Session 05 Start">
+  <div class="kicker">Session 05</div>
+  <h1>Operators & Expressions</h1>
+  <div class="grid3" style="width:100%;margin-top:12px">
+    <div class="card"><div class="icon">➕</div><h3>Operators</h3><p>Symbols that perform operations.</p></div>
+    <div class="card"><div class="icon">🧮</div><h3>Expressions</h3><p>Combinations that produce a value.</p></div>
+    <div class="card"><div class="icon">⚖️</div><h3>Precedence</h3><p>Rules that decide evaluation order.</p></div>
+  </div>
+  <div class="note">Ask: “A calculator follows rules. Does C++ also follow rules when an expression contains +, *, / and parentheses?”</div>
+</section>
+
+<section class="slide fill-slide" data-session="2" data-title="Expression Concept">
+  <div class="kicker">Concept before syntax</div>
+  <h2>An expression is a value-producing statement fragment</h2>
+  <div class="flow">
+    <div class="step"><b>Values</b><span><code>10</code>, <code>marks</code></span></div>
+    <div class="step"><b>Operators</b><span><code>+</code>, <code>-</code>, <code>*</code>, <code>/</code></span></div>
+    <div class="step"><b>Expression</b><span><code>marks + bonus</code></span></div>
+    <div class="step"><b>Evaluation</b><span>compute result</span></div>
+    <div class="step"><b>Use result</b><span>store or display</span></div>
+  </div>
+  <div class="highlight" style="margin-top:18px"><p style="margin:0">An expression must eventually produce a value.</p></div>
+</section>
+
+<section class="slide fill-slide" data-session="2" data-title="Arithmetic Operators">
+  <div class="kicker">Arithmetic operators</div>
+  <h2>Basic arithmetic in C++</h2>
+  <table class="table">
+    <tr><th>Operator</th><th>Name</th><th>Example</th><th>Result idea</th></tr>
+    <tr><td><code>+</code></td><td>Addition</td><td><code>7 + 3</code></td><td><code>10</code></td></tr>
+    <tr><td><code>-</code></td><td>Subtraction</td><td><code>7 - 3</code></td><td><code>4</code></td></tr>
+    <tr><td><code>*</code></td><td>Multiplication</td><td><code>7 * 3</code></td><td><code>21</code></td></tr>
+    <tr><td><code>/</code></td><td>Division</td><td><code>7 / 3</code></td><td>Integer or decimal depends on types</td></tr>
+    <tr><td><code>%</code></td><td>Remainder</td><td><code>7 % 3</code></td><td><code>1</code></td></tr>
+  </table>
+</section>
+
+<section class="slide single-question" data-session="2" data-title="Integer Division Question">
+  <div class="kicker">Ask students</div><h2>Predict the result</h2>
+  <div class="qwrap"><div class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Predict</div><div class="qtext"><code>int x = 7 / 2;</code><br/>What value is stored in <code>x</code>?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans"><b>3</b><br/>Because both operands are integers, C++ performs integer division and discards the fractional part.</div><span class="flipcue">↻</span></div></div></div>
+</section>
+
+<section class="slide fill-slide" data-session="2" data-title="Precedence">
+  <div class="kicker">Operator precedence</div><h2>C++ does not simply evaluate left to right</h2>
+  <div class="split">
+    <div class="card"><h3>Expression</h3><div class="code">int result = 2 + 3 * 4;</div><p>Multiplication has higher precedence than addition.</p></div>
+    <div class="card"><h3>Evaluation</h3><div class="mem"><div class="box"><span>Step 1</span><b>3 * 4 = 12</b></div><div class="arrow">→</div><div class="box good"><span>Step 2</span><b>2 + 12 = 14</b></div></div></div>
+  </div>
+  <div class="highlight" style="margin-top:18px"><p style="margin:0"><b>Use parentheses</b> when the intended order must be absolutely clear.</p></div>
+</section>
+
+<section class="slide" data-session="2" data-title="Precedence Activity">
+  <div class="kicker">Interactive trace · Precedence</div><h2>Which step happens first?</h2>
+  <div class="card"><div class="code">int r = (8 + 4) / 2 + 3 * 2;</div><div class="demo-controls"><button class="action s2" id="precNext" type="button">Next Step</button><button class="action" id="precReset" type="button">Reset</button></div><div class="status" id="precStatus">Press Next Step to trace the expression.</div></div>
+</section>
+
+<section class="slide fill-slide" data-session="2" data-title="Assignment Operator">
+  <div class="kicker">Assignment</div><h2><code>=</code> means store the right-side value on the left</h2>
+  <div class="flow" style="grid-template-columns:repeat(4,1fr)">
+    <div class="step"><b>Read</b><span>current value of x</span></div>
+    <div class="step"><b>Compute</b><span><code>x + 1</code></span></div>
+    <div class="step"><b>Store</b><span>new value into x</span></div>
+    <div class="step"><b>Use</b><span>updated x later</span></div>
+  </div>
+  <div class="code" style="margin-top:18px">x = x + 1;</div>
+  <div class="highlight" style="margin-top:18px"><p style="margin:0"><b>Misconception:</b> This is not a mathematical equality. It is an update operation.</p></div>
+</section>
+
+<section class="slide single-question" data-session="2" data-title="Assignment vs Equality">
+  <div class="kicker">Ask students</div><h2>Final value?</h2>
+  <div class="qwrap"><div class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Predict</div><div class="qtext"><code>int x = 5;</code><br/><code>x = x + 2;</code><br/>What is the final value of <code>x</code>?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans"><b>7</b><br/>Read old value 5 → add 2 → store 7 back into <code>x</code>.</div><span class="flipcue">↻</span></div></div></div>
+</section>
+
+<section class="slide fill-slide" data-session="2" data-title="Combined Assignment">
+  <div class="kicker">Multiple and combined assignment</div><h2>Shorter updates, same logic</h2>
+  <div class="grid2">
+    <div class="card"><h3>Regular form</h3><div class="code">score = score + 10;
+attempts = attempts - 1;</div></div>
+    <div class="card"><h3>Combined form</h3><div class="code">score += 10;
+attempts -= 1;</div></div>
+  </div>
+  <div class="highlight" style="margin-top:18px"><p style="margin:0">Combined assignment is compact, but beginners should still understand the full form first.</p></div>
+</section>
+
+<section class="slide fill-slide" data-session="2" data-title="Increment Decrement">
+  <div class="kicker">Increment and decrement</div><h2>Increasing or decreasing by one</h2>
+  <div class="grid2">
+    <div class="card"><h3>Increment</h3><div class="code">count++;
+// same idea as:
+count = count + 1;</div><p>Used for counters and repeated processing.</p></div>
+    <div class="card"><h3>Decrement</h3><div class="code">attempts--;
+// same idea as:
+attempts = attempts - 1;</div><p>Used when remaining chances decrease.</p></div>
+  </div>
+</section>
+
+<section class="slide single-question" data-session="2" data-title="Remainder Question">
+  <div class="kicker">Ask students</div><h2>Remainder operator</h2>
+  <div class="qwrap"><div class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Predict</div><div class="qtext">What is the result of <code>17 % 5</code>?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans"><b>2</b><br/>Because 17 divided by 5 gives quotient 3 and remainder 2.</div><span class="flipcue">↻</span></div></div></div>
+</section>
+
+<section class="slide fill-slide" data-session="2" data-title="Negative Remainder">
+  <div class="kicker">Negative remainder caution</div><h2>Be careful with negative values and <code>%</code></h2>
+  <div class="split">
+    <div class="card"><h3>Why it matters</h3><p>For positive values, remainder feels intuitive.</p><p>With negative values, beginners can make wrong assumptions.</p></div>
+    <div class="card"><h3>Practical rule</h3><p>For first-semester work, avoid relying on negative remainders unless you deliberately tested and understood the rule.</p><div class="code">int r = -7 % 3;</div></div>
+  </div>
+  <div class="highlight" style="margin-top:18px"><p style="margin:0">When validating logic, test boundary and unusual values, not only comfortable positive values.</p></div>
+</section>
+
+<section class="slide" data-session="2" data-title="Expression Trace Demo">
+  <div class="kicker">Interactive trace · Expressions</div><h2>Trace a security-score expression</h2>
+  <div class="trace">
+    <div class="card"><div class="code">int base = 50;
+int failed = 3;
+int score = base + failed * 10;</div><div class="demo-controls"><button class="action s2" id="exprNext" type="button">Next Step</button><button class="action" id="exprReset" type="button">Reset</button></div></div>
+    <div class="card"><h3>Variable state</h3><div class="vargrid"><div class="varcell" id="baseCell"><b>base</b><span>?</span></div><div class="varcell" id="failedCell"><b>failed</b><span>?</span></div><div class="varcell" id="scoreCell"><b>score</b><span>?</span></div></div><div class="status" id="exprStatus">Press Next Step.</div></div>
+  </div>
+</section>
+
+<section class="slide fill-slide" data-session="2" data-title="Expression Errors">
+  <div class="kicker">Error-based learning</div><h2>Common expression mistakes</h2>
+  <div class="grid3">
+    <div class="card"><h3>Missing semicolon</h3><div class="code">int x = 5<span class="bad"> </span></div><p>Syntax error.</p></div>
+    <div class="card"><h3>Wrong operator</h3><div class="code">total = price x qty;</div><p><code>x</code> is not multiplication. Use <code>*</code>.</p></div>
+    <div class="card"><h3>Integer division surprise</h3><div class="code">double avg = 5 / 2;</div><p>Result becomes 2 before storing as double.</p></div>
+  </div>
+</section>
+
+<section class="slide" data-session="2" data-title="Session 05 Check">
+  <div class="kicker">Session 05 checkpoint</div><h2>Can students trace expressions?</h2>
+  <div class="grid2">
+    <div class="qwrap"><div class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Q1</div><div class="qtext"><code>int r = 10 + 2 * 3;</code><br/>What is <code>r</code>?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans"><b>16</b>. Multiplication occurs before addition.</div><span class="flipcue">↻</span></div></div></div>
+    <div class="qwrap"><div class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Q2</div><div class="qtext">What does <code>count++</code> do?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans">It increases <code>count</code> by 1. It is a short form of <code>count = count + 1;</code>.</div><span class="flipcue">↻</span></div></div></div>
+  </div>
+</section>
+
+<!-- SESSION 3 -->
+<section class="slide s3dark center fill-slide" data-session="3" data-title="Session 06 Start">
+  <div class="kicker">Session 06</div>
+  <h1>Type Conversion, I/O & Debugging</h1>
+  <div class="grid3" style="width:100%;margin-top:12px">
+    <div class="card"><div class="icon">↔️</div><h3>Convert</h3><p>Understand when values change type.</p></div>
+    <div class="card"><div class="icon">⌨️</div><h3>Interact</h3><p>Use <code>cin</code> and <code>cout</code> meaningfully.</p></div>
+    <div class="card"><div class="icon">🐞</div><h3>Debug</h3><p>Trace execution and classify mistakes.</p></div>
+  </div>
+  <div class="note">Bridge from Week 1: revisit cout/cin from first program, but now connect them with typed variables and expressions.</div>
+</section>
+
+<section class="slide fill-slide" data-session="3" data-title="I/O as Conversation">
+  <div class="kicker">Input and output</div>
+  <h2>A program communicates with the user</h2>
+  <div class="flow" style="grid-template-columns:repeat(5,1fr)">
+    <div class="step"><div class="icon">👤</div><b>User</b><span>enters data</span></div>
+    <div class="step"><div class="icon">⌨️</div><b><code>cin</code></b><span>receives input</span></div>
+    <div class="step"><div class="icon">📦</div><b>Variable</b><span>stores input</span></div>
+    <div class="step"><div class="icon">⚙️</div><b>Process</b><span>expression/calculation</span></div>
+    <div class="step"><div class="icon">🖥️</div><b><code>cout</code></b><span>displays result</span></div>
+  </div>
+</section>
+
+<section class="slide fill-slide" data-session="3" data-title="cout cin">
+  <div class="kicker">C++ input/output</div><h2><code>cout</code> sends data out; <code>cin</code> brings data in</h2>
+  <div class="grid2">
+    <div class="card"><h3>Output</h3><div class="code">cout &lt;&lt; "Enter age: ";</div><p>Displays a message on the screen.</p></div>
+    <div class="card"><h3>Input</h3><div class="code">int age;
+cin &gt;&gt; age;</div><p>Reads user input into the variable.</p></div>
+  </div>
+  <div class="highlight" style="margin-top:18px"><p style="margin:0"><code>&lt;&lt;</code> points toward output stream. <code>&gt;&gt;</code> points from input stream into a variable.</p></div>
+</section>
+
+<section class="slide fill-slide" data-session="3" data-title="Cascading Output">
+  <div class="kicker">Cascading output</div><h2>Multiple values can be sent to <code>cout</code></h2>
+  <div class="split">
+    <div class="code">string user = "Ali";
+int score = 80;
+cout &lt;&lt; "User: " &lt;&lt; user
+     &lt;&lt; " Score: " &lt;&lt; score;</div>
+    <div class="card"><h3>Output idea</h3><div class="highlight"><p style="margin:0"><b>User: Ali Score: 80</b></p></div><p style="margin-top:18px">Cascading means chaining multiple <code>&lt;&lt;</code> insertions in one output statement.</p></div>
+  </div>
+</section>
+
+<section class="slide fill-slide" data-session="3" data-title="Formatting Output">
+  <div class="kicker">Formatting output</div><h2>Clear output is part of good programming style</h2>
+  <div class="grid2">
+    <div class="card"><h3>Hard to read</h3><div class="code">cout &lt;&lt; total;</div><p>The user sees only a number.</p></div>
+    <div class="card"><h3>Better</h3><div class="code">cout &lt;&lt; "Total marks = " &lt;&lt; total;</div><p>The output explains itself.</p></div>
+  </div>
+  <div class="highlight" style="margin-top:18px"><p style="margin:0">Readable output helps both users and programmers during debugging.</p></div>
+</section>
+
+<section class="slide fill-slide" data-session="3" data-title="Type Conversion">
+  <div class="kicker">Type conversion</div><h2>Sometimes values move from one type to another</h2>
+  <div class="grid2">
+    <div class="card"><h3>Implicit conversion</h3><p>C++ converts automatically when needed.</p><div class="code">double x = 5;  // int to double</div></div>
+    <div class="card"><h3>Explicit conversion</h3><p>The programmer requests conversion.</p><div class="code">int y = static_cast&lt;int&gt;(3.9);</div></div>
+  </div>
+</section>
+
+<section class="slide" data-session="3" data-title="Conversion Activity">
+  <div class="kicker">Interactive activity · Conversion type</div><h2>Implicit or explicit?</h2>
+  <div class="choice-grid" id="conversionGrid">
+    <button class="choice" data-good="true" data-msg="Implicit: 5 is converted to 5.0 when stored in a double." type="button"><code>double x = 5;</code></button>
+    <button class="choice" data-good="false" data-msg="Explicit: static_cast tells C++ to perform the conversion deliberately." type="button"><code>int n = static_cast&lt;int&gt;(3.7);</code></button>
+    <button class="choice" data-good="true" data-msg="Implicit: arithmetic may promote values before evaluation." type="button"><code>double r = 7 / 2.0;</code></button>
+  </div>
+  <div class="status" id="conversionStatus">For this activity, green means implicit conversion. Select a code fragment.</div>
+</section>
+
+<section class="slide single-question" data-session="3" data-title="Float to Int Question">
+  <div class="kicker">Ask students</div><h2>Information loss</h2>
+  <div class="qwrap"><div class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Predict</div><div class="qtext"><code>int x = static_cast&lt;int&gt;(9.8);</code><br/>What is stored in <code>x</code>?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans"><b>9</b><br/>The fractional part is discarded during conversion to <code>int</code>. It is not rounded to 10.</div><span class="flipcue">↻</span></div></div></div>
+</section>
+
+<section class="slide fill-slide" data-session="3" data-title="Overflow Underflow">
+  <div class="kicker">Overflow and underflow</div><h2>Data types have limits</h2>
+  <div class="split">
+    <div class="card"><h3>Overflow</h3><p>A value becomes too large for the chosen type.</p><p>Result can be incorrect or unexpected.</p></div>
+    <div class="card"><h3>Underflow</h3><p>A value becomes too small to represent accurately, especially for floating-point types.</p><p>Precision may be lost.</p></div>
+  </div>
+  <div class="highlight" style="margin-top:18px"><p style="margin:0"><b>Cyber Security connection:</b> Later, understanding numeric limits helps explain input validation and memory-safety issues.</p></div>
+</section>
+
+<section class="slide fill-slide" data-session="3" data-title="Characters and Strings">
+  <div class="kicker">Characters and strings</div><h2>Text data must be represented carefully</h2>
+  <div class="grid2">
+    <div class="card"><h3>Character</h3><div class="code">char option = 'Y';</div><p>Exactly one character. Use single quotes.</p></div>
+    <div class="card"><h3>String object</h3><div class="code">string username = "student";</div><p>Sequence of characters. Use double quotes and include <code>&lt;string&gt;</code>.</p></div>
+  </div>
+</section>
+
+<section class="slide fill-slide" data-session="3" data-title="Hand Tracing">
+  <div class="kicker">Hand tracing</div><h2>Tracing means following execution step by step</h2>
+  <div class="flow" style="grid-template-columns:repeat(4,1fr)">
+    <div class="step"><b>Read line</b><span>What executes now?</span></div>
+    <div class="step"><b>Update state</b><span>Which variable changes?</span></div>
+    <div class="step"><b>Record output</b><span>What appears on screen?</span></div>
+    <div class="step"><b>Continue</b><span>Next line until finished</span></div>
+  </div>
+  <div class="highlight" style="margin-top:18px"><p style="margin:0">Hand tracing is the beginner’s best debugging tool.</p></div>
+</section>
+
+<section class="slide" data-session="3" data-title="Code Trace Demo">
+  <div class="kicker">Interactive code trace</div><h2>Trace input, calculation and output</h2>
+  <div class="trace">
+    <div class="card"><div class="code">int marks = 70;
+int bonus = 5;
+int total = marks + bonus;
+cout &lt;&lt; total;</div><div class="demo-controls"><button class="action s3" id="traceNext" type="button">Next Step</button><button class="action" id="traceReset" type="button">Reset</button></div></div>
+    <div class="card"><h3>Trace table</h3><div class="vargrid"><div class="varcell" id="marksCell"><b>marks</b><span>?</span></div><div class="varcell" id="bonusCell"><b>bonus</b><span>?</span></div><div class="varcell" id="totalCell"><b>total</b><span>?</span></div></div><div class="status" id="traceStatus">Press Next Step.</div></div>
+  </div>
+</section>
+
+<section class="slide fill-slide" data-session="3" data-title="Common Errors">
+  <div class="kicker">Common program errors</div><h2>Beginner errors have patterns</h2>
+  <div class="grid3">
+    <div class="card"><h3>Syntax error</h3><p>The code violates C++ grammar.</p><div class="code">cout &lt;&lt; "Hi"</div></div>
+    <div class="card"><h3>Logic error</h3><p>The program runs, but the result is wrong.</p><div class="code">avg = total / 2; // should divide by 3</div></div>
+    <div class="card"><h3>Type mistake</h3><p>The chosen type gives an unexpected result.</p><div class="code">int avg = 7 / 2;</div></div>
+  </div>
+</section>
+
+<section class="slide" data-session="3" data-title="Error Detective">
+  <div class="kicker">Interactive activity · Error detective</div><h2>Find the problem</h2>
+  <div class="choice-grid" id="errorGrid">
+    <button class="choice" data-good="false" data-msg="Missing semicolon after the output statement: syntax error." type="button"><code>cout &lt;&lt; total</code></button>
+    <button class="choice" data-good="true" data-msg="Logic issue: if three quizzes exist, divide by 3, not 2." type="button"><code>avg = total / 2;</code></button>
+    <button class="choice" data-good="false" data-msg="Type issue: storing decimal average in int loses fractional part." type="button"><code>int avg = 7 / 2;</code></button>
+  </div>
+  <div class="status" id="errorStatus">Select a fragment to reveal the issue. Green marks a logic error example.</div>
+</section>
+
+<section class="slide fill-slide" data-session="3" data-title="Debugging Process">
+  <div class="kicker">Debugging process</div><h2>Debugging is investigation, not guessing</h2>
+  <div class="flow">
+    <div class="step"><b>Observe</b><span>What is wrong?</span></div>
+    <div class="step"><b>Trace</b><span>Where does state change?</span></div>
+    <div class="step"><b>Hypothesize</b><span>What caused it?</span></div>
+    <div class="step"><b>Fix</b><span>Make a small correction</span></div>
+    <div class="step"><b>Retest</b><span>Check expected output</span></div>
+  </div>
+</section>
+
+<section class="slide fill-slide" data-session="3" data-title="Problem Solving Case">
+  <div class="kicker">Problem-solving case study</div><h2>Mini case: compute a simple login risk score</h2>
+  <div class="split">
+    <div class="card"><h3>Problem</h3><p>A program stores failed login attempts and calculates a simple score.</p><ul class="clean"><li>Base score = 20</li><li>Each failed attempt adds 15</li><li>Display final score</li></ul></div>
+    <div class="code">int baseScore = 20;
+int failedAttempts = 3;
+int riskScore = baseScore + failedAttempts * 15;
+cout &lt;&lt; "Risk score = " &lt;&lt; riskScore;</div>
+  </div>
+  <div class="highlight" style="margin-top:18px"><p style="margin:0">This is not an actual security model. It is a beginner-friendly expression-tracing example.</p></div>
+</section>
+
+<section class="slide fill-slide" data-session="3" data-title="Assignment 1 Issued">
+  <div class="kicker">Course activity note</div><h2>Assignment 1 is issued after Session 06</h2>
+  <div class="grid2">
+    <div class="card"><h3>Coverage link</h3><p>Basic C++, expressions and early decision-making foundation.</p><p>Students should review Week 1 and Week 2 concepts before attempting it.</p></div>
+    <div class="card"><h3>Important habit</h3><p>Do not only copy code. Trace it, explain it, and test different input values.</p><p>Programming skill develops through practice.</p></div>
+  </div>
+  <div class="note">Do not present this as a lab procedure. Keep it as a theory-course assessment reminder and learning expectation.</div>
+</section>
+
+<section class="slide" data-session="3" data-title="Session 06 Check">
+  <div class="kicker">Session 06 checkpoint</div><h2>Can students trace and debug?</h2>
+  <div class="grid2">
+    <div class="qwrap"><div class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Q1</div><div class="qtext">What is the output?<br/><code>int x=4; x+=3; cout&lt;&lt;x;</code></div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans"><b>7</b>. <code>x += 3</code> means <code>x = x + 3</code>.</div><span class="flipcue">↻</span></div></div></div>
+    <div class="qwrap"><div class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Q2</div><div class="qtext">Why can <code>int avg = 5 / 2;</code> surprise beginners?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans">Because integer division gives <code>2</code>, not <code>2.5</code>. The fractional part is discarded.</div><span class="flipcue">↻</span></div></div></div>
+  </div>
+</section>
+
+<section class="slide s3dark center fill-slide" data-session="3" data-title="Week Summary">
+  <div class="kicker">Week 2 summary</div><h1>Data → Operations → Interaction → Debugging</h1>
+  <div class="grid4" style="width:100%;margin-top:20px">
+    <div class="card"><h3>Variables</h3><p>Named storage.</p></div>
+    <div class="card"><h3>Types</h3><p>Meaning and limits.</p></div>
+    <div class="card"><h3>Expressions</h3><p>Value-producing logic.</p></div>
+    <div class="card"><h3>Tracing</h3><p>Understand execution.</p></div>
+  </div>
+</section>
+
+<section class="slide fill-slide" data-session="3" data-title="Concept Connections">
+  <div class="kicker">Concept connections</div><h2>How Week 2 connects internally</h2>
+  <div class="flow">
+    <div class="step"><b>Input</b><span><code>cin</code></span></div>
+    <div class="step"><b>Storage</b><span>variables + types</span></div>
+    <div class="step"><b>Processing</b><span>operators + expressions</span></div>
+    <div class="step"><b>Conversion</b><span>type changes</span></div>
+    <div class="step"><b>Output</b><span><code>cout</code> + formatting</span></div>
+  </div>
+</section>
+
+<section class="slide" data-session="3" data-title="Week Concept Check">
+  <div class="kicker">Week concept check</div><h2>Quick review cards</h2>
+  <div class="grid2">
+    <div class="qwrap"><div class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Q1</div><div class="qtext">Give one example of a valid identifier.</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans"><code>failedAttempts</code>, <code>totalMarks</code>, <code>user_name</code> are valid examples.</div><span class="flipcue">↻</span></div></div></div>
+    <div class="qwrap"><div class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Q2</div><div class="qtext">Which has higher precedence: <code>+</code> or <code>*</code>?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans"><code>*</code> has higher precedence than <code>+</code>.</div><span class="flipcue">↻</span></div></div></div>
+    <div class="qwrap"><div class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Q3</div><div class="qtext">What does <code>static_cast&lt;int&gt;(4.9)</code> produce?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans"><code>4</code>. The fractional part is discarded.</div><span class="flipcue">↻</span></div></div></div>
+    <div class="qwrap"><div class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Q4</div><div class="qtext">Why do we hand trace?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans">To follow execution line by line, track variables, predict output and find mistakes.</div><span class="flipcue">↻</span></div></div></div>
+  </div>
+</section>
+
+<section class="slide fill-slide" data-session="3" data-title="Cyber Security Connection">
+  <div class="kicker">Cyber Security connection</div><h2>Why Week 2 matters for Cyber Security students</h2>
+  <div class="grid3">
+    <div class="card"><div class="icon">🔐</div><h3>Security values</h3><p>Attempts, flags, scores and usernames must be stored correctly.</p></div>
+    <div class="card"><div class="icon">⚠️</div><h3>Input risk</h3><p>Wrong assumptions about input can create incorrect behavior.</p></div>
+    <div class="card"><div class="icon">🧮</div><h3>Type limits</h3><p>Overflow, truncation and conversion errors matter in secure software.</p></div>
+  </div>
+</section>
+
+<section class="slide s3dark center" data-session="3" data-title="Next Week Preview">
+  <div class="kicker">Week 3 preview</div><h1>Next: Decision Making</h1><p class="lead">Relational operators · <code>if</code> statement · <code>if/else</code> · nested decisions · <code>else-if</code> ladder · dangling <code>else</code></p><div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:20px"><span class="pill">Variables store facts</span><span class="pill">Expressions compute values</span><span class="pill">Decisions choose paths</span></div>
+</section>
+
+<section class="slide s3dark center fill-slide" data-session="3" data-title="Thank You">
+  <div class="kicker">Week 2 complete</div>
+  <h1>Thank You</h1>
+  <p class="lead"><b>Any Questions?</b></p>
+  <div class="grid3" style="width:100%;margin-top:20px">
+    <div class="card"><div class="icon">📦</div><h3>Store</h3><p>Variables and types.</p></div>
+    <div class="card"><div class="icon">🧮</div><h3>Compute</h3><p>Expressions and operators.</p></div>
+    <div class="card"><div class="icon">🐞</div><h3>Debug</h3><p>Trace before guessing.</p></div>
+  </div>
+  <p class="small muted" style="margin-top:22px"><b>Instructor:</b><br/>Dr. Zakir Khan<br/>Assistant Professor<br/>Department of Computer Science<br/>Air University Aerospace &amp; Aviation Campus, Kamra</p>
+</section>
+
+<div class="footer"><span id="footerSession">Week 2</span><span>CS111 · Programming Fundamentals</span><span class="clock" id="clock">--:--</span><span class="counter" id="counter">1 / 1</span><span id="buildState"></span></div>
+<div class="note" id="globalNote"></div>
+</main></div>
+<div class="controls"><button class="ctrl" id="timerBtn" title="Class timer (T)">⏱</button><button class="ctrl" id="overviewBtn" title="Overview (O)">▦</button><button class="ctrl" id="fullBtn" title="Full screen (F)">⛶</button><button class="ctrl" id="helpBtn" title="Help (?)">?</button></div>
+<div class="progress"><div id="progress"></div></div>
+<div class="overlay" id="overview"><div class="overlay-inner"><button class="close" id="ovClose">Close</button><h2>Week 2 Slide Overview</h2><div class="ovgrid" id="ovgrid"></div></div></div>
+<div class="overlay" id="help"><div class="helpbox"><button class="close" id="helpClose">Close</button><h2>Presentation Controls</h2><div class="helpgrid">
+<kbd>→ / Space / Enter</kbd><span>Reveal next item; after build completion, move to next slide</span>
+<kbd>Click blank area</kbd><span>Reveal next item / continue</span>
+<kbd>← / Backspace</kbd><span>Previous slide</span>
+<kbd>A</kbd><span>Reveal all remaining items on current slide</span>
+<kbd>S</kbd><span>Switch to next session</span>
+<kbd>Shift + S</kbd><span>Previous session</span>
+<kbd>Page Down</kbd><span>Presenter remote next: reveal next item / next slide</span>
+<kbd>Page Up</kbd><span>Presenter remote previous slide</span>
+<kbd>N / P</kbd><span>Alternative presenter keys: next / previous</span>
+<kbd>I</kbd><span>Instructor cue</span>
+<kbd>T</kbd><span>Timer</span>
+<kbd>O</kbd><span>Slide overview</span>
+<kbd>F</kbd><span>Full screen</span>
+<kbd>Home / End</kbd><span>First / last slide</span>
+<kbd>Esc</kbd><span>Close overlay / exit full screen</span>
+</div></div></div>
+<div class="timerpanel" id="timerPanel"><div class="tiny muted">Class Activity Timer</div><div class="timerdigits" id="timerDigits">05:00</div><div class="timerbtns"><button data-min="2">2 min</button><button data-min="5">5 min</button><button data-min="10">10 min</button><button data-min="15">15 min</button><button id="timerStart">Start/Pause</button><button id="timerReset">Reset</button></div></div>
+
+<script>
+(function(){
+const stage=document.getElementById('stage');
+const slides=[...document.querySelectorAll('.slide')];
+const counter=document.getElementById('counter');
+const progress=document.getElementById('progress');
+const footerSession=document.getElementById('footerSession');
+const globalNote=document.getElementById('globalNote');
+const buildState=document.getElementById('buildState');
+const clock=document.getElementById('clock');
+let current=0;
+const sessionStarts={1:slides.findIndex(s=>s.dataset.session==='1'),2:slides.findIndex(s=>s.dataset.session==='2'),3:slides.findIndex(s=>s.dataset.session==='3')};
+function updateClock(){if(!clock)return;const now=new Date();clock.textContent=now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});}
+updateClock();setInterval(updateClock,1000);
+function labelSession(s){return s==='1'?'Session 04 · Data Storage':s==='2'?'Session 05 · Expressions':s==='3'?'Session 06 · I/O and Debugging':'Week 2 · Bridge'}
+function markRevealSteps(){slides.forEach(slide=>{const chosen=[];const add=el=>{if(!el||chosen.includes(el))return;if(el.classList.contains('note')||el.classList.contains('footer'))return;if(el.closest('.qback'))return;chosen.push(el)};['.grid2','.grid3','.grid4','.flow','.choice-grid','.split'].forEach(sel=>{slide.querySelectorAll(sel).forEach(group=>{[...group.children].forEach(add)})});[...slide.children].forEach(el=>{if(el.matches('.qwrap,.highlight,.code,.status,.demo-controls,.trace,.table'))add(el)});const maxSteps=8;chosen.slice(0,maxSteps).forEach((el,idx)=>{el.classList.add('reveal-step');el.dataset.revealIndex=String(idx)})})}
+function getRevealSteps(slide=slides[current]){return [...slide.querySelectorAll('.reveal-step')]}
+function updateBuildState(){const steps=getRevealSteps();if(!steps.length){buildState.textContent='';return}const done=steps.filter(x=>x.classList.contains('revealed')).length;buildState.innerHTML='<span style="display:inline-block;width:6px;height:6px;border-radius:99px;background:'+(done<steps.length?'#08a8df':'#c4d2dd')+';margin-right:6px"></span>'+done+'/'+steps.length}
+function show(i){current=Math.max(0,Math.min(slides.length-1,i));slides.forEach((s,k)=>s.classList.toggle('active',k===current));counter.textContent=(current+1)+' / '+slides.length;progress.style.width=((current+1)/slides.length*100)+'%';footerSession.textContent=labelSession(slides[current].dataset.session);globalNote.classList.remove('show');globalNote.textContent='';updateBuildState();stage.focus({preventScroll:true})}
+function revealNext(){const steps=getRevealSteps();const nextStep=steps.find(x=>!x.classList.contains('revealed'));if(!nextStep)return false;nextStep.classList.add('revealed');updateBuildState();return true}
+function revealAll(){getRevealSteps().forEach(x=>x.classList.add('revealed'));updateBuildState()}
+function next(){if(!revealNext())show(current+1)}
+function prev(){show(current-1)}
+// flip cards
+document.querySelectorAll('.qcard').forEach(c=>{c.addEventListener('click',e=>{e.stopPropagation();c.classList.toggle('flipped')});c.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();c.classList.toggle('flipped')}})});
+function toggleNote(){const n=slides[current].querySelector('.note');const txt=n?n.textContent.trim():'Instructor cue: Use this slide for explanation, examples and a short student check.';globalNote.textContent=txt;globalNote.classList.toggle('show')}
+const noteBtn=document.getElementById('noteBtn'); if(noteBtn) noteBtn.addEventListener('click',toggleNote);
+async function fullscreen(){try{if(!document.fullscreenElement)await document.documentElement.requestFullscreen();else await document.exitFullscreen()}catch(e){}}
+document.getElementById('fullBtn').addEventListener('click',fullscreen);
+const overview=document.getElementById('overview'),ovgrid=document.getElementById('ovgrid');slides.forEach((s,i)=>{const b=document.createElement('button');b.className='ov';b.innerHTML='<small>'+labelSession(s.dataset.session)+' · Slide '+(i+1)+'</small>'+s.dataset.title;b.addEventListener('click',()=>{show(i);overview.classList.remove('open')});ovgrid.appendChild(b)});document.getElementById('overviewBtn').addEventListener('click',()=>overview.classList.add('open'));document.getElementById('ovClose').addEventListener('click',()=>overview.classList.remove('open'));
+const help=document.getElementById('help');document.getElementById('helpBtn').addEventListener('click',()=>help.classList.add('open'));document.getElementById('helpClose').addEventListener('click',()=>help.classList.remove('open'));
+// timer
+const timerPanel=document.getElementById('timerPanel'),timerDigits=document.getElementById('timerDigits');let timerSeconds=300,timerRun=false,timerId=null;function drawTimer(){const m=Math.floor(timerSeconds/60),s=timerSeconds%60;timerDigits.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}function toggleTimerPanel(){timerPanel.classList.toggle('open')}document.getElementById('timerBtn').addEventListener('click',toggleTimerPanel);document.querySelectorAll('[data-min]').forEach(b=>b.addEventListener('click',()=>{timerSeconds=+b.dataset.min*60;timerRun=false;clearInterval(timerId);drawTimer()}));document.getElementById('timerStart').addEventListener('click',()=>{timerRun=!timerRun;clearInterval(timerId);if(timerRun)timerId=setInterval(()=>{if(timerSeconds>0){timerSeconds--;drawTimer()}else{timerRun=false;clearInterval(timerId);timerDigits.textContent='TIME!'}},1000)});document.getElementById('timerReset').addEventListener('click',()=>{timerRun=false;clearInterval(timerId);timerSeconds=300;drawTimer()});drawTimer();
+// demos: variable state
+let varStep=0;const attemptVal=document.getElementById('attemptVal'),varStatus=document.getElementById('varStatus');function resetVar(){varStep=0;attemptVal.textContent='?';varStatus.textContent='Press Next Step.'}function nextVar(){varStep++;if(varStep===1){attemptVal.textContent='0';varStatus.innerHTML='Line 1: create <b>attempts</b> and initialize it with 0.'}else if(varStep===2){attemptVal.textContent='1';varStatus.innerHTML='Line 2: read 0, add 1, store 1.'}else if(varStep===3){attemptVal.textContent='2';varStatus.innerHTML='Line 3: read 1, add 1, store 2.'}else{varStatus.innerHTML='Trace complete: final value of <b>attempts</b> is 2.'}}document.getElementById('varNext').addEventListener('click',e=>{e.stopPropagation();nextVar()});document.getElementById('varReset').addEventListener('click',e=>{e.stopPropagation();resetVar()});resetVar();
+// identifier activity
+function setupChoice(gridId,statusId,greenText){const st=document.getElementById(statusId);document.querySelectorAll('#'+gridId+' .choice').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();const good=b.dataset.good==='true';b.classList.remove('correct','wrong');b.classList.add(good?'correct':'wrong');st.innerHTML=(good?'<b>Correct category.</b> ':'<b>Notice.</b> ')+b.dataset.msg}))}
+setupChoice('identifierGrid','identifierStatus');
+// precedence demo
+let precStep=0;const precStatus=document.getElementById('precStatus');function resetPrec(){precStep=0;precStatus.textContent='Press Next Step to trace the expression.'}function nextPrec(){precStep++;const msgs=['Step 1: Parentheses first → (8 + 4) = 12.','Step 2: Division → 12 / 2 = 6.','Step 3: Multiplication → 3 * 2 = 6.','Step 4: Addition → 6 + 6 = 12.','Final: r = 12.'];precStatus.innerHTML=msgs[Math.min(precStep-1,msgs.length-1)]}document.getElementById('precNext').addEventListener('click',e=>{e.stopPropagation();nextPrec()});document.getElementById('precReset').addEventListener('click',e=>{e.stopPropagation();resetPrec()});resetPrec();
+// expression trace
+let exprStep=0;const exprStatus=document.getElementById('exprStatus');function setCell(id,val,active=false){const c=document.getElementById(id);c.querySelector('span').textContent=val;c.classList.toggle('active',active)}function resetExpr(){exprStep=0;setCell('baseCell','?');setCell('failedCell','?');setCell('scoreCell','?');exprStatus.textContent='Press Next Step.'}function nextExpr(){exprStep++;document.querySelectorAll('#baseCell,#failedCell,#scoreCell').forEach(c=>c.classList.remove('active'));if(exprStep===1){setCell('baseCell','50',true);exprStatus.textContent='Line 1: base = 50.'}else if(exprStep===2){setCell('failedCell','3',true);exprStatus.textContent='Line 2: failed = 3.'}else if(exprStep===3){setCell('scoreCell','80',true);exprStatus.innerHTML='Line 3: failed * 10 = 30, then 50 + 30 = <b>80</b>.'}else{exprStatus.innerHTML='Final state: base=50, failed=3, score=80.'}}document.getElementById('exprNext').addEventListener('click',e=>{e.stopPropagation();nextExpr()});document.getElementById('exprReset').addEventListener('click',e=>{e.stopPropagation();resetExpr()});resetExpr();
+// conversion and error choices
+setupChoice('conversionGrid','conversionStatus');setupChoice('errorGrid','errorStatus');
+// code trace
+let traceStep=0;const traceStatus=document.getElementById('traceStatus');function resetTrace(){traceStep=0;['marksCell','bonusCell','totalCell'].forEach(id=>setCell(id,'?'));traceStatus.textContent='Press Next Step.'}function nextTrace(){traceStep++;document.querySelectorAll('#marksCell,#bonusCell,#totalCell').forEach(c=>c.classList.remove('active'));if(traceStep===1){setCell('marksCell','70',true);traceStatus.textContent='Line 1: marks = 70.'}else if(traceStep===2){setCell('bonusCell','5',true);traceStatus.textContent='Line 2: bonus = 5.'}else if(traceStep===3){setCell('totalCell','75',true);traceStatus.textContent='Line 3: total = marks + bonus = 75.'}else if(traceStep===4){traceStatus.innerHTML='Line 4 output: <b>75</b>.'}else{traceStatus.innerHTML='Trace complete.'}}document.getElementById('traceNext').addEventListener('click',e=>{e.stopPropagation();nextTrace()});document.getElementById('traceReset').addEventListener('click',e=>{e.stopPropagation();resetTrace()});resetTrace();
+// keyboard and navigation
+function closeOverlays(){overview.classList.remove('open');help.classList.remove('open')}function switchSession(dir=1){const raw=slides[current].dataset.session;const s=(raw==='1'||raw==='2'||raw==='3')?Number(raw):0;let target;if(s===0){target=dir<0?3:1}else if(dir>0){target=s===3?1:s+1}else{target=s===1?3:s-1}show(sessionStarts[target])}
+let lastRemoteNav=0;
+function remoteSafe(action){const now=Date.now();if(now-lastRemoteNav<120)return;lastRemoteNav=now;action()}
+document.addEventListener('keydown',e=>{
+  const target=e.target;
+  const tag=(target.tagName||'').toUpperCase();
+  if(['INPUT','TEXTAREA','SELECT'].includes(tag) || (target.closest && target.closest('button,.qcard,.timerpanel,.overlay')))return;
+  const key=e.key;
+  const lower=key.toLowerCase();
+  // Presenter remotes commonly send PageDown/PageUp, ArrowRight/ArrowLeft, Enter or Space.
+  if(key==='ArrowRight'||key==='ArrowDown'||key==='PageDown'||key===' '||key==='Enter'||lower==='n'||key==='MediaTrackNext'){e.preventDefault();remoteSafe(next)}
+  else if(key==='ArrowLeft'||key==='ArrowUp'||key==='PageUp'||key==='Backspace'||lower==='p'||key==='MediaTrackPrevious'){e.preventDefault();remoteSafe(prev)}
+  else if(key==='Home'){e.preventDefault();show(0)}
+  else if(key==='End'){e.preventDefault();show(slides.length-1)}
+  else if(lower==='s'){e.preventDefault();switchSession(e.shiftKey?-1:1)}
+  else if(lower==='a'){e.preventDefault();revealAll()}
+  else if(lower==='f'){e.preventDefault();fullscreen()}
+  else if(lower==='o'){e.preventDefault();overview.classList.toggle('open')}
+  else if(lower==='i'){e.preventDefault();toggleNote()}
+  else if(lower==='t'){e.preventDefault();toggleTimerPanel()}
+  else if(key==='?'){e.preventDefault();help.classList.add('open')}
+  else if(key==='Escape'){closeOverlays()}
+});
+let startX=null;stage.addEventListener('pointerdown',e=>startX=e.clientX);stage.addEventListener('pointerup',e=>{if(startX===null)return;const dx=e.clientX-startX;startX=null;if(Math.abs(dx)>90)(dx<0?next():prev())});stage.addEventListener('click',e=>{if(e.target.closest('button,.qcard,input,.controls,.overlay,.timerpanel'))return;next()});
+markRevealSteps();show(0);
+})();
+</script>
+</body>
+</html>

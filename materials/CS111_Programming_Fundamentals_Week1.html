@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>CS111 Programming Fundamentals — Week 1 — BS Cyber Security</title><style>
+:root{
+ --au:#0868a8;--cyan:#09a9df;--navy:#082a46;--ink:#102436;--muted:#5b7285;
+ --paper:#f7fbfe;--card:#fff;--line:#cfe0ec;--good:#16845f;--bad:#b84444;
+ --amber:#b87500;--s2:#6d50c6;--s3:#14856b;--shadow:0 16px 44px rgba(15,52,82,.15);
+}
+*{box-sizing:border-box} html,body{margin:0;width:100%;height:100%;font-family:Segoe UI,Arial,sans-serif;background:#dfeaf2;color:var(--ink);overflow:hidden}
+button,input{font:inherit} button{cursor:pointer}
+#shell{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;padding:12px;background:radial-gradient(circle at 10% 10%,rgba(9,169,223,.12),transparent 28%),radial-gradient(circle at 90% 90%,rgba(8,104,168,.12),transparent 30%),#e5eef5}
+#stage{position:relative;width:min(calc(100vw - 24px),calc((100vh - 24px)*16/9));height:min(calc(100vh - 24px),calc((100vw - 24px)*9/16));background:var(--paper);box-shadow:var(--shadow);overflow:hidden;border:1px solid #bfd3e0;outline:none}
+.slide{position:absolute;inset:0;padding:42px 58px 62px;display:none;background:linear-gradient(90deg,rgba(8,104,168,.025) 1px,transparent 1px),linear-gradient(rgba(8,104,168,.025) 1px,transparent 1px),var(--paper);background-size:36px 36px}
+.slide.active{display:flex;flex-direction:column}.slide.dark{background:radial-gradient(circle at 78% 18%,rgba(61,196,242,.20),transparent 28%),linear-gradient(135deg,#06223c,#0b3a63 72%,#0a4f78);color:white}.slide.s2dark{background:radial-gradient(circle at 80% 18%,rgba(170,144,255,.18),transparent 30%),linear-gradient(135deg,#241b49,#4a378c 75%,#5b45a7);color:white}.slide.s3dark{background:radial-gradient(circle at 80% 18%,rgba(91,224,181,.18),transparent 30%),linear-gradient(135deg,#0a3228,#126049 75%,#167357);color:white}
+.slide::before{content:"";position:absolute;left:0;right:0;top:0;height:9px;background:linear-gradient(90deg,var(--cyan),var(--au))}.slide[data-session="2"]::before{background:linear-gradient(90deg,#b196ff,var(--s2))}.slide[data-session="3"]::before{background:linear-gradient(90deg,#66d9b4,var(--s3))}
+.logo{position:absolute;right:44px;top:28px;width:70px;height:70px;object-fit:contain;opacity:.96}.kicker{font-size:clamp(24px,1.35vw,28px);font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--au);margin-bottom:9px}.slide[data-session="2"] .kicker{color:var(--s2)}.slide[data-session="3"] .kicker{color:var(--s3)}.dark .kicker,.s2dark .kicker,.s3dark .kicker{color:#a7e9ff}.s2dark .kicker{color:#d5c8ff}.s3dark .kicker{color:#b7f2df}
+h1,h2,h3,p{margin-top:0} h1{font-size:clamp(49px,4.25vw,78px);line-height:1.02;letter-spacing:-.035em;margin-bottom:20px} h2{font-size:clamp(39px,3vw,56px);line-height:1.08;letter-spacing:-.025em;margin-bottom:18px;color:var(--navy)}.dark h2,.s2dark h2,.s3dark h2{color:white} h3{font-size:clamp(28px,1.8vw,36px);line-height:1.14;margin-bottom:10px;color:var(--navy)}.dark h3,.s2dark h3,.s3dark h3{color:white}
+p,li,.body{font-size:clamp(24px,1.58vw,31px);line-height:1.30}.small{font-size:clamp(22px,1.28vw,26px);line-height:1.3}.tiny{font-size:clamp(18px,1.0vw,21px)}.lead{font-size:clamp(30px,2.2vw,42px);line-height:1.24}.muted{color:var(--muted)}.dark .muted,.s2dark .muted,.s3dark .muted{color:#d0dfeb}.accent{color:#5dd9ff}.center{align-items:center;justify-content:center;text-align:center}
+code{font-family:Cascadia Code,Consolas,monospace;font-size:.93em;background:rgba(8,104,168,.07);padding:.05em .18em;border-radius:.18em}.dark code,.s2dark code,.s3dark code{background:rgba(255,255,255,.12)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px;min-height:0}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;min-height:0}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;min-height:0}.split{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:stretch;min-height:0}.fill-slide>.grid2,.fill-slide>.grid3,.fill-slide>.grid4,.fill-slide>.split{flex:1;align-content:center}.fill-slide>.grid2>.card,.fill-slide>.grid3>.card,.fill-slide>.grid4>.card{display:flex;flex-direction:column;justify-content:center}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 22px;box-shadow:0 8px 24px rgba(17,55,85,.08);min-width:0}.dark .card,.s2dark .card,.s3dark .card{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.18);box-shadow:none}.card p,.card li{font-size:clamp(23px,1.42vw,28px)}.card.compact{padding:17px 18px}.icon{font-size:clamp(42px,3.35vw,62px);line-height:1;margin-bottom:10px}.big{font-size:clamp(52px,4.2vw,78px);font-weight:950;line-height:1;color:var(--cyan)}.pill{display:inline-flex;align-items:center;gap:8px;padding:9px 15px;border-radius:999px;background:#e7f6fc;border:1px solid #b9e5f5;font-size:clamp(22px,1.25vw,25px);font-weight:800;color:var(--navy)}.dark .pill,.s2dark .pill,.s3dark .pill{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.2);color:white}.clean{margin:0;padding-left:1.18em}.clean li{margin:.24em 0}.highlight{border-left:8px solid var(--cyan);background:#edf9fe;border-radius:12px;padding:15px 18px}.slide[data-session="2"] .highlight{border-color:#9f84ec;background:#f3f0ff}.slide[data-session="3"] .highlight{border-color:#56c99f;background:#eefaf6}.dark .highlight,.s2dark .highlight,.s3dark .highlight{background:rgba(255,255,255,.08)}
+.hero-path{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;width:100%;margin-top:8px}.hero-node{min-height:145px;padding:18px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);border-radius:16px;text-align:left}.hero-node span{display:block;color:#83e0ff;font-weight:950;font-size:24px;margin-bottom:5px}.hero-node b{display:block;color:white;font-size:clamp(27px,1.6vw,32px);margin-bottom:5px}.hero-node small{color:#d1e2ef;font-size:clamp(23px,1.24vw,26px);line-height:1.28}.session-focus{width:100%;margin-top:14px}.session-focus .card{min-height:280px;display:flex;flex-direction:column;justify-content:center}.session-bridge{margin-top:18px;padding:14px 18px;border:1px solid rgba(255,255,255,.18);border-radius:14px;background:rgba(255,255,255,.08);font-size:clamp(23px,1.35vw,27px);width:100%;text-align:center}
+.visual-stack{display:grid;gap:12px}.vstep{min-height:66px;display:flex;align-items:center;padding:13px 18px;border-radius:14px;background:#fff;border:2px solid #cfe0ec;color:var(--navy);font-size:clamp(24px,1.4vw,29px);font-weight:850;box-shadow:0 6px 16px rgba(17,55,85,.06)}
+.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:18px;align-items:stretch}.step{position:relative;background:#fff;border:2px solid var(--line);border-radius:17px;padding:20px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:180px}.step:not(:last-child)::after{content:"→";position:absolute;right:-27px;top:50%;transform:translateY(-50%);font-size:37px;color:var(--cyan);font-weight:950}.step b{font-size:clamp(27px,1.62vw,32px);color:var(--navy)}.step span{font-size:clamp(22px,1.28vw,26px);color:var(--muted);margin-top:7px;line-height:1.22}
+.code{font-family:Cascadia Code,Consolas,monospace;background:#071825;color:#ecf8ff;border-radius:16px;padding:19px 22px;font-size:clamp(23px,1.42vw,29px);line-height:1.43;white-space:pre-wrap;overflow:auto}.code.numbered span{display:block;padding:2px 7px;border-radius:6px;transition:.2s}.code.numbered span.active-line{background:#2a5268;color:#fff8c4}.big-code{font-family:Cascadia Code,Consolas,monospace;font-weight:900;font-size:clamp(38px,3.2vw,60px);color:var(--navy);line-height:1.2}
+.qwrap{perspective:1200px;min-height:230px}.qcard{width:100%;height:100%;min-height:230px;position:relative;transform-style:preserve-3d;transition:transform .55s ease;cursor:pointer;outline:none}.qcard.flipped{transform:rotateY(180deg)}.qface{position:absolute;inset:0;backface-visibility:hidden;border-radius:20px;padding:26px 28px;display:flex;flex-direction:column;justify-content:center;border:2px solid #f1c46e;background:linear-gradient(135deg,#fffdf4,#fff6d8);box-shadow:0 12px 26px rgba(118,83,10,.12)}.qback{transform:rotateY(180deg);border-color:#75cda9;background:linear-gradient(135deg,#f3fff9,#e2f9ef)}.qlabel{font-size:clamp(21px,1.18vw,24px);font-weight:950;letter-spacing:.08em;text-transform:uppercase;color:#986000;margin-bottom:10px}.qback .qlabel{color:#126948}.qtext{font-size:clamp(34px,2.45vw,47px);line-height:1.18;font-weight:850;color:var(--navy)}.ans{font-size:clamp(27px,1.75vw,34px);line-height:1.28}.flipcue{position:absolute;right:18px;bottom:12px;font-size:24px;font-weight:950;line-height:1;color:#8e6b15;opacity:.72;transition:transform .2s,opacity .2s}.qback .flipcue{color:#167152}.qcard:hover .flipcue,.qcard:focus-visible .flipcue{transform:rotate(45deg);opacity:1}.single-question .qwrap{min-height:390px;flex:1;margin-top:12px;max-height:500px}.single-question .qcard{min-height:390px}.single-question .qface{padding:38px 46px}.single-question .qtext{font-size:clamp(40px,2.9vw,54px)}.single-question .ans{font-size:clamp(30px,2.0vw,38px)}.compact-questions .qwrap,.compact-questions .qcard{min-height:205px}.compact-questions .qtext{font-size:clamp(25px,1.65vw,32px)}.compact-questions .ans{font-size:clamp(23px,1.42vw,28px)}
+.workflow-pool{display:flex;gap:12px;flex-wrap:wrap;margin:8px 0 18px}.workflow-chip{border:2px solid #b7d6e8;background:white;color:var(--navy);border-radius:14px;padding:13px 18px;font-size:clamp(21px,1.3vw,26px);font-weight:900}.workflow-chip.used{opacity:.35;pointer-events:none}.workflow-track{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.workflow-track.four{grid-template-columns:repeat(4,1fr)}.workflow-track span{min-height:88px;border:2px dashed #9fcae0;border-radius:15px;display:grid;place-items:center;padding:10px;text-align:center;color:#6b91a7;font-size:clamp(21px,1.28vw,26px);font-weight:850}.workflow-track span.filled{border-style:solid;background:#eaf7fd;color:#0c5d8a}.demo-controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.action{border:1px solid #b8d2e2;background:white;color:var(--navy);border-radius:10px;padding:10px 15px;font-size:clamp(22px,1.28vw,26px);font-weight:850}.action.primary{background:var(--au);color:white;border-color:var(--au)}.action.s2{background:var(--s2);color:white;border-color:var(--s2)}.action.s3{background:var(--s3);color:white;border-color:var(--s3)}.status{margin-top:13px;padding:12px 15px;border-radius:12px;background:#edf5fa;border:1px dashed #b8d0df;font-size:clamp(22px,1.28vw,26px);min-height:56px;line-height:1.25}
+.symbol-grid .card{align-items:center}.fc-terminator,.fc-process,.fc-io{display:grid;place-items:center;font-weight:900;color:var(--navy);font-size:clamp(20px,1.2vw,24px);margin:4px auto 14px}.fc-terminator{width:190px;height:74px;border:3px solid #5faed0;border-radius:999px;background:#eefaff}.fc-process{width:190px;height:74px;border:3px solid #719ac0;background:#f5f9fc}.fc-io{width:190px;height:74px;border:3px solid #69b895;background:#effbf6;transform:skew(-12deg)}.fc-io>*{transform:skew(12deg)}.fc-diamond{width:112px;height:112px;border:3px solid #c79a3b;background:#fff8e6;transform:rotate(45deg);display:grid;place-items:center;margin:0 auto 18px}.fc-diamond span{transform:rotate(-45deg);font-weight:900;color:var(--navy);font-size:18px}.mini-flowchart{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;justify-content:center}.bigshape{width:300px;height:70px;margin:0;font-size:24px}.bigdiamond{width:132px;height:132px;margin:0}.bigdiamond span{font-size:19px;text-align:center}.down{font-size:34px;font-weight:950;color:var(--cyan);text-align:center}.branch-row{width:78%;display:grid;grid-template-columns:1fr 1fr;gap:100px;text-align:center}.branch-label{font-size:23px;font-weight:900;color:var(--navy)}.goodbox{border-color:#55b98d;background:#ecfaf4}.badbox{border-color:#d27c7c;background:#fff1f1}
+.level-flow{display:grid;grid-template-columns:1fr .16fr 1.35fr .16fr 1fr;gap:10px;align-items:center;flex:1}.level-card{min-height:250px;border:2px solid #c6deeb;background:white;border-radius:20px;padding:24px 20px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;box-shadow:0 9px 24px rgba(17,55,85,.08)}.level-card b{font-size:clamp(28px,1.7vw,34px);color:var(--navy);margin-bottom:10px}.level-card span{font-size:clamp(23px,1.35vw,27px);line-height:1.25;color:var(--muted)}.level-arrow,.ipo-arrow,.pipe-arrow{font-size:46px;font-weight:950;color:var(--cyan);text-align:center}
+.compile-pipeline{display:grid;grid-template-columns:1fr .12fr 1fr .12fr 1fr .12fr 1fr .12fr 1fr;gap:8px;align-items:center;margin-top:18px}.compile-stage{min-height:180px;border:2px solid var(--line);border-radius:18px;background:white;padding:18px 12px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;opacity:.5;transition:.25s}.compile-stage.active{opacity:1;border-color:var(--s2);background:#f4f1ff;transform:translateY(-4px)}.compile-stage.done{opacity:.9;border-color:#79b99b;background:#eef9f4}.compile-stage span{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#e8f3f9;font-weight:950;margin-bottom:9px}.compile-stage b{font-size:clamp(23px,1.38vw,27px);color:var(--navy)}.compile-stage small{font-size:clamp(18px,1.05vw,21px);color:var(--muted);line-height:1.2;margin-top:7px}
+.ipo-flow{flex:1;display:grid;grid-template-columns:1fr .18fr 1.25fr .18fr 1fr;gap:14px;align-items:center}.ipo-node{min-height:310px;border-radius:28px;border:3px solid #9fdced;background:#eefaff;padding:28px 22px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}.process-node{background:#fff;border-color:#bcd4e4}.output-node{background:#ecfaf4;border-color:#8dd8bb}.ipo-icon{font-size:62px;margin-bottom:12px}.ipo-node b{font-size:clamp(34px,2.15vw,43px);color:var(--navy);margin-bottom:12px}.ipo-node span{font-size:clamp(26px,1.5vw,30px);color:var(--ink);font-weight:800;line-height:1.24}.ipo-node small{font-size:clamp(22px,1.24vw,25px);color:var(--muted);line-height:1.25;margin-top:12px}
+.output-box{margin-top:18px;padding:16px 18px;border-radius:14px;background:#0b2638;color:#edfbff;font-family:Cascadia Code,Consolas,monospace;font-size:clamp(24px,1.45vw,29px);min-height:64px;display:flex;align-items:center}.memory-row{display:flex;align-items:center;justify-content:space-between;gap:20px;margin:14px 0}.memory-row>span{font-size:24px;font-weight:800}.memory-cell{min-width:160px;min-height:90px;border:3px solid #c7dae6;border-radius:15px;background:white;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;box-shadow:0 6px 18px rgba(17,55,85,.06)}.memory-cell b{font-size:22px;color:var(--muted)}.memory-cell em{font-style:normal;font-size:31px;font-weight:950;color:var(--navy)}.memory-cell.active{border-color:#50b58a;background:#ecfaf4}.memory-cell.large{min-width:240px;min-height:125px}.memory-cell.xlarge{min-width:280px;min-height:150px}.trace-layout{display:grid;grid-template-columns:1.15fr .85fr;gap:24px;min-height:0;flex:1;align-items:center}.trace-layout>.card{height:100%;display:flex;flex-direction:column;justify-content:center}
+.variable-visual{display:grid;grid-template-columns:1fr .2fr 1.2fr .2fr 1fr;gap:15px;align-items:center;flex:1}.label-card{border:2px solid var(--line);border-radius:18px;background:white;padding:26px;text-align:center}.label-card span{display:block;font-size:22px;color:var(--muted);font-weight:800}.label-card b{display:block;font-size:34px;color:var(--navy);margin-top:8px}.label-arrow{font-size:44px;text-align:center;color:var(--s3);font-weight:950}.identifier-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}.identifier-choice{min-height:110px;border:2px solid var(--line);border-radius:16px;background:white;font-family:Cascadia Code,Consolas,monospace;font-size:clamp(25px,1.55vw,30px);font-weight:900;color:var(--navy)}.identifier-choice.valid{background:#e9f8f1;border-color:#4eb286}.identifier-choice.invalid{background:#fff0f0;border-color:#d98080}.type-token{display:inline-flex;align-items:center;justify-content:center;min-height:62px;padding:8px 14px;border-radius:12px;background:#eaf7fd;color:#075f8f;font-family:Cascadia Code,Consolas,monospace;font-size:clamp(26px,1.55vw,31px);font-weight:950;margin-bottom:12px}.badge{display:inline-block;margin-top:8px;border-radius:999px;padding:6px 10px;background:#e8f8ff;border:1px solid #b9e9fb;color:#0b4773;font-size:clamp(20px,1.12vw,23px);font-weight:800}.boolean{display:grid;place-items:center;width:210px;height:110px;border-radius:20px;color:white;font-family:Cascadia Code,Consolas,monospace;font-size:43px;font-weight:950;margin:0 auto 16px}.boolean.true{background:#17855f}.boolean.false{background:#b84444}.assignment-demo{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center;flex:1}.state-panel{display:flex;flex-direction:column;align-items:center}.scope-demo{display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:center;flex:1}
+.operator-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;flex:1;align-items:center}.op-card{min-height:230px;border:2px solid var(--line);border-radius:18px;background:white;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:15px}.op-card b{font-family:Cascadia Code,Consolas,monospace;font-size:58px;color:var(--s3)}.op-card span{font-size:26px;font-weight:900;color:var(--navy)}.op-card small{font-size:21px;color:var(--muted);margin-top:8px}.math-big{font-size:clamp(34px,2.5vw,48px);font-weight:900;color:var(--navy);line-height:1.25}.precedence-stack{display:grid;gap:14px;flex:1;align-content:center}.precedence-level{display:grid;grid-template-columns:70px 220px 1fr;gap:18px;align-items:center;background:white;border:2px solid var(--line);border-radius:17px;padding:16px 20px}.precedence-level span{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:#e7f5ec;color:#136e4f;font-size:25px;font-weight:950}.precedence-level b{font-family:Cascadia Code,Consolas,monospace;font-size:32px;color:var(--navy)}.precedence-level small{font-size:23px;color:var(--muted);line-height:1.2}.memory-bank{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.error-options{display:grid;gap:12px}.error-choice{border:2px solid var(--line);border-radius:14px;background:white;padding:15px 17px;text-align:left;color:var(--ink);font-size:clamp(22px,1.3vw,26px);font-weight:800;line-height:1.22}.error-choice.correct{background:#eaf9f2;border-color:#4db387}.error-choice.wrong{background:#fff0f0;border-color:#d77979}
+.footer{position:absolute;left:58px;right:58px;bottom:20px;display:flex;justify-content:space-between;align-items:center;font-size:15px;color:#6e8191}.dark .footer,.s2dark .footer,.s3dark .footer{color:#c8dae6}.counter{font-variant-numeric:tabular-nums}.note{display:none}.global-note{position:absolute;left:58px;right:58px;bottom:54px;padding:10px 13px;border-radius:11px;background:#fff5c7;border:1px solid #e7cb66;color:#4d3b00;font-size:18px;display:none;z-index:12}.global-note.show{display:block}.controls{position:fixed;right:22px;bottom:16px;display:flex;gap:7px;z-index:50;opacity:.18;transition:opacity .25s ease}.controls:hover,.controls:focus-within{opacity:1}.ctrl{width:43px;height:43px;border-radius:50%;border:1px solid rgba(8,42,70,.16);background:rgba(255,255,255,.12);display:grid;place-items:center;color:var(--navy);font-size:19px;font-weight:900;box-shadow:none;backdrop-filter:blur(5px)}.controls:hover .ctrl,.ctrl:focus-visible{background:rgba(255,255,255,.96);border-color:#9ecfe3}.ctrl:hover{transform:translateY(-1px)}#noteBtn{width:32px;height:32px;font-family:Georgia,serif;font-style:italic;font-size:20px}.progress{position:fixed;bottom:0;left:0;right:0;height:6px;background:rgba(6,42,70,.12);z-index:45}.progress>div{height:100%;background:linear-gradient(90deg,var(--cyan),var(--au));width:0;transition:width .2s}
+.overlay{position:fixed;inset:0;z-index:80;background:rgba(4,20,34,.95);display:none;overflow:auto;padding:34px}.overlay.open{display:block}.overlay-inner{max-width:1250px;margin:auto;color:white}.overlay h2{color:white}.ovgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.ov{border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);color:white;padding:14px;border-radius:13px;text-align:left;min-height:82px}.ov small{display:block;color:#94ddf5;margin-bottom:4px}.close{float:right;border:0;background:white;color:var(--navy);border-radius:9px;padding:8px 12px;font-weight:900}.helpgrid{display:grid;grid-template-columns:160px 1fr;gap:12px 18px;font-size:22px}.helpbox{background:white;color:var(--ink);border-radius:18px;padding:26px;max-width:820px;margin:40px auto}.helpbox h2{color:var(--navy)}kbd{background:#edf4f8;border:1px solid #b7cad7;border-bottom-width:3px;border-radius:6px;padding:3px 8px;font-weight:850}.timerpanel{position:fixed;right:20px;top:20px;z-index:70;background:white;border:1px solid #bed3e0;border-radius:14px;padding:15px;width:280px;box-shadow:0 10px 30px rgba(16,51,78,.18);display:none}.timerpanel.open{display:block}.timerdigits{font-size:42px;font-weight:950;color:var(--navy);text-align:center;font-variant-numeric:tabular-nums;margin:8px 0}.timerbtns{display:flex;gap:7px;flex-wrap:wrap;justify-content:center}.timerbtns button{border:1px solid #bfd2df;background:#f5fafc;border-radius:8px;padding:7px 10px;font-weight:800;color:var(--navy)}
+@keyframes titleIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}@keyframes softPop{0%{opacity:0;transform:translateY(18px) scale(.985)}70%{opacity:1;transform:translateY(-2px) scale(1.005)}100%{opacity:1;transform:translateY(0) scale(1)}}@keyframes accentSweep{from{transform:scaleX(0)}to{transform:scaleX(1)}}.slide.active>.kicker,.slide.active>h1,.slide.active>h2{animation:titleIn .42s cubic-bezier(.2,.8,.2,1) both}.slide.active::before{transform-origin:left center;animation:accentSweep .55s ease-out both}.reveal-step{opacity:0;transform:translateY(18px) scale(.985);pointer-events:none;visibility:hidden}.reveal-step.revealed{visibility:visible;pointer-events:auto;animation:softPop .42s cubic-bezier(.2,.8,.2,1) both}.build-state{display:inline-flex;align-items:center;gap:6px;margin-left:10px;color:#8296a8;font-size:13px;font-weight:800}.build-dot{width:6px;height:6px;border-radius:999px;background:#c4d2dd;display:inline-block}.build-dot.on{background:var(--cyan)}
+@media(max-width:1450px){.slide{padding:36px 46px 58px}h1{font-size:clamp(46px,4.0vw,70px)}h2{font-size:clamp(37px,2.9vw,52px)}p,li,.body{font-size:clamp(23px,1.52vw,29px)}.card p,.card li{font-size:clamp(22px,1.38vw,26px)}.qtext{font-size:clamp(31px,2.35vw,41px)}.ans{font-size:clamp(26px,1.7vw,31px)}.single-question .qtext{font-size:clamp(36px,2.7vw,47px)}.single-question .ans{font-size:clamp(28px,1.85vw,34px)}.compile-stage{min-height:165px}.compile-stage small{font-size:18px}.operator-row{gap:10px}.op-card{min-height:205px}.hero-node small{font-size:22px}}
+@media(max-width:1100px){#shell{padding:0}#stage{width:100vw;height:100vh;max-width:none;max-height:none}.slide{padding:32px 36px 56px;overflow:auto}.grid3,.grid4,.hero-path,.identifier-grid{grid-template-columns:1fr 1fr}.grid2,.split,.trace-layout,.assignment-demo,.scope-demo{grid-template-columns:1fr}.flow,.level-flow,.ipo-flow,.compile-pipeline,.variable-visual{grid-template-columns:1fr}.step:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-30px;transform:translateX(-50%)}.level-arrow,.ipo-arrow,.pipe-arrow{transform:rotate(90deg);font-size:34px}.operator-row{grid-template-columns:repeat(2,1fr)}.branch-row{width:95%;gap:25px}.ovgrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:680px){.slide{padding:28px 22px 58px}.grid2,.grid3,.grid4,.hero-path,.identifier-grid{grid-template-columns:1fr}.workflow-track,.workflow-track.four{grid-template-columns:1fr 1fr}.operator-row{grid-template-columns:1fr}.footer{left:22px;right:22px}.global-note{left:22px;right:22px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}.reveal-step{transform:none}}
+@media print{
+ @page{size:13.333in 7.5in;margin:0}
+ html,body{overflow:visible!important;background:white!important;width:auto;height:auto}
+ #shell{display:block;padding:0;background:white;width:auto;height:auto}.controls,.progress,.overlay,.timerpanel,.footer,.global-note{display:none!important}
+ #stage{width:auto;height:auto;border:0;box-shadow:none;overflow:visible}
+ .slide,.slide.active{position:relative!important;display:flex!important;width:13.333in;height:7.5in;page-break-after:always;overflow:hidden}
+ .reveal-step{opacity:1!important;visibility:visible!important;transform:none!important;pointer-events:auto!important}
+ .qwrap,.qcard{height:auto!important;min-height:0!important}.qcard{transform:none!important;display:grid;grid-template-columns:1fr 1fr;gap:10px}.qface{position:relative!important;inset:auto!important;transform:none!important;backface-visibility:visible!important;min-height:180px}.flipcue{display:none!important}
+}
+</style></head>
+<body>
+<div id="shell"><main id="stage" tabindex="0">
+<section class="slide dark center" data-session="0" data-title="Week 1 Welcome">
+  <img alt="Air University logo" class="logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEwAACxMBAJqcGAAABWhJREFUeJzt3U1v2zAQBuD39z/VI8dFom1al05ix4ICBkX2IhBGDyUiCzZ2c/wqJpZ8+q7w6KQSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB4ruwB0A2n06n3f3d3t91ut9vtdrvd7Xb7dnx8fNfv9/vc7/fX8/PzW4+Pj/vt9ntkAI5qPv7+/q7Pz8/7bDZ7q+vr6/5+fHzcWq1Wu91u99vt9sEGAJxWv9/vt7e3t91u99f7+/s+Ho9H29vb+/39fS8vL/s4HI7VajV5PB4bHx/3dDqdms1mM5lM5vP5bG5u7vT0dDuZTCYWi8Xlcnm9Xu/7+vr68fFxDw8P+3w+v9/v93g8Hn+73Y5Go7FYLLlcLr/f7/v7+2symaw+Pj6WSCQWCoX0er2WSCQWCoXU6/XaZDLZ4XBYKBRKp9NpKBQKp9NpKBQKp9NpKBQKp9NpKBQKp9NpKBQKp9NpKBQKp9NpKBQKp9NpKBQKp9NpKBQKp9NpKBRK2+329vb2NhwO4+Pj4/HxcX9/f2+73a7VajWZTGbT6fT7/T6fz+fT6XS6XC6Xy+Xy+Xw+H4/H4/F4PB6Pp9Pp9Pp9Pp9Pp9Pp9Pp9Pp9Pp9Pp9Pp9Pp9Pp9Npn88HAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP8PHwAAvmLzE7n2uBoAAAAASUVORK5CYII="/>
+  <div class="kicker">CS111 · Programming Fundamentals</div>
+  <h1>Week 1</h1>
+  <p class="lead"><b>From Human Problems to C++ Programs</b></p>
+  <p class="lead muted"><b>BS Cyber Security · 1st Semester · Theory</b></p>
+  <div class="hero-path">
+    <div class="hero-node"><span>01</span><b>Think</b><small>Understand the problem before writing syntax.</small></div>
+    <div class="hero-node"><span>02</span><b>Plan</b><small>Turn the task into precise, ordered steps.</small></div>
+    <div class="hero-node"><span>03</span><b>Express</b><small>Represent the logic with flowcharts and C++.</small></div>
+    <div class="hero-node"><span>04</span><b>Execute</b><small>See how source code becomes machine actions.</small></div>
+  </div>
+  <p class="small muted" style="margin-top:20px"><b>Dr. Zakir Khan · Assistant Professor</b><br/>Department of Computer Science · Air University Aerospace &amp; Aviation Campus, Kamra</p>
+  <div class="note">Opening cue: Ask, “Who has written a program before?” Then normalize both answers. This week starts from logic, not prior coding experience.</div>
+</section>
+<section class="slide fill-slide" data-session="0" data-title="Three-Session Map">
+  <div class="kicker">Week 1 structure</div>
+  <h2>One beginner-friendly journey across three theory sessions</h2>
+  <div class="grid3 session-focus">
+    <div class="card"><div class="icon">🧭</div><h3>Session 1 · Think Like a Programmer</h3><p>Course orientation, why we program, programs and languages, C++, logic building, algorithms, diagrams and flowcharts.</p></div>
+    <div class="card"><div class="icon">⚙️</div><h3>Session 2 · From Source to Execution</h3><p>Your first C++ program, compilation, program structure, headers, directives, comments, input/output and the programming process.</p></div>
+    <div class="card"><div class="icon">🧠</div><h3>Session 3 · Data + Expressions</h3><p>Variables, literals, identifiers, data types, initialization, scope, operators, constants, expressions, precedence and style.</p></div>
+  </div>
+  <div class="highlight"><p style="margin:0"><b>Week principle:</b> understand the logic → represent the logic → read the code → trace what the computer does.</p></div>
+</section>
+<section class="slide fill-slide" data-session="0" data-title="Course Direction">
+  <div class="kicker">Course direction</div>
+  <h2>What will Programming Fundamentals develop?</h2>
+  <div class="split">
+    <div class="visual-stack">
+      <div class="vstep">🧩 Break a problem into smaller parts</div>
+      <div class="vstep">🧠 Build step-by-step computational logic</div>
+      <div class="vstep">🔎 Read, trace and predict program behavior</div>
+      <div class="vstep">🛠️ Express solutions using C++</div>
+      <div class="vstep">✅ Develop correct, structured programming habits</div>
+    </div>
+    <div class="card">
+      <h3>Week 1 alignment</h3>
+      <p><b>Primary CLO-01:</b> Understand the fundamental concepts of programming.</p>
+      <p class="muted"><b>Bridge to CLO-02:</b> later weeks apply those concepts in C++ programs.</p>
+      <div class="highlight"><p style="margin:0"><b>No prerequisite:</b> the course is designed to start from the foundations.</p></div>
+    </div>
+  </div>
+  <div class="note">Keep the distinction clear: this theory class develops concepts, code-reading, dry runs and reasoning. The separate laboratory handles extended hands-on practice.</div>
+</section>
+<section class="slide fill-slide" data-session="0" data-title="Grading and Week 1 Reading">
+  <div class="kicker">Course orientation</div>
+  <h2>Assessment + Week 1 academic source</h2>
+  <div class="grid4">
+    <div class="card center"><div class="big">15%</div><h3>Quizzes</h3></div>
+    <div class="card center"><div class="big">15%</div><h3>Assignments</h3></div>
+    <div class="card center"><div class="big">25%</div><h3>Mid-Term</h3></div>
+    <div class="card center"><div class="big">45%</div><h3>Final</h3></div>
+  </div>
+  <div class="grid2" style="margin-top:18px">
+    <div class="highlight"><p style="margin:0"><b>Week 1 reading:</b> Chapter 1 + slides/code examples.</p></div>
+    <div class="highlight"><p style="margin:0"><b>Main language:</b> C++.</p></div>
+  </div>
+</section>
+<section class="slide dark center fill-slide" data-session="1" data-title="Session 1 Start">
+  <div class="kicker">Session 1</div>
+  <h1>Think Like a Programmer</h1>
+  <div class="grid3 session-focus">
+    <div class="card"><div class="icon">❓</div><h3>Why Program?</h3><p>Understand why software needs explicit instructions.</p></div>
+    <div class="card"><div class="icon">🧠</div><h3>Build Logic</h3><p>Convert a human task into precise ordered steps.</p></div>
+    <div class="card"><div class="icon">🔀</div><h3>Represent Logic</h3><p>Use algorithms, diagrams and flowcharts before code.</p></div>
+  </div>
+  <div class="session-bridge">Begin with human reasoning. C++ syntax comes after the idea is clear.</div>
+</section>
+<section class="slide single-question" data-session="1" data-title="Opening Intuition Question">
+  <div class="kicker">Think → Predict → Reveal</div>
+  <h2>Can a computer follow this instruction?</h2>
+  <div class="qwrap"><div class="qcard" role="button" tabindex="0" aria-label="Question card">
+    <div class="qface"><div class="qlabel">Ask Students</div><div class="qtext">“Create a strong password.”<br/><br/>Is this precise enough for a computer?</div><span class="flipcue">↻</span></div>
+    <div class="qface qback"><div class="qlabel">Suggested Answer</div><div class="ans"><b>No — not yet.</b> “Strong” is a human idea. A computer needs measurable rules, for example: minimum length, required character categories, or a score threshold.</div><span class="flipcue">↻</span></div>
+  </div></div>
+  <div class="note">Use this to establish the core theme: computers are fast, but they are literal. Programming converts vague intentions into precise instructions.</div>
+</section>
+<section class="slide fill-slide" data-session="1" data-title="Why Program">
+  <div class="kicker">Introduction to programming · Why to program?</div>
+  <h2>Programming turns a problem-solving idea into repeatable computation</h2>
+  <div class="grid3">
+    <div class="card"><div class="icon">⚡</div><h3>Automate</h3><p>Make the computer repeat precise work quickly and consistently.</p></div>
+    <div class="card"><div class="icon">📊</div><h3>Process Data</h3><p>Transform raw input into useful output.</p></div>
+    <div class="card"><div class="icon">🧩</div><h3>Solve Problems</h3><p>Encode a logical method that can be executed again.</p></div>
+    <div class="card"><div class="icon">🌐</div><h3>Build Systems</h3><p>Web, mobile, embedded, cloud and security systems all depend on programs.</p></div>
+    <div class="card"><div class="icon">🛡️</div><h3>Enforce Rules</h3><p>Software can validate input, check permissions and monitor events.</p></div>
+    <div class="card"><div class="icon">🔁</div><h3>Scale</h3><p>A clear procedure can handle one case or millions of cases.</p></div>
+  </div>
+</section>
+<section class="slide fill-slide" data-session="1" data-title="Program vs Programming Language">
+  <div class="kicker">Programs and programming languages</div>
+  <h2>Program ≠ Programming Language</h2>
+  <div class="grid2">
+    <div class="card"><div class="icon">📋</div><h3>Program</h3><p>A specific set of instructions and data that performs a task.</p><div class="highlight"><p style="margin:0"><b>Example:</b> a program that reads two numbers and displays their sum.</p></div></div>
+    <div class="card"><div class="icon">🗣️</div><h3>Programming Language</h3><p>A formal language used to express instructions in a form that can be translated for the computer.</p><div class="highlight"><p style="margin:0"><b>Examples:</b> C++, C, Java, Python.</p></div></div>
+  </div>
+  <div class="note">Analogy: the recipe is the program; English/Urdu is the language used to write it. The same idea may be expressed in different languages.</div>
+</section>
+<section class="slide" data-session="1" data-title="Programming Language Levels">
+  <div class="kicker">Programming languages</div>
+  <h2>Humans and processors speak at different levels</h2>
+  <div class="level-flow">
+    <div class="level-card"><div class="icon">🧑‍💻</div><b>High-Level Language</b><span>C++ code is readable and structured for humans.</span></div>
+    <div class="level-arrow">→</div>
+    <div class="level-card"><div class="icon">🔧</div><b>Translation Tools</b><span>Compiler + linker transform source into executable machine instructions.</span></div>
+    <div class="level-arrow">→</div>
+    <div class="level-card"><div class="icon">💻</div><b>Machine Instructions</b><span>The processor ultimately executes low-level binary-encoded operations.</span></div>
+  </div>
+  <div class="highlight" style="margin-top:22px"><p style="margin:0"><b>Important:</b> You write C++; the CPU does not execute C++ text directly.</p></div>
+</section>
+<section class="slide fill-slide" data-session="1" data-title="Introduction to C++">
+  <div class="kicker">Intro to C++ language</div>
+  <h2>Why is C++ suitable for learning Programming Fundamentals?</h2>
+  <div class="grid3">
+    <div class="card"><div class="icon">🧱</div><h3>Structured</h3><p>Its syntax makes program structure and control flow visible.</p></div>
+    <div class="card"><div class="icon">⚙️</div><h3>Compiled</h3><p>Source code is translated into executable machine code.</p></div>
+    <div class="card"><div class="icon">🧠</div><h3>Explicit</h3><p>Students see data types, declarations, expressions and memory-oriented concepts clearly.</p></div>
+    <div class="card"><div class="icon">🚀</div><h3>Efficient</h3><p>C++ is widely used where performance and system-level control matter.</p></div>
+    <div class="card"><div class="icon">🧰</div><h3>General-Purpose</h3><p>It supports small learning programs and large real-world software.</p></div>
+    <div class="card"><div class="icon">🛡️</div><h3>Security Relevance</h3><p>Later security study benefits from understanding how compiled programs, memory and input handling work.</p></div>
+  </div>
+</section>
+<section class="slide fill-slide" data-session="1" data-title="What a Program Is Made Of">
+  <div class="kicker">What is a program made of?</div>
+  <h2>At the beginner level, think in four building blocks</h2>
+  <div class="grid4">
+    <div class="card center"><div class="icon">📥</div><h3>Input</h3><p>Values entering the program.</p></div>
+    <div class="card center"><div class="icon">📦</div><h3>Data</h3><p>Values the program stores and works with.</p></div>
+    <div class="card center"><div class="icon">⚙️</div><h3>Instructions</h3><p>Operations that transform the data.</p></div>
+    <div class="card center"><div class="icon">📤</div><h3>Output</h3><p>Results produced for a user or another system.</p></div>
+  </div>
+  <div class="highlight" style="margin-top:18px"><p style="margin:0">Later, we add <b>decisions, repetition, functions, arrays and files</b> — but they still operate on this same idea: data + instructions + flow.</p></div>
+</section>
+<section class="slide" data-session="1" data-title="Logic Before Syntax">
+  <div class="kicker">Logic building</div>
+  <h2>Programming starts before the first line of code</h2>
+  <div class="flow">
+    <div class="step"><div class="icon">🎯</div><b>Problem</b><span>What must be achieved?</span></div>
+    <div class="step"><div class="icon">📥</div><b>Inputs</b><span>What information is available?</span></div>
+    <div class="step"><div class="icon">🧠</div><b>Steps</b><span>What exact operations are required?</span></div>
+    <div class="step"><div class="icon">📤</div><b>Output</b><span>What result must be produced?</span></div>
+    <div class="step"><div class="icon">🔎</div><b>Check</b><span>Do the steps actually solve the task?</span></div>
+  </div>
+  <div class="note">Ask students to say the steps for making tea. Then challenge vague steps: “add some water,” “cook until ready.” This prepares definiteness without needing code.</div>
+</section>
+<section class="slide" data-session="1" data-title="Build a Step-by-Step Process">
+  <div class="kicker">Interactive activity · Logic building</div>
+  <h2>Build a simple login-check process</h2>
+  <p class="lead">Select the steps in the order a computer should perform them.</p>
+  <div class="workflow-pool" id="loginPool">
+    <button class="workflow-chip" data-order="2" type="button">Compare entered values with stored values</button>
+    <button class="workflow-chip" data-order="0" type="button">Read username and password</button>
+    <button class="workflow-chip" data-order="3" type="button">Display access result</button>
+    <button class="workflow-chip" data-order="1" type="button">Load the expected credentials/rule</button>
+  </div>
+  <div class="workflow-track four" id="loginTrack"><span>1</span><span>2</span><span>3</span><span>4</span></div>
+  <div class="demo-controls"><button class="action primary" id="loginReset" type="button">Reset</button></div>
+  <div class="status" id="loginStatus">Start with the information the program must receive.</div>
+  <div class="note">Keep this conceptual. Do not discuss real password storage mechanisms yet. The point is ordered, explicit execution.</div>
+</section>
+<section class="slide dark center" data-session="1" data-title="Algorithm Concept">
+  <div class="kicker">Logic building · Algorithm</div>
+  <div style="max-width:1280px"><h1>An <span class="accent">algorithm</span> is a finite, ordered and unambiguous sequence of steps for solving a problem.</h1></div>
+  <div class="flow" style="width:100%;margin-top:12px">
+    <div class="step"><b>Defined Task</b><span>Know the goal</span></div>
+    <div class="step"><b>Input</b><span>Know what arrives</span></div>
+    <div class="step"><b>Precise Steps</b><span>No guessing</span></div>
+    <div class="step"><b>Termination</b><span>Eventually stops</span></div>
+    <div class="step"><b>Output</b><span>Produces the result</span></div>
+  </div>
+</section>
+<section class="slide single-question" data-session="1" data-title="Algorithm or Not">
+  <div class="kicker">Concept check</div><h2>Algorithm or not?</h2>
+  <div class="qwrap"><div class="qcard" role="button" tabindex="0">
+    <div class="qface"><div class="qlabel">Ask Students</div><div class="qtext">“Keep checking the log until it looks safe.”<br/><br/>Is this a valid algorithmic instruction?</div><span class="flipcue">↻</span></div>
+    <div class="qface qback"><div class="qlabel">Suggested Answer</div><div class="ans"><b>No.</b> “Looks safe” is ambiguous. The stopping rule is also unclear. A program needs a measurable condition, for example: process exactly N records, or stop when a specific end marker is reached.</div><span class="flipcue">↻</span></div>
+  </div></div>
+</section>
+<section class="slide fill-slide" data-session="1" data-title="Diagrams and Flowcharts">
+  <div class="kicker">Diagrams and flowcharts</div>
+  <h2>Why visualize logic before code?</h2>
+  <div class="grid2">
+    <div class="card"><div class="icon">🗺️</div><h3>Diagram</h3><p>A broad visual representation of components, relationships or stages.</p><div class="highlight"><p style="margin:0"><b>Useful for:</b> showing the big picture.</p></div></div>
+    <div class="card"><div class="icon">🔀</div><h3>Flowchart</h3><p>A standardized diagram that shows the sequence and control flow of a process.</p><div class="highlight"><p style="margin:0"><b>Useful for:</b> making execution order and decisions visible.</p></div></div>
+  </div>
+</section>
+<section class="slide fill-slide" data-session="1" data-title="Flowchart Symbols">
+  <div class="kicker">Flowchart fundamentals</div>
+  <h2>Four symbols every beginner should recognize</h2>
+  <div class="grid4 symbol-grid">
+    <div class="card center"><div class="fc-terminator">Start / End</div><h3>Terminator</h3><p>Beginning or ending of the process.</p></div>
+    <div class="card center"><div class="fc-io">Input / Output</div><h3>I/O</h3><p>Read data or display a result.</p></div>
+    <div class="card center"><div class="fc-process">Process</div><h3>Process</h3><p>Perform a calculation or action.</p></div>
+    <div class="card center"><div class="fc-diamond"><span>Decision</span></div><h3>Decision</h3><p>Choose a path based on a condition.</p></div>
+  </div>
+  <div class="note">The decision symbol is introduced conceptually now; C++ decision syntax (if/else) appears later in the course.</div>
+</section>
+<section class="slide" data-session="1" data-title="Flowchart Example">
+  <div class="kicker">Visual reasoning</div>
+  <h2>Flowchart: basic access decision</h2>
+  <div class="mini-flowchart">
+    <div class="fc-terminator bigshape">Start</div><div class="down">↓</div>
+    <div class="fc-io bigshape">Read PIN</div><div class="down">↓</div>
+    <div class="fc-diamond bigdiamond"><span>PIN matches?</span></div>
+    <div class="branch-row"><div><span class="branch-label">Yes</span><div class="down">↓</div><div class="fc-io bigshape goodbox">Display “Access Granted”</div></div><div><span class="branch-label">No</span><div class="down">↓</div><div class="fc-io bigshape badbox">Display “Access Denied”</div></div></div>
+  </div>
+  <div class="highlight"><p style="margin:0"><b>Observe:</b> the flowchart shows the logic without requiring C++ syntax.</p></div>
+</section>
+<section class="slide" data-session="1" data-title="Session 1 Checkpoint">
+  <div class="kicker">Session 1 checkpoint</div><h2>Can you explain the logic before the code?</h2>
+  <div class="grid2">
+    <div class="qwrap"><div class="qcard" role="button" tabindex="0"><div class="qface"><div class="qlabel">Q1</div><div class="qtext">What is the difference between a program and a programming language?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans">A <b>program</b> is a specific set of instructions. A <b>programming language</b> is the formal notation used to express such instructions.</div><span class="flipcue">↻</span></div></div></div>
+    <div class="qwrap"><div class="qcard" role="button" tabindex="0"><div class="qface"><div class="qlabel">Q2</div><div class="qtext">Why use a flowchart before writing code?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans">It makes the sequence, processing and decisions visible, helping us verify the logic before dealing with language syntax.</div><span class="flipcue">↻</span></div></div></div>
+  </div>
+</section>
+<section class="slide s2dark center fill-slide" data-session="2" data-title="Session 2 Start">
+  <div class="kicker">Session 2</div>
+  <h1>From Source Code to Execution</h1>
+  <div class="grid3 session-focus">
+    <div class="card"><div class="icon">🧾</div><h3>Write</h3><p>See the parts of a minimal C++ program.</p></div>
+    <div class="card"><div class="icon">🔧</div><h3>Translate</h3><p>Understand preprocessing, compilation and linking.</p></div>
+    <div class="card"><div class="icon">📥</div><h3>Interact</h3><p>Use input, processing and output as the execution model.</p></div>
+  </div>
+  <div class="session-bridge">The goal is to understand what every line is doing — not merely to copy syntax.</div>
+</section>
+<section class="slide" data-session="2" data-title="Programming Process">
+  <div class="kicker">The programming process</div><h2>A program is developed in stages</h2>
+  <div class="flow">
+    <div class="step"><div class="icon">🎯</div><b>Analyze</b><span>Understand the problem</span></div>
+    <div class="step"><div class="icon">🧠</div><b>Design</b><span>Plan the logic</span></div>
+    <div class="step"><div class="icon">⌨️</div><b>Code</b><span>Express it in C++</span></div>
+    <div class="step"><div class="icon">🔧</div><b>Translate</b><span>Build executable code</span></div>
+    <div class="step"><div class="icon">✅</div><b>Test / Refine</b><span>Check behavior and improve</span></div>
+  </div>
+  <div class="highlight"><p style="margin:0"><b>Beginner habit:</b> code is one stage of problem solving — not the starting point.</p></div>
+</section>
+<section class="slide" data-session="2" data-title="Source to Machine Code">
+  <div class="kicker">Source to machine code translation</div><h2>How does C++ source become something the CPU can run?</h2>
+  <div class="compile-pipeline" id="compilePipeline">
+    <div class="compile-stage active" data-stage="0"><span>1</span><b>Source Code</b><small>Your .cpp text</small></div><div class="pipe-arrow">→</div>
+    <div class="compile-stage" data-stage="1"><span>2</span><b>Preprocess</b><small>Handle #include / #define</small></div><div class="pipe-arrow">→</div>
+    <div class="compile-stage" data-stage="2"><span>3</span><b>Compile</b><small>Translate to object code</small></div><div class="pipe-arrow">→</div>
+    <div class="compile-stage" data-stage="3"><span>4</span><b>Link</b><small>Combine needed code</small></div><div class="pipe-arrow">→</div>
+    <div class="compile-stage" data-stage="4"><span>5</span><b>Executable</b><small>Machine instructions ready to run</small></div>
+  </div>
+  <div class="demo-controls"><button class="action s2" id="compileNext">Next Stage</button><button class="action" id="compileReset">Reset</button></div>
+  <div class="status" id="compileStatus">Source code is human-readable C++ text.</div>
+  <div class="note">Keep compilation conceptual. Students do not need toolchain commands in the theory lecture.</div>
+</section>
+<section class="slide single-question" data-session="2" data-title="Compilation Question">
+  <div class="kicker">Predict before reveal</div><h2>Does the CPU execute this text directly?</h2>
+  <div class="qwrap"><div class="qcard" role="button" tabindex="0"><div class="qface"><div class="qlabel">Ask Students</div><div class="qtext"><code>cout &lt;&lt; "Hello";</code><br/><br/>Does the processor execute these C++ characters exactly as written?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans"><b>No.</b> C++ source is translated and linked into machine instructions. The processor executes the generated machine-level instructions, not the original C++ text.</div><span class="flipcue">↻</span></div></div></div>
+</section>
+<section class="slide" data-session="2" data-title="First C++ Program">
+  <div class="kicker">Your first program</div><h2>Read the program as a sequence of roles</h2>
+  <div class="code numbered" id="helloCode"><span data-line="0">#include &lt;iostream&gt;</span>
+<span data-line="1">using namespace std;</span>
+<span data-line="2"></span>
+<span data-line="3">int main() {</span>
+<span data-line="4">    cout &lt;&lt; "Hello, Cyber Security!";</span>
+<span data-line="5">    return 0;</span>
+<span data-line="6">}</span></div>
+  <div class="grid3" style="margin-top:18px"><div class="card compact"><h3>Prepare</h3><p>Make library features available.</p></div><div class="card compact"><h3>Execute</h3><p>Start at <code>main()</code> and run statements in order.</p></div><div class="card compact"><h3>Output</h3><p><code>cout</code> sends text to standard output.</p></div></div>
+</section>
+<section class="slide fill-slide" data-session="2" data-title="Anatomy of a C++ Program">
+  <div class="kicker">The parts of a C++ program</div><h2>Every line has a purpose</h2>
+  <div class="grid2">
+    <div class="code">#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    cout &lt;&lt; "Hello";
+    return 0;
+}</div>
+    <div class="visual-stack">
+      <div class="vstep"><code>#include</code> → request a header</div>
+      <div class="vstep"><code>using</code> → simplify standard-library names</div>
+      <div class="vstep"><code>main()</code> → program entry function</div>
+      <div class="vstep"><code>{ }</code> → define a block</div>
+      <div class="vstep"><code>;</code> → end many C++ statements</div>
+    </div>
+  </div>
+</section>
+<section class="slide fill-slide" data-session="2" data-title="Header Files">
+  <div class="kicker">Header files</div><h2>What does <code>#include &lt;iostream&gt;</code> mean?</h2>
+  <div class="split">
+    <div class="card center"><div class="big-code">#include<br/>&lt;iostream&gt;</div></div>
+    <div class="card"><h3>Concept</h3><p>A header provides declarations for reusable library facilities.</p><p>For our first programs, <code>&lt;iostream&gt;</code> provides stream-based input/output facilities such as <code>cout</code> and <code>cin</code>.</p><div class="highlight"><p style="margin:0"><b>#include is handled before normal compilation.</b></p></div></div>
+  </div>
+</section>
+<section class="slide fill-slide" data-session="2" data-title="Using Directive">
+  <div class="kicker">The using directive</div><h2>Why do beginner examples often write <code>using namespace std;</code>?</h2>
+  <div class="grid2">
+    <div class="card"><h3>Without the directive</h3><div class="code">std::cout &lt;&lt; "Hello";
+std::string name;</div></div>
+    <div class="card"><h3>With the directive</h3><div class="code">using namespace std;
+
+cout &lt;&lt; "Hello";
+string name;</div></div>
+  </div>
+  <div class="highlight" style="margin-top:18px"><p style="margin:0"><b>Concept:</b> names such as <code>cout</code> belong to the standard namespace <code>std</code>. The directive lets beginner code omit the <code>std::</code> prefix.</p></div>
+</section>
+<section class="slide fill-slide" data-session="2" data-title="Main Function and Statements">
+  <div class="kicker">Program structure</div><h2><code>main()</code> is where execution begins</h2>
+  <div class="grid2">
+    <div class="code">int main() {
+    cout &lt;&lt; "Start";
+    cout &lt;&lt; "End";
+    return 0;
+}</div>
+    <div class="card"><h3>Read it top → down</h3><ul class="clean"><li>Enter <code>main()</code>.</li><li>Execute the first output statement.</li><li>Execute the second output statement.</li><li><code>return 0;</code> indicates normal completion.</li></ul></div>
+  </div>
+  <div class="highlight"><p style="margin:0"><b>Execution order matters.</b> The computer follows the sequence you specify.</p></div>
+</section>
+<section class="slide fill-slide" data-session="2" data-title="Comments">
+  <div class="kicker">Single-line and multi-line comments</div><h2>Comments explain code to humans</h2>
+  <div class="grid2">
+    <div class="card"><h3>Single-line</h3><div class="code">// Display a welcome message
+cout &lt;&lt; "Welcome";</div><p>Everything after <code>//</code> on that line is a comment.</p></div>
+    <div class="card"><h3>Multi-line</h3><div class="code">/*
+  Program: Login Demo
+  Purpose: Show output
+*/</div><p>Text between <code>/*</code> and <code>*/</code> is a block comment.</p></div>
+  </div>
+  <div class="highlight"><p style="margin:0"><b>Good comments explain purpose or reasoning.</b> They should not restate obvious syntax.</p></div>
+</section>
+<section class="slide fill-slide" data-session="2" data-title="Define Directive">
+  <div class="kicker">The #define directive</div><h2>A preprocessor definition is handled before compilation</h2>
+  <div class="grid2">
+    <div class="code">#define MAX_ATTEMPTS 3
+
+cout &lt;&lt; MAX_ATTEMPTS;</div>
+    <div class="card"><h3>Beginner mental model</h3><p>The preprocessor associates the name <code>MAX_ATTEMPTS</code> with the replacement text <code>3</code> before the compiler processes the program.</p><div class="highlight"><p style="margin:0">Later in this session/week we will compare this with a typed named constant using <code>const</code>.</p></div></div>
+  </div>
+</section>
+<section class="slide" data-session="2" data-title="Input Processing Output">
+  <div class="kicker">Input · Processing · Output</div><h2>The simplest execution model</h2>
+  <div class="ipo-flow">
+    <div class="ipo-node"><div class="ipo-icon">📥</div><b>INPUT</b><span>Data enters</span><small>Keyboard, file, sensor, network, etc.</small></div>
+    <div class="ipo-arrow">→</div>
+    <div class="ipo-node process-node"><div class="ipo-icon">⚙️</div><b>PROCESS</b><span>Program transforms data</span><small>Calculations, rules, decisions, repetition</small></div>
+    <div class="ipo-arrow">→</div>
+    <div class="ipo-node output-node"><div class="ipo-icon">📤</div><b>OUTPUT</b><span>Result leaves</span><small>Screen, file, message, action</small></div>
+  </div>
+  <div class="note">Cyber example: Input = number of failed logins; Process = compute a summary; Output = display the summary. Keep advanced detection logic for later weeks.</div>
+</section>
+<section class="slide fill-slide" data-session="2" data-title="Cout Object">
+  <div class="kicker">The cout object</div><h2><code>cout</code> sends values to standard output</h2>
+  <div class="grid2">
+    <div class="code">cout &lt;&lt; "Attempts: ";
+cout &lt;&lt; 3;</div>
+    <div class="card"><h3>Read the operator as “send to output”</h3><p><code>&lt;&lt;</code> is the stream insertion operator.</p><div class="output-box">Attempts: 3</div></div>
+  </div>
+</section>
+<section class="slide fill-slide" data-session="2" data-title="Cascading Output">
+  <div class="kicker">Cascading &lt;&lt;</div><h2>One output statement can send multiple pieces</h2>
+  <div class="grid2">
+    <div class="code">cout &lt;&lt; "User: "
+     &lt;&lt; "Zakir"
+     &lt;&lt; " | Attempts: "
+     &lt;&lt; 2;</div>
+    <div class="card"><h3>Output</h3><div class="output-box">User: Zakir | Attempts: 2</div><p class="muted">Each <code>&lt;&lt;</code> continues the same output stream.</p></div>
+  </div>
+  <div class="highlight"><p style="margin:0"><b>Do not confuse</b> <code>&lt;&lt;</code> with “less than.” Its meaning depends on context.</p></div>
+</section>
+<section class="slide fill-slide" data-session="2" data-title="Cin Object">
+  <div class="kicker">The cin object</div><h2><code>cin</code> reads input into a variable</h2>
+  <div class="grid2">
+    <div class="code">int attempts;
+cin &gt;&gt; attempts;
+cout &lt;&lt; attempts;</div>
+    <div class="card"><h3>Execution idea</h3><div class="memory-row"><span>Before input</span><div class="memory-cell"><b>attempts</b><em>?</em></div></div><div class="down">↓ user enters 4</div><div class="memory-row"><span>After input</span><div class="memory-cell active"><b>attempts</b><em>4</em></div></div></div>
+  </div>
+  <div class="highlight"><p style="margin:0"><b>Preview:</b> a variable is a named storage location. We formalize variables in Session 3.</p></div>
+</section>
+<section class="slide" data-session="2" data-title="Input Output Trace">
+  <div class="kicker">Interactive execution trace</div><h2>Follow the program one statement at a time</h2>
+  <div class="trace-layout">
+    <div class="code numbered" id="ioTraceCode"><span data-trace="0">int x;</span>
+<span data-trace="1">cin &gt;&gt; x;        // user enters 5</span>
+<span data-trace="2">cout &lt;&lt; "Value = " &lt;&lt; x;</span></div>
+    <div class="card"><h3>Program state</h3><div id="ioMemory" class="memory-cell large"><b>x</b><em>not created</em></div><div class="output-box" id="ioOutput">Output: —</div><div class="demo-controls"><button class="action s2" id="ioNext">Next Step</button><button class="action" id="ioReset">Reset</button></div><div class="status" id="ioStatus">Predict what happens first.</div></div>
+  </div>
+</section>
+<section class="slide" data-session="2" data-title="Session 2 Checkpoint">
+  <div class="kicker">Session 2 checkpoint</div><h2>Can you follow the path from source to output?</h2>
+  <div class="grid2">
+    <div class="qwrap"><div class="qcard" role="button" tabindex="0"><div class="qface"><div class="qlabel">Q1</div><div class="qtext">What are the major stages between C++ source code and an executable?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans">Preprocessing → compilation → linking → executable. The executable contains machine-level instructions.</div><span class="flipcue">↻</span></div></div></div>
+    <div class="qwrap"><div class="qcard" role="button" tabindex="0"><div class="qface"><div class="qlabel">Q2</div><div class="qtext">What is the conceptual difference between <code>cout</code> and <code>cin</code>?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans"><code>cout</code> sends data to output; <code>cin</code> reads data from standard input into program storage.</div><span class="flipcue">↻</span></div></div></div>
+  </div>
+</section>
+<section class="slide s3dark center fill-slide" data-session="3" data-title="Session 3 Start">
+  <div class="kicker">Session 3</div><h1>Data, Variables &amp; Expressions</h1>
+  <div class="grid3 session-focus">
+    <div class="card"><div class="icon">📦</div><h3>Store</h3><p>Variables, literals, identifiers and data types.</p></div>
+    <div class="card"><div class="icon">🧮</div><h3>Compute</h3><p>Arithmetic operators, expressions and precedence.</p></div>
+    <div class="card"><div class="icon">🧼</div><h3>Write Clearly</h3><p>Initialization, scope, constants and programming style.</p></div>
+  </div>
+  <div class="session-bridge">Now the “data” part of Input → Process → Output becomes concrete.</div>
+</section>
+<section class="slide" data-session="3" data-title="Variable Intuition">
+  <div class="kicker">Variables</div><h2>A variable is a named place where a program keeps a value</h2>
+  <div class="variable-visual">
+    <div class="label-card"><span>Name</span><b>attempts</b></div><div class="label-arrow">→</div>
+    <div class="memory-cell xlarge"><b>attempts</b><em>3</em></div><div class="label-arrow">←</div>
+    <div class="label-card"><span>Current value</span><b>3</b></div>
+  </div>
+  <div class="grid3" style="margin-top:22px"><div class="card center"><h3>Name</h3><p>How we refer to it.</p></div><div class="card center"><h3>Type</h3><p>What kind of value it can store.</p></div><div class="card center"><h3>Value</h3><p>Its current stored data.</p></div></div>
+</section>
+<section class="slide fill-slide" data-session="3" data-title="Variables Literals Identifiers">
+  <div class="kicker">Variables, literals and identifiers</div><h2>Three terms that beginners often mix up</h2>
+  <div class="grid3">
+    <div class="card"><h3>Variable</h3><p>A named storage location whose value can change.</p><div class="code">int attempts = 3;</div></div>
+    <div class="card"><h3>Literal</h3><p>A fixed value written directly in the source code.</p><div class="code">3
+4.5
+"admin"
+true</div></div>
+    <div class="card"><h3>Identifier</h3><p>A programmer-chosen name used to identify program elements.</p><div class="code">attempts
+userName
+totalMarks</div></div>
+  </div>
+</section>
+<section class="slide" data-session="3" data-title="Identifier Rules">
+  <div class="kicker">Interactive activity · Identifiers</div><h2>Valid C++ identifier or not?</h2>
+  <p class="lead">Select each name to classify it.</p>
+  <div class="identifier-grid">
+    <button class="identifier-choice" data-valid="true">loginAttempts</button>
+    <button class="identifier-choice" data-valid="false">2factor</button>
+    <button class="identifier-choice" data-valid="true">user_name</button>
+    <button class="identifier-choice" data-valid="false">user-name</button>
+    <button class="identifier-choice" data-valid="false">int</button>
+    <button class="identifier-choice" data-valid="true">score2</button>
+  </div>
+  <div class="status" id="identifierStatus">Rules: begin with a letter or underscore; then letters/digits/underscore; no spaces/hyphens; keywords are reserved.</div>
+</section>
+<section class="slide fill-slide" data-session="3" data-title="Core Data Types">
+  <div class="kicker">Data types</div><h2>The type tells C++ what kind of value a variable stores</h2>
+  <div class="grid4">
+    <div class="card center"><div class="type-token">int</div><h3>Whole numbers</h3><p>0, 3, -15, 2048</p></div>
+    <div class="card center"><div class="type-token">float / double</div><h3>Real numbers</h3><p>3.14, 0.75, -2.5</p></div>
+    <div class="card center"><div class="type-token">bool</div><h3>Logical state</h3><p><code>true</code> or <code>false</code></p></div>
+    <div class="card center"><div class="type-token">string</div><h3>Text</h3><p>"student01"</p></div>
+  </div>
+  <div class="highlight"><p style="margin:0"><b>Why types matter:</b> they affect valid operations, storage representation and how the value is interpreted.</p></div>
+</section>
+<section class="slide fill-slide" data-session="3" data-title="Integer and Floating Point">
+  <div class="kicker">int · float · double</div><h2>Choose a type that matches the kind of data</h2>
+  <div class="grid3">
+    <div class="card"><h3><code>int</code></h3><p>Whole-number values.</p><div class="code">int failed = 4;</div><span class="badge">counts · indexes · quantities</span></div>
+    <div class="card"><h3><code>float</code></h3><p>Single-precision floating-point values.</p><div class="code">float score = 7.5f;</div><span class="badge">fractional measurements</span></div>
+    <div class="card"><h3><code>double</code></h3><p>Double-precision floating-point values.</p><div class="code">double rate = 0.125;</div><span class="badge">more precision than float</span></div>
+  </div>
+  <div class="note">Avoid promising exact byte sizes here. C++ guarantees minimum ranges; exact sizes are implementation-dependent. Use sizeof on the next slide to observe the current system.</div>
+</section>
+<section class="slide fill-slide" data-session="3" data-title="String Class">
+  <div class="kicker">The C++ string class</div><h2>Text can be stored as a <code>string</code></h2>
+  <div class="grid2">
+    <div class="code">#include &lt;string&gt;
+
+string userName = "student01";
+cout &lt;&lt; userName;</div>
+    <div class="card"><h3>Concept</h3><p><code>string</code> is a standard-library type for sequences of characters.</p><div class="memory-cell large"><b>userName</b><em>"student01"</em></div><p class="muted">The quotes belong to the string literal in source code.</p></div>
+  </div>
+</section>
+<section class="slide fill-slide" data-session="3" data-title="Bool Type">
+  <div class="kicker">The bool data type</div><h2>Some program facts are naturally true or false</h2>
+  <div class="grid2">
+    <div class="card center"><div class="boolean true">true</div><h3>Example meaning</h3><p>User is authenticated.</p></div>
+    <div class="card center"><div class="boolean false">false</div><h3>Example meaning</h3><p>User is not authenticated.</p></div>
+  </div>
+  <div class="code" style="margin-top:20px">bool authenticated = false;</div>
+  <div class="highlight"><p style="margin:0"><b>Later:</b> relational and logical expressions will produce Boolean results used by decisions and loops.</p></div>
+</section>
+<section class="slide fill-slide" data-session="3" data-title="Sizeof Operator">
+  <div class="kicker">Determining the size of a data type</div><h2><code>sizeof</code> reports storage size in bytes</h2>
+  <div class="grid2">
+    <div class="code">cout &lt;&lt; sizeof(int);
+cout &lt;&lt; sizeof(double);
+cout &lt;&lt; sizeof(bool);</div>
+    <div class="card"><h3>Important interpretation</h3><p>The exact result can depend on the implementation/platform.</p><p><code>sizeof(type)</code> is therefore the correct way to inspect the storage size on the system being used.</p></div>
+  </div>
+  <div class="highlight"><p style="margin:0"><b>Do not memorize one universal byte count for every platform.</b></p></div>
+</section>
+<section class="slide" data-session="3" data-title="Declaration Initialization Assignment">
+  <div class="kicker">Variable assignments and initialization</div><h2>Three related actions — not the same thing</h2>
+  <div class="grid3">
+    <div class="card"><h3>Declaration</h3><div class="code">int attempts;</div><p>Create a variable with a type and name.</p></div>
+    <div class="card"><h3>Initialization</h3><div class="code">int attempts = 3;</div><p>Give the variable its first value as it is created.</p></div>
+    <div class="card"><h3>Assignment</h3><div class="code">attempts = 4;</div><p>Replace the current value later.</p></div>
+  </div>
+</section>
+<section class="slide" data-session="3" data-title="Assignment State Change">
+  <div class="kicker">Interactive state update</div><h2>Assignment changes the stored value</h2>
+  <div class="assignment-demo">
+    <div class="code">int attempts = 3;
+attempts = 5;</div>
+    <div class="state-panel"><div class="memory-cell xlarge" id="assignCell"><b>attempts</b><em>3</em></div><div class="demo-controls"><button class="action s3" id="assignNext">Execute Next Line</button><button class="action" id="assignReset">Reset</button></div><div class="status" id="assignStatus">After initialization, attempts stores 3.</div></div>
+  </div>
+  <div class="highlight"><p style="margin:0"><code>=</code> in C++ means <b>assignment</b>: evaluate the right side, then store the result in the left-side variable.</p></div>
+</section>
+<section class="slide fill-slide" data-session="3" data-title="Scope">
+  <div class="kicker">Scope</div><h2>Scope answers: “Where can this name be used?”</h2>
+  <div class="scope-demo">
+    <div class="code">int main() {
+    int outer = 10;
+    {
+        int inner = 20;
+        cout &lt;&lt; outer;  // visible
+        cout &lt;&lt; inner;  // visible
+    }
+    cout &lt;&lt; outer;      // visible
+    // inner is not visible here
+}</div>
+    <div class="card"><h3>Beginner rule</h3><p>A variable declared inside a block <code>{ }</code> is available only within its permitted scope.</p><div class="highlight"><p style="margin:0">Smaller, clear scopes reduce accidental misuse of data.</p></div></div>
+  </div>
+</section>
+<section class="slide fill-slide" data-session="3" data-title="Arithmetic Operators">
+  <div class="kicker">Arithmetic operators</div><h2>C++ notation for basic arithmetic</h2>
+  <div class="operator-row">
+    <div class="op-card"><b>+</b><span>Addition</span><small>8 + 2 → 10</small></div>
+    <div class="op-card"><b>-</b><span>Subtraction</span><small>8 - 2 → 6</small></div>
+    <div class="op-card"><b>*</b><span>Multiplication</span><small>8 * 2 → 16</small></div>
+    <div class="op-card"><b>/</b><span>Division</span><small>8 / 2 → 4</small></div>
+    <div class="op-card"><b>%</b><span>Remainder</span><small>8 % 3 → 2</small></div>
+  </div>
+  <div class="highlight"><p style="margin:0"><b>Expression:</b> a combination of values, variables and operators that produces a result.</p></div>
+</section>
+<section class="slide single-question" data-session="3" data-title="Integer Division">
+  <div class="kicker">Beginner misconception</div><h2>Predict the result</h2>
+  <div class="qwrap"><div class="qcard" role="button" tabindex="0"><div class="qface"><div class="qlabel">Predict</div><div class="qtext"><code>int result = 7 / 2;</code><br/><br/>What value is stored in <code>result</code>?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans"><b>3</b>. Both operands are integers, so integer division discards the fractional part. A floating-point operand is needed to obtain 3.5.</div><span class="flipcue">↻</span></div></div></div>
+</section>
+<section class="slide fill-slide" data-session="3" data-title="Mathematical Expressions">
+  <div class="kicker">Mathematical expressions</div><h2>Translate the mathematics into explicit C++ operations</h2>
+  <div class="grid2">
+    <div class="card"><h3>Mathematical idea</h3><div class="math-big">total = price × quantity + tax</div></div>
+    <div class="card"><h3>C++ expression</h3><div class="code">total = price * quantity + tax;</div><p>C++ uses <code>*</code> for multiplication and requires explicit operators.</p></div>
+  </div>
+  <div class="highlight"><p style="margin:0"><b>Programming is not handwriting:</b> <code>2x</code> is not multiplication syntax in C++; write <code>2 * x</code>.</p></div>
+</section>
+<section class="slide fill-slide" data-session="3" data-title="Operator Precedence">
+  <div class="kicker">Operator precedence</div><h2>Which operation happens first?</h2>
+  <div class="precedence-stack">
+    <div class="precedence-level"><span>1</span><b>( )</b><small>Parentheses group what should be evaluated first.</small></div>
+    <div class="precedence-level"><span>2</span><b>* &nbsp; / &nbsp; %</b><small>Multiplication, division and remainder.</small></div>
+    <div class="precedence-level"><span>3</span><b>+ &nbsp; -</b><small>Addition and subtraction.</small></div>
+  </div>
+  <div class="code" style="margin-top:18px">int x = 2 + 3 * 4;   // x becomes 14
+int y = (2 + 3) * 4; // y becomes 20</div>
+</section>
+<section class="slide single-question" data-session="3" data-title="Precedence Challenge">
+  <div class="kicker">Think → Predict → Reveal</div><h2>Evaluate without running code</h2>
+  <div class="qwrap"><div class="qcard" role="button" tabindex="0"><div class="qface"><div class="qlabel">Predict</div><div class="qtext"><code>int result = 20 - 6 / 2 * 3;</code><br/><br/>What is <code>result</code>?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans"><b>11.</b> Division and multiplication have higher precedence than subtraction and are evaluated left-to-right: 6/2 = 3, 3*3 = 9, then 20-9 = 11.</div><span class="flipcue">↻</span></div></div></div>
+</section>
+<section class="slide fill-slide" data-session="3" data-title="Named Constants">
+  <div class="kicker">Named constants</div><h2>If a value should not change, give that fact a name</h2>
+  <div class="grid2">
+    <div class="card"><h3>Typed constant</h3><div class="code">const int MAX_ATTEMPTS = 3;</div><p>The compiler knows the type and prevents assignment to the constant.</p></div>
+    <div class="card"><h3>Preprocessor definition</h3><div class="code">#define MAX_ATTEMPTS 3</div><p>This is text replacement handled before compilation.</p></div>
+  </div>
+  <div class="highlight"><p style="margin:0"><b>Beginner best practice:</b> prefer a typed <code>const</code> when you need a normal named constant in C++.</p></div>
+</section>
+<section class="slide fill-slide" data-session="3" data-title="Programming Style">
+  <div class="kicker">Programming style</div><h2>Readable code is easier to understand, review and debug</h2>
+  <div class="grid4">
+    <div class="card center"><div class="icon">🏷️</div><h3>Meaningful Names</h3><p><code>failedAttempts</code> beats <code>x</code>.</p></div>
+    <div class="card center"><div class="icon">↔️</div><h3>Whitespace</h3><p>Use spacing to reveal expression structure.</p></div>
+    <div class="card center"><div class="icon">↳</div><h3>Indentation</h3><p>Align statements with their block structure.</p></div>
+    <div class="card center"><div class="icon">💬</div><h3>Useful Comments</h3><p>Explain intent, assumptions or non-obvious logic.</p></div>
+  </div>
+  <div class="highlight"><p style="margin:0"><b>Security connection:</b> readable code is easier to audit for mistakes and unsafe assumptions.</p></div>
+</section>
+<section class="slide" data-session="3" data-title="Integrated Mini Program">
+  <div class="kicker">Integrated example</div><h2>Read before you trace: a tiny security-log summary</h2>
+  <div class="code numbered" id="summaryCode"><span data-sum="0">#include &lt;iostream&gt;</span>
+<span data-sum="1">using namespace std;</span>
+<span data-sum="2"></span>
+<span data-sum="3">int main() {</span>
+<span data-sum="4">    int failed = 4;</span>
+<span data-sum="5">    int success = 6;</span>
+<span data-sum="6">    int total = failed + success;</span>
+<span data-sum="7">    cout &lt;&lt; "Total logins: " &lt;&lt; total;</span>
+<span data-sum="8">    return 0;</span>
+<span data-sum="9">}</span></div>
+  <div class="highlight"><p style="margin:0"><b>Before tracing:</b> predict the output and identify the three variables.</p></div>
+</section>
+<section class="slide" data-session="3" data-title="Integrated Code Trace">
+  <div class="kicker">Interactive code trace</div><h2>Watch data move through the program</h2>
+  <div class="trace-layout">
+    <div class="code numbered" id="summaryTraceCode"><span data-summary-trace="0">int failed = 4;</span>
+<span data-summary-trace="1">int success = 6;</span>
+<span data-summary-trace="2">int total = failed + success;</span>
+<span data-summary-trace="3">cout &lt;&lt; "Total logins: " &lt;&lt; total;</span></div>
+    <div class="card"><div class="memory-bank"><div class="memory-cell"><b>failed</b><em id="mFailed">—</em></div><div class="memory-cell"><b>success</b><em id="mSuccess">—</em></div><div class="memory-cell"><b>total</b><em id="mTotal">—</em></div></div><div class="output-box" id="summaryOutput">Output: —</div><div class="demo-controls"><button class="action s3" id="summaryNext">Next Step</button><button class="action" id="summaryReset">Reset</button></div><div class="status" id="summaryStatus">Start by creating the first variable.</div></div>
+  </div>
+</section>
+<section class="slide" data-session="3" data-title="Find the Error">
+  <div class="kicker">Error-based learning</div><h2>Which lines violate Week 1 rules?</h2>
+  <div class="grid2">
+    <div class="code">int 2attempts = 3;
+double rate = 0.5
+cout &lt;&lt; total;
+int total = 10;</div>
+    <div class="error-options" id="errorOptions">
+      <button class="error-choice" data-msg="Correct: an identifier cannot begin with a digit. A name such as attempts2 or twoFactor is valid." data-good="true">Line 1: identifier begins with a digit</button>
+      <button class="error-choice" data-msg="Correct: the declaration is missing its semicolon." data-good="true">Line 2: missing semicolon</button>
+      <button class="error-choice" data-msg="Correct: total is used before it has been declared in this sequence." data-good="true">Line 3: total is used before declaration</button>
+      <button class="error-choice" data-msg="Line 4 itself is a valid declaration and initialization." data-good="false">Line 4: declaration is invalid</button>
+    </div>
+  </div>
+  <div class="status" id="errorStatus">Ask: What is wrong? Why? How would you correct it?</div>
+</section>
+<section class="slide" data-session="3" data-title="Session 3 Checkpoint">
+  <div class="kicker">Session 3 checkpoint</div><h2>Can you reason about data and expressions?</h2>
+  <div class="grid2">
+    <div class="qwrap"><div class="qcard" role="button" tabindex="0"><div class="qface"><div class="qlabel">Q1</div><div class="qtext"><code>int x = 5;<br/>x = x + 2;</code><br/><br/>Final value of <code>x</code>?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans"><b>7.</b> Read the old value 5, add 2, then assign the result 7 back to <code>x</code>.</div><span class="flipcue">↻</span></div></div></div>
+    <div class="qwrap"><div class="qcard" role="button" tabindex="0"><div class="qface"><div class="qlabel">Q2</div><div class="qtext">Why might <code>double</code> be a better choice than <code>int</code> for a rate such as 0.125?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans"><code>int</code> stores whole numbers, while <code>double</code> can represent fractional floating-point values.</div><span class="flipcue">↻</span></div></div></div>
+  </div>
+</section>
+<section class="slide fill-slide" data-session="3" data-title="Week 1 Summary">
+  <div class="kicker">Week summary</div><h2>What should be clear after Week 1?</h2>
+  <div class="grid3">
+    <div class="card"><h3>Programming Logic</h3><p>A computer needs precise, ordered instructions.</p></div>
+    <div class="card"><h3>Representation</h3><p>Algorithms and flowcharts make logic visible before syntax.</p></div>
+    <div class="card"><h3>C++ Structure</h3><p>Headers, <code>main()</code>, statements, comments and directives each have roles.</p></div>
+    <div class="card"><h3>Translation</h3><p>Source → preprocess → compile → link → executable.</p></div>
+    <div class="card"><h3>Data</h3><p>Variables have names, types, values and scope.</p></div>
+    <div class="card"><h3>Expressions</h3><p>Operators and precedence determine how values are computed.</p></div>
+  </div>
+</section>
+<section class="slide" data-session="3" data-title="Concept Connections">
+  <div class="kicker">Concept connections</div><h2>One connected mental model</h2>
+  <div class="flow">
+    <div class="step"><b>Problem</b><span>Human goal</span></div>
+    <div class="step"><b>Algorithm</b><span>Precise logical steps</span></div>
+    <div class="step"><b>C++ Source</b><span>Language representation</span></div>
+    <div class="step"><b>Executable</b><span>Translated instructions</span></div>
+    <div class="step"><b>Program State</b><span>Input → data → expressions → output</span></div>
+  </div>
+  <div class="highlight"><p style="margin:0"><b>Core principle:</b> syntax is only useful when it expresses correct logic.</p></div>
+</section>
+<section class="slide" data-session="3" data-title="Week Concept Check">
+  <div class="kicker">Week concept check</div><h2>Four short questions</h2>
+  <div class="grid2 compact-questions">
+    <div class="qwrap"><div class="qcard" role="button" tabindex="0"><div class="qface"><div class="qlabel">Concept</div><div class="qtext">What does a compiler do at a high level?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans">It translates source code toward lower-level/object code and checks language rules as part of the build process.</div><span class="flipcue">↻</span></div></div></div>
+    <div class="qwrap"><div class="qcard" role="button" tabindex="0"><div class="qface"><div class="qlabel">Output</div><div class="qtext"><code>cout &lt;&lt; 2 + 3 * 4;</code><br/>What is displayed?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans"><b>14</b>, because multiplication is evaluated before addition.</div><span class="flipcue">↻</span></div></div></div>
+    <div class="qwrap"><div class="qcard" role="button" tabindex="0"><div class="qface"><div class="qlabel">Identifier</div><div class="qtext">Is <code>user-name</code> a valid C++ identifier?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans"><b>No.</b> The hyphen is interpreted as the subtraction operator; identifiers may use letters, digits and underscore under the naming rules.</div><span class="flipcue">↻</span></div></div></div>
+    <div class="qwrap"><div class="qcard" role="button" tabindex="0"><div class="qface"><div class="qlabel">Trace</div><div class="qtext"><code>int a = 2;<br/>a = a * 5;</code><br/>Final value?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans"><b>10.</b> The current value 2 is multiplied by 5 and assigned back to <code>a</code>.</div><span class="flipcue">↻</span></div></div></div>
+  </div>
+</section>
+<section class="slide fill-slide" data-session="3" data-title="Cyber Security Connection">
+  <div class="kicker">Cyber Security connection</div><h2>Why these foundations matter later</h2>
+  <div class="grid3">
+    <div class="card"><div class="icon">🧾</div><h3>Input Validation</h3><p>Programs must interpret external input correctly and predictably.</p></div>
+    <div class="card"><div class="icon">📦</div><h3>Data Representation</h3><p>Types and memory concepts help you reason about how software handles values.</p></div>
+    <div class="card"><div class="icon">🔎</div><h3>Code Reading</h3><p>Security work often requires tracing what software actually does.</p></div>
+    <div class="card"><div class="icon">🧠</div><h3>Logic Quality</h3><p>Incorrect assumptions can create incorrect program behavior.</p></div>
+    <div class="card"><div class="icon">🧼</div><h3>Readable Code</h3><p>Clear programs are easier to review and audit.</p></div>
+    <div class="card"><div class="icon">⚙️</div><h3>Compiled Programs</h3><p>Understanding source-to-executable translation prepares you for later systems topics.</p></div>
+  </div>
+</section>
+<section class="slide s3dark center" data-session="3" data-title="Next Week Preview">
+  <div class="kicker">Next week preview</div><h1>Week 2: Work with C++ more deeply</h1>
+  <p class="lead">File input/output · type conversion · overflow/underflow · type casting · combined assignment · formatted output · characters and strings · hand tracing · common program errors · problem solving</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:18px"><span class="pill">Build on Week 1 variables</span><span class="pill">Trace more carefully</span><span class="pill">Handle data more deliberately</span></div>
+</section>
+<section class="slide fill-slide" data-session="3" data-title="Academic Sources">
+  <div class="kicker">Academic sources used for Week 1</div><h2>Course guide + prescribed textbooks</h2>
+  <div class="grid2">
+    <div class="card"><h3>Course Guide</h3><p><b>Programming Fundamentals (CS111), 2026–2027</b><br/>Air University, Department of Computer Science.</p><p class="muted">Week 1 scope, CLO alignment, grading and reading sequence follow the supplied course guide.</p></div>
+    <div class="card"><h3>Prescribed Textbooks</h3><p><b>Tony Gaddis</b>, <i>Starting Out with C++ from Control Structures through Objects</i>, 10th ed., Pearson, 2022.</p><p><b>Paul Deitel &amp; Harvey Deitel</b>, <i>C++ How to Program</i>, 11th ed., Pearson, 2023.</p></div>
+  </div>
+</section>
+<section class="slide s3dark center fill-slide" data-session="3" data-title="Thank You">
+  <div class="kicker">Week 1 complete</div>
+  <h1>THANK YOU</h1>
+  <p class="lead"><b>Any Questions?</b></p>
+  <div class="grid3" style="width:100%;margin-top:20px"><div class="card"><div class="icon">🧠</div><h3>Understand</h3><p>Logic before syntax.</p></div><div class="card"><div class="icon">🧾</div><h3>Represent</h3><p>Algorithm, flowchart, code.</p></div><div class="card"><div class="icon">🔎</div><h3>Trace</h3><p>Know what the computer does next.</p></div></div>
+  <p class="small muted" style="margin-top:22px"><b>Instructor:</b><br/>Dr. Zakir Khan · Assistant Professor<br/>Department of Computer Science<br/>Air University Aerospace &amp; Aviation Campus, Kamra</p>
+</section>
+<div class="footer"><span id="footerSession">Week 1</span><span>CS111 · Programming Fundamentals</span><span class="counter" id="counter">1 / 1</span><span class="build-state" id="buildState"></span></div>
+<div class="global-note" id="globalNote"></div>
+</main></div>
+<div class="controls"><button aria-label="Instructor cue" class="ctrl" id="noteBtn" title="Instructor cue (I)">i</button><button class="ctrl" id="timerBtn" title="Class timer (T)">⏱</button><button class="ctrl" id="overviewBtn" title="Overview (O)">▦</button><button class="ctrl" id="fullBtn" title="Full screen (F)">⛶</button><button class="ctrl" id="helpBtn" title="Help (?)">?</button></div>
+<div class="progress"><div id="progress"></div></div>
+<div class="overlay" id="overview"><div class="overlay-inner"><button class="close" id="ovClose">Close</button><h2>Week 1 Slide Overview</h2><div class="ovgrid" id="ovgrid"></div></div></div>
+<div class="overlay" id="help"><div class="helpbox"><button class="close" id="helpClose">Close</button><h2>Presentation Controls</h2><div class="helpgrid"><kbd>→ / Space</kbd><span>Reveal next item; then move to next slide</span><kbd>←</kbd><span>Previous slide</span><kbd>A</kbd><span>Reveal all remaining items on current slide</span><kbd>S</kbd><span>Next session</span><kbd>Shift + S</kbd><span>Previous session</span><kbd>Page Down / Up</kbd><span>Next / previous session</span><kbd>I</kbd><span>Instructor cue</span><kbd>T</kbd><span>Classroom timer</span><kbd>O</kbd><span>Slide overview</span><kbd>F</kbd><span>Full screen</span><kbd>Home / End</kbd><span>First / last slide</span><kbd>Esc</kbd><span>Close overlays / exit full screen</span></div></div></div>
+<div class="timerpanel" id="timerPanel"><div class="tiny muted">Class Activity Timer</div><div class="timerdigits" id="timerDigits">05:00</div><div class="timerbtns"><button data-min="2">2 min</button><button data-min="5">5 min</button><button data-min="10">10 min</button><button data-min="15">15 min</button><button id="timerStart">Start/Pause</button><button id="timerReset">Reset</button></div></div>
+<script>
+(function(){
+ const stage=document.getElementById('stage');
+ const slides=[...document.querySelectorAll('.slide')];
+ const counter=document.getElementById('counter'),progress=document.getElementById('progress'),footerSession=document.getElementById('footerSession'),globalNote=document.getElementById('globalNote'),buildState=document.getElementById('buildState');
+ let current=0;
+ const sessionStarts={1:slides.findIndex(s=>s.dataset.session==='1'),2:slides.findIndex(s=>s.dataset.session==='2'),3:slides.findIndex(s=>s.dataset.session==='3')};
+ function markRevealSteps(){
+  slides.forEach(slide=>{
+   const chosen=[]; const add=el=>{if(!el||chosen.includes(el)||el.classList.contains('note')||el.closest('.qback'))return;chosen.push(el)};
+   ['.hero-path','.session-focus','.grid2','.grid3','.grid4','.flow','.visual-stack','.compile-pipeline','.identifier-grid','.operator-row','.precedence-stack'].forEach(sel=>slide.querySelectorAll(sel).forEach(g=>[...g.children].forEach(add)));
+   [...slide.children].forEach(el=>{if(el.matches('.qwrap,.highlight,.workflow-pool,.workflow-track,.code,.status,.session-bridge,.demo-controls,.level-flow,.ipo-flow,.mini-flowchart,.variable-visual,.assignment-demo,.scope-demo,.trace-layout'))add(el)});
+   chosen.slice(0,8).forEach((el,i)=>{el.classList.add('reveal-step');el.dataset.revealIndex=String(i)});
+  });
+ }
+ function getRevealSteps(slide=slides[current]){return [...slide.querySelectorAll('.reveal-step')]}
+ function updateBuildState(){const steps=getRevealSteps();if(!steps.length){buildState.textContent='';return}const done=steps.filter(x=>x.classList.contains('revealed')).length;buildState.innerHTML='<span class="build-dot '+(done<steps.length?'on':'')+'"></span>'+done+'/'+steps.length}
+ function labelSession(s){return s==='1'?'Session 1 · Foundations':s==='2'?'Session 2 · Source → Execution':s==='3'?'Session 3 · Data + Expressions':'Week 1 · Orientation'}
+ function show(i){current=Math.max(0,Math.min(slides.length-1,i));slides.forEach((s,k)=>s.classList.toggle('active',k===current));counter.textContent=(current+1)+' / '+slides.length;progress.style.width=((current+1)/slides.length*100)+'%';footerSession.textContent=labelSession(slides[current].dataset.session);globalNote.classList.remove('show');globalNote.textContent='';updateBuildState();stage.focus({preventScroll:true})}
+ function revealNext(){const x=getRevealSteps().find(x=>!x.classList.contains('revealed'));if(!x)return false;x.classList.add('revealed');updateBuildState();return true}
+ function revealAll(){getRevealSteps().forEach(x=>x.classList.add('revealed'));updateBuildState()}
+ function next(){if(!revealNext())show(current+1)} function prev(){show(current-1)}
+ document.querySelectorAll('.qcard').forEach(c=>{const toggle=()=>c.classList.toggle('flipped');c.addEventListener('click',toggle);c.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle()}})});
+ function toggleNote(){const n=slides[current].querySelector('.note');globalNote.textContent=n?n.textContent.trim():'Instructor cue: Explain the slide briefly, ask one prediction question, and check for a beginner misconception before moving on.';globalNote.classList.toggle('show')}
+ document.getElementById('noteBtn').addEventListener('click',toggleNote);
+ async function fullscreen(){try{if(!document.fullscreenElement)await document.documentElement.requestFullscreen();else await document.exitFullscreen()}catch(e){}}
+ document.getElementById('fullBtn').addEventListener('click',fullscreen);
+ const overview=document.getElementById('overview'),ovgrid=document.getElementById('ovgrid');slides.forEach((s,i)=>{const b=document.createElement('button');b.className='ov';b.innerHTML='<small>'+labelSession(s.dataset.session)+' · Slide '+(i+1)+'</small>'+s.dataset.title;b.addEventListener('click',()=>{show(i);overview.classList.remove('open')});ovgrid.appendChild(b)});document.getElementById('overviewBtn').addEventListener('click',()=>overview.classList.add('open'));document.getElementById('ovClose').addEventListener('click',()=>overview.classList.remove('open'));
+ const help=document.getElementById('help');document.getElementById('helpBtn').addEventListener('click',()=>help.classList.add('open'));document.getElementById('helpClose').addEventListener('click',()=>help.classList.remove('open'));
+ const timerPanel=document.getElementById('timerPanel'),timerDigits=document.getElementById('timerDigits');let timerSeconds=300,timerRun=false,timerId=null;function drawTimer(){const m=Math.floor(timerSeconds/60),s=timerSeconds%60;timerDigits.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}function toggleTimerPanel(){timerPanel.classList.toggle('open')}document.getElementById('timerBtn').addEventListener('click',toggleTimerPanel);document.querySelectorAll('[data-min]').forEach(b=>b.addEventListener('click',()=>{timerSeconds=+b.dataset.min*60;timerRun=false;clearInterval(timerId);drawTimer()}));document.getElementById('timerStart').addEventListener('click',()=>{timerRun=!timerRun;clearInterval(timerId);if(timerRun)timerId=setInterval(()=>{if(timerSeconds>0){timerSeconds--;drawTimer()}else{timerRun=false;clearInterval(timerId);timerDigits.textContent='TIME!'}},1000)});document.getElementById('timerReset').addEventListener('click',()=>{timerRun=false;clearInterval(timerId);timerSeconds=300;drawTimer()});drawTimer();
+ // login ordering
+ let loginNext=0; const loginLabels=['Read username and password','Load expected credentials/rule','Compare entered values with stored values','Display access result'];const loginSlots=[...document.querySelectorAll('#loginTrack span')],loginStatus=document.getElementById('loginStatus');function resetLogin(){loginNext=0;document.querySelectorAll('#loginPool .workflow-chip').forEach(b=>b.classList.remove('used'));loginSlots.forEach((s,i)=>{s.classList.remove('filled');s.textContent=String(i+1)});loginStatus.textContent='Start with the information the program must receive.'}document.querySelectorAll('#loginPool .workflow-chip').forEach(b=>b.addEventListener('click',()=>{const order=+b.dataset.order;if(order===loginNext){loginSlots[loginNext].textContent=loginLabels[loginNext];loginSlots[loginNext].classList.add('filled');b.classList.add('used');loginNext++;loginStatus.innerHTML=loginNext===4?'<b>Complete.</b> The task is now an ordered process that a program could represent.':'<b>Correct.</b> Choose the next logical step.'}else loginStatus.innerHTML='<b>Try again.</b> Ask what information or preparation is required before that step.'}));document.getElementById('loginReset').addEventListener('click',resetLogin);resetLogin();
+ // compile pipeline
+ const compileStages=[...document.querySelectorAll('.compile-stage')],compileStatus=document.getElementById('compileStatus');const compileMsgs=['Source code is human-readable C++ text.','Preprocessing handles directives such as #include and #define.','Compilation checks/translates the preprocessed C++ into object-level code.','Linking combines object code with required library code and resolves references.','The executable contains machine-level instructions that the operating system can load and run.'];let compileIndex=0;function drawCompile(){compileStages.forEach((s,i)=>{s.classList.toggle('active',i===compileIndex);s.classList.toggle('done',i<compileIndex)});compileStatus.textContent=compileMsgs[compileIndex]}document.getElementById('compileNext').addEventListener('click',()=>{compileIndex=Math.min(compileStages.length-1,compileIndex+1);drawCompile()});document.getElementById('compileReset').addEventListener('click',()=>{compileIndex=0;drawCompile()});drawCompile();
+ // io trace
+ let ioStep=-1;const ioLines=[...document.querySelectorAll('#ioTraceCode [data-trace]')],ioMemory=document.getElementById('ioMemory'),ioOutput=document.getElementById('ioOutput'),ioStatus=document.getElementById('ioStatus');function resetIO(){ioStep=-1;ioLines.forEach(x=>x.classList.remove('active-line'));ioMemory.innerHTML='<b>x</b><em>not created</em>';ioMemory.classList.remove('active');ioOutput.textContent='Output: —';ioStatus.textContent='Predict what happens first.'}function nextIO(){ioStep=Math.min(2,ioStep+1);ioLines.forEach((x,i)=>x.classList.toggle('active-line',i===ioStep));if(ioStep===0){ioMemory.innerHTML='<b>x</b><em>?</em>';ioStatus.textContent='x now exists, but this example has not yet supplied a value.'}else if(ioStep===1){ioMemory.innerHTML='<b>x</b><em>5</em>';ioMemory.classList.add('active');ioStatus.textContent='cin stores the entered value 5 in x.'}else{ioOutput.textContent='Output: Value = 5';ioStatus.textContent='cout reads the current value of x and sends it to output.'}}document.getElementById('ioNext').addEventListener('click',nextIO);document.getElementById('ioReset').addEventListener('click',resetIO);resetIO();
+ // identifier activity
+ const identifierStatus=document.getElementById('identifierStatus');document.querySelectorAll('.identifier-choice').forEach(b=>b.addEventListener('click',()=>{const good=b.dataset.valid==='true';b.classList.add(good?'valid':'invalid');b.disabled=true;identifierStatus.innerHTML=good?'<b>Valid.</b> This name follows the basic identifier rules.':'<b>Invalid.</b> It breaks a naming rule or uses a reserved C++ keyword.'}));
+ // assignment demo
+ let assignStep=0;const assignCell=document.getElementById('assignCell'),assignStatus=document.getElementById('assignStatus');document.getElementById('assignNext').addEventListener('click',()=>{assignStep=Math.min(1,assignStep+1);if(assignStep===1){assignCell.querySelector('em').textContent='5';assignCell.classList.add('active');assignStatus.innerHTML='The assignment statement replaces the previous value 3 with <b>5</b>.'}});document.getElementById('assignReset').addEventListener('click',()=>{assignStep=0;assignCell.querySelector('em').textContent='3';assignCell.classList.remove('active');assignStatus.textContent='After initialization, attempts stores 3.'});
+ // summary trace
+ let sumStep=-1;const sumLines=[...document.querySelectorAll('#summaryTraceCode [data-summary-trace]')],mFailed=document.getElementById('mFailed'),mSuccess=document.getElementById('mSuccess'),mTotal=document.getElementById('mTotal'),summaryOutput=document.getElementById('summaryOutput'),summaryStatus=document.getElementById('summaryStatus');function resetSummary(){sumStep=-1;sumLines.forEach(x=>x.classList.remove('active-line'));mFailed.textContent=mSuccess.textContent=mTotal.textContent='—';summaryOutput.textContent='Output: —';summaryStatus.textContent='Start by creating the first variable.'}function nextSummary(){sumStep=Math.min(3,sumStep+1);sumLines.forEach((x,i)=>x.classList.toggle('active-line',i===sumStep));if(sumStep===0){mFailed.textContent='4';summaryStatus.textContent='failed is created and initialized with 4.'}else if(sumStep===1){mSuccess.textContent='6';summaryStatus.textContent='success is created and initialized with 6.'}else if(sumStep===2){mTotal.textContent='10';summaryStatus.textContent='The expression failed + success evaluates to 10, then total stores 10.'}else{summaryOutput.textContent='Output: Total logins: 10';summaryStatus.textContent='cout sends the text and current value of total to output.'}}document.getElementById('summaryNext').addEventListener('click',nextSummary);document.getElementById('summaryReset').addEventListener('click',resetSummary);resetSummary();
+ // error activity
+ const errorStatus=document.getElementById('errorStatus');document.querySelectorAll('.error-choice').forEach(b=>b.addEventListener('click',()=>{const good=b.dataset.good==='true';b.classList.add(good?'correct':'wrong');errorStatus.innerHTML=(good?'<b>Good observation.</b> ':'<b>Check again.</b> ')+b.dataset.msg}));
+ function closeOverlays(){overview.classList.remove('open');help.classList.remove('open')}
+ function switchSession(dir=1){const raw=slides[current].dataset.session;const s=(raw==='1'||raw==='2'||raw==='3')?Number(raw):0;let target;if(s===0)target=dir<0?3:1;else if(dir>0)target=s===3?1:s+1;else target=s===1?3:s-1;show(sessionStarts[target])}
+ document.addEventListener('keydown',e=>{const tag=(e.target.tagName||'').toUpperCase();if(['INPUT','TEXTAREA','SELECT'].includes(tag))return;if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}else if(e.key==='ArrowLeft'){e.preventDefault();prev()}else if(e.key==='PageDown'){e.preventDefault();switchSession(1)}else if(e.key==='PageUp'){e.preventDefault();switchSession(-1)}else if(e.key==='Home'){show(0)}else if(e.key==='End'){show(slides.length-1)}else if(e.key.toLowerCase()==='s'){e.preventDefault();switchSession(e.shiftKey?-1:1)}else if(e.key.toLowerCase()==='a'){e.preventDefault();revealAll()}else if(e.key.toLowerCase()==='f'){fullscreen()}else if(e.key.toLowerCase()==='o'){overview.classList.toggle('open')}else if(e.key.toLowerCase()==='i'){toggleNote()}else if(e.key.toLowerCase()==='t'){toggleTimerPanel()}else if(e.key==='?'){help.classList.add('open')}else if(e.key==='Escape'){closeOverlays()}});
+ let startX=null;stage.addEventListener('pointerdown',e=>startX=e.clientX);stage.addEventListener('pointerup',e=>{if(startX===null)return;const dx=e.clientX-startX;startX=null;if(Math.abs(dx)>90)(dx<0?next():prev())});stage.addEventListener('click',e=>{if(e.target.closest('button,a,input,select,textarea,.qcard,.ctrl,.timer-panel,.identifier-choice,.error-choice,.workflow-chip'))return;next()});
+ markRevealSteps();show(0);
+})();
+</script></body></html>
