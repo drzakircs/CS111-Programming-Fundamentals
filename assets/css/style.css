@@ -179,14 +179,31 @@ iframe { width: 100%; height: 74vh; min-height: 620px; border: 0; display: none;
   align-items: center;
   gap: 8px;
   min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
   color: #435362;
   font-size: .82rem;
   font-weight: 650;
 }
-.material-name > span:last-child {
+.material-title-viewport {
+  position: relative;
+  display: block;
+  flex: 1 1 auto;
+  min-width: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
+}
+.material-title {
+  display: inline-block;
+  white-space: nowrap;
+  will-change: transform;
+}
+.material-title-viewport.is-overflowing .material-title {
+  animation: material-name-scroll var(--scroll-duration, 9s) ease-in-out infinite;
+}
+@keyframes material-name-scroll {
+  0%, 14% { transform: translateX(0); }
+  86%, 100% { transform: translateX(calc(-1 * var(--scroll-distance, 0px))); }
 }
 .material-index {
   display: grid;
@@ -202,7 +219,7 @@ iframe { width: 100%; height: 74vh; min-height: 620px; border: 0; display: none;
 }
 .material-actions { display: flex; gap: 5px; flex: 0 0 auto; }
 .btn-small { padding: 6px 8px; border-radius: 8px; font-size: .76rem; }
-.materials-empty p { margin: 0; color: var(--muted); font-size: .78rem; }
+.materials-empty small strong { color: var(--muted); font-weight: 750; }
 .materials-empty code, .section-intro code {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   background: #f1f4f7;
@@ -212,7 +229,7 @@ iframe { width: 100%; height: 74vh; min-height: 620px; border: 0; display: none;
 
 @media (max-width: 620px) {
   .material-item { align-items: stretch; flex-direction: column; }
-  .material-name > span:last-child { white-space: normal; }
+  .material-title-viewport { width: 100%; }
   .material-actions { width: 100%; }
   .material-actions .btn { flex: 1; }
 }

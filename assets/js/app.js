@@ -82,9 +82,8 @@ function renderMaterialList(weekNumber) {
       <div class="materials-block materials-empty">
         <div class="materials-heading">
           <span>Learning Material</span>
-          <small>Not uploaded yet</small>
+          <small><strong>Not uploaded yet</strong></small>
         </div>
-        <p>Files containing <code>Week${weekNumber}</code> or <code>Week${String(weekNumber).padStart(2, '0')}</code> in the filename will appear here automatically.</p>
       </div>
     `;
   }
@@ -100,7 +99,9 @@ function renderMaterialList(weekNumber) {
           <div class="material-item">
             <div class="material-name">
               <span class="material-index">${index + 1}</span>
-              <span>${escapeHtml(file.label || file.name)}</span>
+              <span class="material-title-viewport" title="${escapeHtml(file.label || file.name)}">
+                <span class="material-title">${escapeHtml(file.label || file.name)}</span>
+              </span>
             </div>
             <div class="material-actions">
               <button
@@ -117,6 +118,27 @@ function renderMaterialList(weekNumber) {
       </div>
     </div>
   `;
+}
+
+function setupMaterialNameScrolling() {
+  const viewports = document.querySelectorAll('.material-title-viewport');
+
+  viewports.forEach(viewport => {
+    const title = viewport.querySelector('.material-title');
+    if (!title) return;
+
+    viewport.classList.remove('is-overflowing');
+    viewport.style.removeProperty('--scroll-distance');
+    viewport.style.removeProperty('--scroll-duration');
+
+    const distance = Math.max(0, title.scrollWidth - viewport.clientWidth);
+    if (distance > 4) {
+      viewport.style.setProperty('--scroll-distance', `${distance}px`);
+      const duration = Math.min(18, Math.max(7, 7 + distance / 45));
+      viewport.style.setProperty('--scroll-duration', `${duration}s`);
+      viewport.classList.add('is-overflowing');
+    }
+  });
 }
 
 function renderWeeks(items) {
@@ -143,6 +165,8 @@ function renderWeeks(items) {
       </div>
     </article>
   `).join('');
+
+  requestAnimationFrame(setupMaterialNameScrolling);
 
   document.querySelectorAll('.view-material').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -186,6 +210,7 @@ function filterWeeks() {
 }
 
 weekSearch.addEventListener('input', filterWeeks);
+window.addEventListener('resize', () => requestAnimationFrame(setupMaterialNameScrolling));
 
 async function getMaterials() {
   // Primary path: GitHub Pages/Jekyll injects the file list into index.html.
