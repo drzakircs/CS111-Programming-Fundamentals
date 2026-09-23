@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CS111 — Interactive Overflow & Underflow Counter</title>
+<style>
+:root{
+  --navy:#0a2f4f; --blue:#0b74b9; --cyan:#22a8d8; --ink:#122331; --muted:#607487;
+  --paper:#f6fbfe; --card:#ffffff; --line:#cfe0ea; --good:#187a57; --warn:#a15d00; --bad:#b63f3f;
+  --shadow:0 14px 38px rgba(15,55,82,.12);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Inter,Segoe UI,Arial,sans-serif;background:#eaf3f8;color:var(--ink)}
+body{padding:20px}
+.app{max-width:1500px;margin:auto;background:var(--paper);border:1px solid #bfd5e2;border-radius:22px;box-shadow:var(--shadow);overflow:hidden}
+header{padding:22px 30px;background:linear-gradient(135deg,#082d4d,#0e5f91);color:#fff;display:flex;align-items:flex-start;justify-content:space-between;gap:24px}
+header h1{margin:0;font-size:clamp(30px,3vw,52px);line-height:1.02}
+header p{margin:8px 0 0;font-size:clamp(17px,1.35vw,23px);color:#d9edf8}
+.badge{display:inline-flex;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);font-weight:800;white-space:nowrap}
+main{padding:26px 30px 30px;display:grid;gap:22px}
+.toolbar{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:14px}
+.control{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.control label{display:block;font-size:14px;text-transform:uppercase;letter-spacing:.08em;font-weight:900;color:var(--muted);margin-bottom:8px}
+select,input,button{font:inherit}
+select,input[type="number"]{width:100%;padding:10px 12px;border:1px solid #bcd0dc;border-radius:10px;background:#fff;color:var(--ink);font-weight:700}
+button{border:1px solid #bcd0dc;background:#fff;color:var(--navy);border-radius:11px;padding:11px 15px;font-weight:850;cursor:pointer;transition:.15s}
+button:hover,button:focus-visible{border-color:#66bddf;background:#eefaff;outline:none;transform:translateY(-1px)}
+button.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+button.danger{background:#fff4f4;border-color:#e6b8b8;color:#8b3030}
+.grid{display:grid;grid-template-columns:1.15fr .85fr;gap:22px;align-items:stretch}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 7px 22px rgba(15,55,82,.06)}
+.card h2{margin:0 0 14px;color:var(--navy);font-size:clamp(24px,2vw,34px)}
+.range{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center;margin:16px 0 20px}
+.limit{padding:14px;border-radius:14px;background:#f4f9fc;border:1px solid #d7e5ee;text-align:center}
+.limit b{display:block;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:7px}
+.limit span{font-size:clamp(21px,1.7vw,30px);font-weight:950;color:var(--navy);font-variant-numeric:tabular-nums;word-break:break-word}
+.arrow{font-size:34px;color:var(--cyan);font-weight:900}
+.counterbox{display:grid;place-items:center;min-height:245px;border:2px solid #c7deea;border-radius:22px;background:linear-gradient(180deg,#fbfeff,#eef8fd);padding:22px;text-align:center}
+.counter-label{font-size:14px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:900}
+.counter{font-size:clamp(58px,7vw,112px);font-weight:950;line-height:1;color:var(--navy);font-variant-numeric:tabular-nums;word-break:break-word;margin:10px 0}
+.typehint{font-size:18px;color:var(--muted);font-weight:700}
+.actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+.status{margin-top:18px;border-radius:15px;padding:15px 17px;border:2px solid #cbdce6;background:#f4f8fb;font-size:clamp(18px,1.35vw,23px);line-height:1.3;min-height:70px}
+.status.good{background:#edf9f4;border-color:#8bd2b5;color:#155d44}
+.status.warn{background:#fff8e9;border-color:#e7c47d;color:#805000}
+.status.bad{background:#fff0f0;border-color:#df9898;color:#8a2c2c}
+.binary{font-family:Consolas,Cascadia Code,monospace;font-size:clamp(18px,1.5vw,26px);line-height:1.55;background:#081a27;color:#eaf8ff;border-radius:16px;padding:18px;word-break:break-all;min-height:92px}
+.bit-caption{font-size:14px;color:var(--muted);margin-top:8px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.step{border:1px solid var(--line);border-radius:14px;padding:13px;background:#fbfdff}
+.step b{display:block;color:var(--navy);font-size:14px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.step span{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums;word-break:break-word}
+.note{border-left:6px solid var(--cyan);background:#edf9fe;border-radius:12px;padding:14px 16px;font-size:18px;line-height:1.35}
+.warnnote{border-left-color:#e3a441;background:#fff7e8}
+.code{font-family:Consolas,Cascadia Code,monospace;background:#071825;color:#ebf9ff;border-radius:16px;padding:16px 18px;font-size:18px;line-height:1.45;white-space:pre-wrap}
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.legend .item{padding:14px;border:1px solid var(--line);border-radius:14px;background:#fbfdff}
+.legend strong{display:block;color:var(--navy);margin-bottom:5px}
+footer{padding:14px 24px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:20px;color:var(--muted);font-size:14px;background:#f9fcfe}
+@media(max-width:1000px){.toolbar{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.legend{grid-template-columns:1fr}.steps{grid-template-columns:1fr}.range{grid-template-columns:1fr}.arrow{transform:rotate(90deg);text-align:center}}
+@media(max-width:620px){body{padding:0}.app{border-radius:0;border-left:0;border-right:0}header,main{padding-left:18px;padding-right:18px}.toolbar{grid-template-columns:1fr}.counter{font-size:58px}.actions button{flex:1 1 45%}footer{flex-direction:column}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div>
+    <div class="badge">CS111 · Programming Fundamentals</div>
+    <h1>Overflow & Underflow Counter</h1>
+    <p>Explore integer data-type limits by stepping beyond the minimum and maximum values.</p>
+  </div>
+  <div class="badge">C++ Concept Demonstration</div>
+</header>
+
+<main>
+  <section class="toolbar" aria-label="Counter controls">
+    <div class="control">
+      <label for="typeSelect">Data Type</label>
+      <select id="typeSelect">
+        <option value="int8">int8_t — signed 8-bit</option>
+        <option value="uint8">uint8_t — unsigned 8-bit</option>
+        <option value="int16">int16_t — signed 16-bit</option>
+        <option value="uint16">uint16_t — unsigned 16-bit</option>
+        <option value="int32" selected>int32_t — signed 32-bit</option>
+        <option value="uint32">uint32_t — unsigned 32-bit</option>
+        <option value="int64">int64_t — signed 64-bit</option>
+        <option value="uint64">uint64_t — unsigned 64-bit</option>
+      </select>
+    </div>
+    <div class="control">
+      <label for="stepSize">Step Size</label>
+      <input id="stepSize" type="number" min="1" value="1" />
+    </div>
+    <div class="control">
+      <label>Jump Near a Limit</label>
+      <div style="display:flex;gap:8px"><button id="nearMin" type="button">Near MIN</button><button id="nearMax" type="button">Near MAX</button></div>
+    </div>
+    <div class="control">
+      <label>Reset</label>
+      <button id="reset" type="button" class="danger" style="width:100%">Reset to 0</button>
+    </div>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <h2>1. Counter Demonstration</h2>
+      <div class="range">
+        <div class="limit"><b>Minimum</b><span id="minValue">—</span></div>
+        <div class="arrow">↔</div>
+        <div class="limit"><b>Maximum</b><span id="maxValue">—</span></div>
+      </div>
+
+      <div class="counterbox">
+        <div class="counter-label">Current stored value</div>
+        <div class="counter" id="counterValue">0</div>
+        <div class="typehint" id="typeHint">—</div>
+        <div class="actions">
+          <button id="minus" type="button">− Step</button>
+          <button id="plus" type="button" class="primary">+ Step</button>
+          <button id="autoDown" type="button">Auto −</button>
+          <button id="autoUp" type="button">Auto +</button>
+          <button id="stop" type="button">Stop</button>
+        </div>
+      </div>
+
+      <div class="status" id="status" aria-live="polite">Choose a data type, then move the counter near MIN or MAX and step across the boundary.</div>
+    </div>
+
+    <div class="card">
+      <h2>2. What the Bits Look Like</h2>
+      <div class="binary" id="binaryView">00000000</div>
+      <div class="bit-caption" id="bitCaption">Binary representation</div>
+
+      <div class="steps">
+        <div class="step"><b>Current</b><span id="currentStep">0</span></div>
+        <div class="step"><b>Mathematical Next</b><span id="mathNext">—</span></div>
+        <div class="step"><b>Stored / Conceptual Result</b><span id="storedNext">—</span></div>
+      </div>
+
+      <div class="note warnnote" id="cppNote" style="margin-top:16px">
+        <b>C++ rule:</b> unsigned integer arithmetic wraps modulo 2<sup>N</sup>. Signed integer overflow is <b>undefined behavior</b>; a wrap-around shown here for signed types is only a two's-complement teaching model, not a C++ guarantee.
+      </div>
+    </div>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <h2>3. Teaching Interpretation</h2>
+      <div class="legend">
+        <div class="item"><strong>Overflow</strong>A computed value is greater than the maximum representable value of the selected data type.</div>
+        <div class="item"><strong>Underflow (integer-range context)</strong>A computed value is less than the minimum representable value of the selected data type.</div>
+        <div class="item"><strong>Signed Type</strong>Uses one bit pattern range for negative and positive values. Example: int8_t = −128 to 127.</div>
+        <div class="item"><strong>Unsigned Type</strong>Stores only non-negative values. Example: uint8_t = 0 to 255.</div>
+      </div>
+      <div class="note" style="margin-top:16px"><b>Classroom prompt:</b> “If a data type has only N bits, how many distinct bit patterns can it represent?” → <b>2<sup>N</sup></b>.</div>
+    </div>
+
+    <div class="card">
+      <h2>4. C++ Connection</h2>
+      <div class="code">#include &lt;iostream&gt;
+#include &lt;cstdint&gt;
+#include &lt;limits&gt;
+using namespace std;
+
+int main() {
+    cout &lt;&lt; numeric_limits&lt;int8_t&gt;::min() &lt;&lt; "\n";
+    cout &lt;&lt; numeric_limits&lt;int8_t&gt;::max() &lt;&lt; "\n";
+
+    uint8_t x = 255;
+    x = x + 1;      // wraps to 0 for unsigned 8-bit arithmetic
+}
+</div>
+      <div class="note warnnote" style="margin-top:16px"><b>Important:</b> fixed-width types such as <code>int8_t</code> and <code>uint32_t</code> make the bit width explicit. Plain C++ types such as <code>int</code> are implementation-dependent in size.</div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>Dr. Zakir Khan · Department of Computer Science · Air University A&A Campus, Kamra</span>
+  <span>Use the counter to demonstrate limits before showing arithmetic overflow examples.</span>
+</footer>
+</div>
+
+<script>
+(function(){
+  const types={
+    int8:{label:'int8_t',bits:8,signed:true,min:-(1n<<7n),max:(1n<<7n)-1n},
+    uint8:{label:'uint8_t',bits:8,signed:false,min:0n,max:(1n<<8n)-1n},
+    int16:{label:'int16_t',bits:16,signed:true,min:-(1n<<15n),max:(1n<<15n)-1n},
+    uint16:{label:'uint16_t',bits:16,signed:false,min:0n,max:(1n<<16n)-1n},
+    int32:{label:'int32_t',bits:32,signed:true,min:-(1n<<31n),max:(1n<<31n)-1n},
+    uint32:{label:'uint32_t',bits:32,signed:false,min:0n,max:(1n<<32n)-1n},
+    int64:{label:'int64_t',bits:64,signed:true,min:-(1n<<63n),max:(1n<<63n)-1n},
+    uint64:{label:'uint64_t',bits:64,signed:false,min:0n,max:(1n<<64n)-1n}
+  };
+  const $=id=>document.getElementById(id);
+  const typeSelect=$('typeSelect'), stepSize=$('stepSize'), minValue=$('minValue'), maxValue=$('maxValue'), counterValue=$('counterValue'), typeHint=$('typeHint'), status=$('status'), binaryView=$('binaryView'), bitCaption=$('bitCaption'), currentStep=$('currentStep'), mathNext=$('mathNext'), storedNext=$('storedNext');
+  let current=0n, timer=null, lastDirection=1n;
+
+  function info(){return types[typeSelect.value]}
+  function fmt(n){return n.toLocaleString('en-US')}
+  function clampStep(){let v;try{v=BigInt(Math.max(1,Math.floor(Number(stepSize.value)||1)))}catch(e){v=1n}stepSize.value=v.toString();return v}
+  function wrapUnsigned(raw,t){const mod=1n<<BigInt(t.bits);return ((raw%mod)+mod)%mod}
+  function conceptualSigned(raw,t){const mod=1n<<BigInt(t.bits);let u=((raw%mod)+mod)%mod;const sign=1n<<BigInt(t.bits-1);return u>=sign?u-mod:u}
+  function toBits(val,t){const mod=1n<<BigInt(t.bits);let u=val<0n?val+mod:val;u=((u%mod)+mod)%mod;let s=u.toString(2).padStart(t.bits,'0');return s.match(/.{1,4}/g).join(' ')}
+  function storedFor(raw,t){return t.signed?conceptualSigned(raw,t):wrapUnsigned(raw,t)}
+
+  function render(nextRaw=null){
+    const t=info();
+    minValue.textContent=fmt(t.min); maxValue.textContent=fmt(t.max);
+    counterValue.textContent=fmt(current); typeHint.textContent=`${t.label} · ${t.bits}-bit · ${t.signed?'signed':'unsigned'}`;
+    binaryView.textContent=toBits(current,t); bitCaption.textContent=`${t.bits} bits · grouped in 4-bit nibbles`;
+    currentStep.textContent=fmt(current);
+    if(nextRaw===null){nextRaw=current+lastDirection*clampStep()}
+    mathNext.textContent=fmt(nextRaw); storedNext.textContent=fmt(storedFor(nextRaw,t));
+  }
+
+  function setStatus(kind,html){status.className='status '+kind;status.innerHTML=html}
+  function apply(direction){
+    const t=info(), step=clampStep(); lastDirection=direction; const raw=current+direction*step;
+    if(raw>t.max){
+      const wrapped=storedFor(raw,t); current=wrapped; render(raw);
+      if(t.signed) setStatus('bad',`<b>Overflow:</b> ${fmt(raw)} is greater than ${t.label} maximum ${fmt(t.max)}. In standard C++, signed overflow is <b>undefined behavior</b>. The counter shows the conceptual two's-complement result ${fmt(wrapped)} for teaching.`);
+      else setStatus('warn',`<b>Overflow:</b> ${fmt(raw)} exceeds the maximum ${fmt(t.max)}. Unsigned arithmetic wraps modulo 2<sup>${t.bits}</sup>, so the stored value becomes <b>${fmt(wrapped)}</b>.`);
+    } else if(raw<t.min){
+      const wrapped=storedFor(raw,t); current=wrapped; render(raw);
+      if(t.signed) setStatus('bad',`<b>Underflow:</b> ${fmt(raw)} is less than ${t.label} minimum ${fmt(t.min)}. In standard C++, signed overflow/underflow is <b>undefined behavior</b>. Conceptual two's-complement result: ${fmt(wrapped)}.`);
+      else setStatus('warn',`<b>Underflow:</b> ${fmt(raw)} is below the minimum 0. Unsigned arithmetic wraps modulo 2<sup>${t.bits}</sup>, so the stored value becomes <b>${fmt(wrapped)}</b>.`);
+    } else {
+      current=raw; render(raw); setStatus('good',`Value is still inside the valid range of <b>${t.label}</b>: ${fmt(t.min)} to ${fmt(t.max)}.`);
+    }
+  }
+  function stopAuto(){if(timer){clearInterval(timer);timer=null}}
+  function startAuto(dir){stopAuto();timer=setInterval(()=>apply(dir),550)}
+  function reset(){stopAuto();current=0n;lastDirection=1n;setStatus('', 'Choose a data type, then move the counter near MIN or MAX and step across the boundary.');render()}
+  function near(which){stopAuto();const t=info(), step=clampStep();current=which==='min'?t.min+step*2n:t.max-step*2n; if(current<t.min)current=t.min;if(current>t.max)current=t.max;render();setStatus('good',`Counter moved close to the <b>${which.toUpperCase()}</b> boundary. Now step ${which==='min'?'down':'up'} to cross the limit.`)}
+
+  $('minus').addEventListener('click',()=>apply(-1n)); $('plus').addEventListener('click',()=>apply(1n));
+  $('autoDown').addEventListener('click',()=>startAuto(-1n)); $('autoUp').addEventListener('click',()=>startAuto(1n)); $('stop').addEventListener('click',stopAuto);
+  $('nearMin').addEventListener('click',()=>near('min')); $('nearMax').addEventListener('click',()=>near('max')); $('reset').addEventListener('click',reset);
+  typeSelect.addEventListener('change',reset); stepSize.addEventListener('change',()=>{clampStep();render()});
+  document.addEventListener('keydown',e=>{if(['INPUT','SELECT','TEXTAREA'].includes((e.target.tagName||'').toUpperCase()))return;if(e.key==='ArrowUp'||e.key==='+'){e.preventDefault();apply(1n)}else if(e.key==='ArrowDown'||e.key==='-'){e.preventDefault();apply(-1n)}else if(e.key.toLowerCase()==='r'){reset()}else if(e.key==='Escape'){stopAuto()}});
+  render();
+})();
+</script>
+</body>
+</html>
