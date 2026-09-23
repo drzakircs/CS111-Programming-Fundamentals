@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="CS111 Programming Fundamentals course portal - Air University A&A Campus, Kamra" />
+  <title>CS111 | Programming Fundamentals</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div>
+        <p class="eyebrow">Air University Aerospace & Aviation Campus, Kamra</p>
+        <h1>CS111 — Programming Fundamentals</h1>
+        <p class="subtitle">Course Material Portal · Academic Year 2026–2027</p>
+      </div>
+      <div class="instructor-card">
+        <span>Instructor</span>
+        <strong>Dr. Zakir Khan</strong>
+        <small>Assistant Professor, Department of Computer Science</small>
+      </div>
+    </div>
+  </header>
+
+  <nav class="top-nav" aria-label="Primary navigation">
+    <div class="container nav-inner">
+      <a href="#overview">Course Sheet</a>
+      <a href="#clo">CLOs</a>
+      <a href="#assessment">Assessment</a>
+      <a href="#weekly-plan">Weekly Plan</a>
+      <a href="#material-viewer">Material Viewer</a>
+    </div>
+  </nav>
+
+  <main class="container page-shell">
+    <section class="hero-panel" id="overview">
+      <div>
+        <span class="badge">Course Sheet</span>
+        <h2>Learn programming by solving problems</h2>
+        <p>
+          The course progresses from programming foundations and logic to decisions, loops,
+          functions, arrays, searching/sorting, pointers, dynamic memory, STL vectors,
+          user-defined data types, file handling, and integrated applications.
+        </p>
+      </div>
+      <div class="quick-grid" aria-label="Course quick facts">
+        <div><span>Weeks</span><strong>15</strong></div>
+        <div><span>Sessions</span><strong>45</strong></div>
+        <div><span>Language</span><strong>C++</strong></div>
+        <div><span>Prerequisite</span><strong>None</strong></div>
+        <div><span>Quizzes</span><strong>4</strong></div>
+        <div><span>Assignments</span><strong>4</strong></div>
+      </div>
+    </section>
+
+    <section class="section" id="clo">
+      <div class="section-heading">
+        <span class="section-kicker">Course Sheet</span>
+        <h2>Course Learning Outcomes</h2>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>CLO</th><th>Outcome</th><th>Level</th><th>GA</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>CLO-01</td><td>Understand the fundamental concepts of programming.</td><td>C2</td><td>GA-02</td></tr>
+            <tr><td>CLO-02</td><td>Apply basic programming concepts using a programming language.</td><td>C3</td><td>GA-02</td></tr>
+            <tr><td>CLO-03</td><td>Develop programs for data processing and file handling.</td><td>C3</td><td>GA-03</td></tr>
+            <tr><td>CLO-04</td><td>Use user-defined data types to solve real-world computing problems.</td><td>C3</td><td>GA-04</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">CLO-04 includes Structure, Union, and Enum.</p>
+    </section>
+
+    <section class="section" id="assessment">
+      <div class="section-heading">
+        <span class="section-kicker">Course Sheet</span>
+        <h2>Assessment & Grading</h2>
+      </div>
+      <div class="assessment-grid">
+        <div class="assessment-card"><span>Quizzes</span><strong>15%</strong></div>
+        <div class="assessment-card"><span>Assignments</span><strong>15%</strong></div>
+        <div class="assessment-card"><span>Mid-Term</span><strong>25%</strong></div>
+        <div class="assessment-card"><span>Final</span><strong>45%</strong></div>
+      </div>
+    </section>
+
+    <section class="section" id="weekly-plan">
+      <div class="section-heading split-heading">
+        <div>
+          <span class="section-kicker">Teaching Plan</span>
+          <h2>15-Week Weekly Plan</h2>
+        </div>
+        <label class="search-box">
+          <span class="sr-only">Search weeks</span>
+          <input id="weekSearch" type="search" placeholder="Search topic, week, CLO…" />
+        </label>
+      </div>
+      <div id="weekGrid" class="week-grid" aria-live="polite"></div>
+    </section>
+
+    <section class="section" id="material-viewer">
+      <div class="section-heading">
+        <span class="section-kicker">HTML Material</span>
+        <h2>Embedded Material Viewer</h2>
+        <p class="section-intro">
+          Select any available week above. Its HTML file will open here without leaving the course portal.
+        </p>
+      </div>
+      <div class="viewer-toolbar">
+        <div>
+          <strong id="viewerTitle">No material selected</strong>
+          <span id="viewerPath">Choose a week from the plan.</span>
+        </div>
+        <a id="openNewTab" class="btn btn-secondary is-disabled" href="#" target="_blank" rel="noopener">Open in new tab</a>
+      </div>
+      <div class="iframe-shell">
+        <iframe id="materialFrame" title="CS111 weekly material" loading="lazy"></iframe>
+        <div id="viewerEmpty" class="viewer-empty">
+          <div class="empty-icon">&lt;/&gt;</div>
+          <p>Your HTML learning material will appear here.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>CS111 Programming Fundamentals</span>
+      <span>Dr. Zakir Khan · Air University A&A Campus, Kamra</span>
+    </div>
+  </footer>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

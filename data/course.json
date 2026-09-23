@@ -1,0 +1,184 @@
+{
+  "weeks": [
+    {
+      "week": 1,
+      "title": "Programming Foundations & Logic",
+      "sessions": [
+        "Course introduction and programming fundamentals",
+        "Logic building, algorithms and flowcharts",
+        "First C++ program and compilation"
+      ],
+      "clo": "CLO-01",
+      "assessment": "Orientation / reading activity",
+      "material": "materials/week-01.html"
+    },
+    {
+      "week": 2,
+      "title": "Data, Expressions & Debugging",
+      "sessions": [
+        "Variables, literals and data types",
+        "Operators and expressions",
+        "Type conversion, I/O and debugging"
+      ],
+      "clo": "CLO-01 / CLO-02",
+      "assessment": "Assignment 1 issued",
+      "material": "materials/week-02.html"
+    },
+    {
+      "week": 3,
+      "title": "Decision Making",
+      "sessions": [
+        "Relational operators and simple if",
+        "if/else, nested if and else-if",
+        "Logical operators, menus, validation and switch"
+      ],
+      "clo": "CLO-02",
+      "assessment": "Quiz 1",
+      "material": "materials/week-03.html"
+    },
+    {
+      "week": 4,
+      "title": "Loops & Iteration",
+      "sessions": [
+        "while loop and validation",
+        "do-while and for loops",
+        "Sentinels and nested loops"
+      ],
+      "clo": "CLO-02",
+      "assessment": "Assignment 1 due",
+      "material": "materials/week-04.html"
+    },
+    {
+      "week": 5,
+      "title": "Functions I",
+      "sessions": [
+        "Function definition and calls",
+        "Parameters and pass-by-value",
+        "Return values and menu-driven programs"
+      ],
+      "clo": "CLO-02",
+      "assessment": "Assignment 2 issued",
+      "material": "materials/week-05.html"
+    },
+    {
+      "week": 6,
+      "title": "Functions II & Recursion",
+      "sessions": [
+        "Scope, static and reference parameters",
+        "Overloading, inline functions and exit()",
+        "Recursion and recursive vs iterative solutions"
+      ],
+      "clo": "CLO-02",
+      "assessment": "Quiz 2",
+      "material": "materials/week-06.html"
+    },
+    {
+      "week": 7,
+      "title": "One-Dimensional Arrays",
+      "sessions": [
+        "Introduction to 1-D arrays",
+        "Processing array contents",
+        "Arrays as function arguments and safety"
+      ],
+      "clo": "CLO-02 / CLO-03",
+      "assessment": "Assignment 2 due",
+      "material": "materials/week-07.html"
+    },
+    {
+      "week": 8,
+      "title": "Multi-Dimensional Arrays & Mid Review",
+      "sessions": [
+        "Two-dimensional arrays",
+        "Matrix manipulation and 2-D functions",
+        "3-D arrays, parallel arrays and mid review"
+      ],
+      "clo": "CLO-01 / CLO-02 / CLO-03",
+      "assessment": "Protected mid-semester preparation",
+      "material": "materials/week-08.html"
+    },
+    {
+      "week": 9,
+      "title": "Searching & Sorting",
+      "sessions": [
+        "Linear search",
+        "Binary search",
+        "Bubble sort and insertion sort"
+      ],
+      "clo": "CLO-03",
+      "assessment": "Assignment 3 issued",
+      "material": "materials/week-09.html"
+    },
+    {
+      "week": 10,
+      "title": "Pointers",
+      "sessions": [
+        "Pointer fundamentals",
+        "Arrays and pointers",
+        "Pointers as function parameters"
+      ],
+      "clo": "CLO-02 / CLO-03",
+      "assessment": "Quiz 3",
+      "material": "materials/week-10.html"
+    },
+    {
+      "week": 11,
+      "title": "Dynamic Memory & Vector Introduction",
+      "sessions": [
+        "Dynamic memory allocation",
+        "Dynamic arrays",
+        "Introduction to STL vector"
+      ],
+      "clo": "CLO-03",
+      "assessment": "Assignment 3 due",
+      "material": "materials/week-11.html"
+    },
+    {
+      "week": 12,
+      "title": "Vectors & Structures",
+      "sessions": [
+        "Vector operations and problem solving",
+        "Introduction to structures",
+        "Arrays / nested structures and enum"
+      ],
+      "clo": "CLO-03 / CLO-04",
+      "assessment": "Assignment 4 issued",
+      "material": "materials/week-12.html"
+    },
+    {
+      "week": 13,
+      "title": "Structures, Unions & File Handling Intro",
+      "sessions": [
+        "Structures with functions",
+        "Pointers to structures and unions",
+        "Introduction to file handling"
+      ],
+      "clo": "CLO-03 / CLO-04",
+      "assessment": "Quiz 4",
+      "material": "materials/week-13.html"
+    },
+    {
+      "week": 14,
+      "title": "File Handling & Persistent Records",
+      "sessions": [
+        "Reading and writing text files",
+        "Advanced file operations",
+        "Files with arrays, vectors and structures"
+      ],
+      "clo": "CLO-03 / CLO-04",
+      "assessment": "Assignment 4 due",
+      "material": "materials/week-14.html"
+    },
+    {
+      "week": 15,
+      "title": "Integration, Debugging & Final Review",
+      "sessions": [
+        "Integrated application",
+        "Problem solving and debugging",
+        "Comprehensive review and final preparation"
+      ],
+      "clo": "CLO-01–04",
+      "assessment": "No continuous assessment",
+      "material": "materials/week-15.html"
+    }
+  ]
+}
