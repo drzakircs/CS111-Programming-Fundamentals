@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CS111 Programming Fundamentals — Week 3 Interactive Lecture</title>
+<style>
+:root{
+  --au:#0b3a6e; --au2:#0ea5e9; --ink:#122033; --muted:#5b7087; --paper:#f7fbff;
+  --card:#fff; --line:#d6e4ef; --green:#16845f; --red:#b84444; --amber:#b87500;
+  --s1:#0b78b8; --s2:#6d50c6; --s3:#14856b; --shadow:0 18px 50px rgba(13,51,84,.16);
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;font-family:Inter,Segoe UI,Arial,sans-serif;background:#dfeaf2;color:var(--ink);overflow:hidden}
+button,input,select{font:inherit}
+button{cursor:pointer}
+#shell{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;padding:12px;background:radial-gradient(circle at 10% 10%,rgba(14,165,233,.14),transparent 28%),radial-gradient(circle at 90% 90%,rgba(11,58,110,.14),transparent 30%),#e5eef5}
+#stage{position:relative;width:min(calc(100vw - 24px),calc((100vh - 24px)*16/9));height:min(calc(100vh - 24px),calc((100vw - 24px)*9/16));background:var(--paper);box-shadow:var(--shadow);overflow:hidden;border:1px solid #bfd3e0;outline:none}
+.slide{position:absolute;inset:0;padding:42px 58px 62px;display:none;background:linear-gradient(90deg,rgba(11,58,110,.025) 1px,transparent 1px),linear-gradient(rgba(11,58,110,.025) 1px,transparent 1px),var(--paper);background-size:36px 36px;overflow:hidden}
+.slide.active{display:flex;flex-direction:column}
+.slide::before{content:"";position:absolute;left:0;right:0;top:0;height:9px;background:linear-gradient(90deg,var(--au2),var(--au))}
+.slide[data-session="2"]::before{background:linear-gradient(90deg,#b196ff,var(--s2))}.slide[data-session="3"]::before{background:linear-gradient(90deg,#66d9b4,var(--s3))}
+.dark{background:radial-gradient(circle at 78% 18%,rgba(61,196,242,.20),transparent 28%),linear-gradient(135deg,#06223c,#0b3a63 72%,#0a4f78);color:white}.s2dark{background:radial-gradient(circle at 80% 18%,rgba(170,144,255,.18),transparent 30%),linear-gradient(135deg,#241b49,#4a378c 75%,#5b45a7);color:white}.s3dark{background:radial-gradient(circle at 80% 18%,rgba(91,224,181,.18),transparent 30%),linear-gradient(135deg,#0a3228,#126049 75%,#167357);color:white}
+.center{align-items:center;justify-content:center;text-align:center}
+.kicker{font-size:clamp(24px,1.35vw,28px);font-weight:950;letter-spacing:.08em;text-transform:uppercase;color:var(--s1);margin-bottom:10px}.slide[data-session="2"] .kicker{color:var(--s2)}.slide[data-session="3"] .kicker{color:var(--s3)}.dark .kicker,.s2dark .kicker,.s3dark .kicker{color:#a7e7ff}.s2dark .kicker{color:#d9cdff}.s3dark .kicker{color:#c0f3e2}
+h1,h2,h3,p{margin-top:0}h1{font-size:clamp(52px,4.45vw,82px);line-height:1.02;letter-spacing:-.035em;margin-bottom:20px}h2{font-size:clamp(40px,3.15vw,60px);line-height:1.08;letter-spacing:-.025em;margin-bottom:22px;color:#082a46}.dark h2,.s2dark h2,.s3dark h2{color:white}h3{font-size:clamp(29px,1.9vw,38px);line-height:1.15;margin-bottom:10px;color:#082a46}.dark h3,.s2dark h3,.s3dark h3{color:white}
+p,li,.body{font-size:clamp(25px,1.55vw,31px);line-height:1.30}.small{font-size:clamp(22px,1.2vw,25px);line-height:1.32}.tiny{font-size:clamp(18px,1vw,21px)}.lead{font-size:clamp(32px,2.35vw,45px);line-height:1.25}.muted{color:var(--muted)}.dark .muted,.s2dark .muted,.s3dark .muted{color:#d6e4ef}.accent{color:var(--au2)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;min-height:0}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;min-height:0}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;min-height:0}.split{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:stretch;min-height:0}.splitwide{display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:stretch;min-height:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 22px;box-shadow:0 8px 24px rgba(17,55,85,.08);min-width:0}.dark .card,.s2dark .card,.s3dark .card{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.18);box-shadow:none}.card p,.card li{font-size:clamp(23px,1.38vw,28px);line-height:1.28}.card.center{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}.icon{font-size:clamp(42px,3.2vw,62px);line-height:1;margin-bottom:10px}.pill{display:inline-flex;align-items:center;gap:8px;padding:9px 15px;border-radius:999px;background:#e7f6fc;border:1px solid #b9e5f5;font-size:clamp(21px,1.18vw,25px);font-weight:850;color:#082a46}.dark .pill,.s2dark .pill,.s3dark .pill{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.2);color:white}.highlight{border-left:8px solid var(--au2);background:#edf9fe;border-radius:12px;padding:17px 20px}.slide[data-session="2"] .highlight{border-color:#9f84ec;background:#f3f0ff}.slide[data-session="3"] .highlight{border-color:#56c99f;background:#eefaf6}.dark .highlight,.s2dark .highlight,.s3dark .highlight{background:rgba(255,255,255,.08)}
+.clean{margin:0;padding-left:1.15em}.clean li{margin:.22em 0}
+.code{font-family:Cascadia Code,Consolas,monospace;background:#071825;color:#ecf8ff;border-radius:16px;padding:19px 22px;font-size:clamp(23px,1.35vw,29px);line-height:1.42;white-space:pre-wrap}.code .kw{color:#6ee7ff}.code .num{color:#fbd38d}.code .str{color:#9ae6b4}.code .comment{color:#8aa2b7}.code-line{display:block;padding:2px 8px;border-radius:7px}.code-line.active{background:rgba(14,165,233,.22)}
+.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:18px;align-items:stretch}.step{position:relative;background:white;border:2px solid var(--line);border-radius:17px;padding:20px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:175px}.step:not(:last-child)::after{content:"→";position:absolute;right:-28px;top:50%;transform:translateY(-50%);font-size:38px;color:var(--au2);font-weight:950}.step b{font-size:clamp(26px,1.55vw,32px);color:#082a46}.step span{font-size:clamp(21px,1.18vw,25px);color:var(--muted);margin-top:8px;line-height:1.23}
+.qwrap{perspective:1200px;min-height:250px}.qcard{width:100%;height:100%;min-height:250px;position:relative;transform-style:preserve-3d;transition:transform .55s ease;cursor:pointer;outline:none}.qcard.flipped{transform:rotateY(180deg)}.qface{position:absolute;inset:0;backface-visibility:hidden;border-radius:20px;padding:26px 28px;display:flex;flex-direction:column;justify-content:center;border:2px solid #f1c46e;background:linear-gradient(135deg,#fffdf4,#fff6d8);box-shadow:0 12px 26px rgba(118,83,10,.12)}.qback{transform:rotateY(180deg);border-color:#75cda9;background:linear-gradient(135deg,#f3fff9,#e2f9ef)}.qlabel{font-size:clamp(20px,1.12vw,24px);font-weight:950;letter-spacing:.08em;text-transform:uppercase;color:#986000;margin-bottom:10px}.qback .qlabel{color:#126948}.qtext{font-size:clamp(31px,2.05vw,42px);line-height:1.2;font-weight:850;color:#082a46}.ans{font-size:clamp(26px,1.55vw,32px);line-height:1.28}.flipcue{position:absolute;right:18px;bottom:12px;font-size:24px;font-weight:950;color:#8e6b15;opacity:.75}.qback .flipcue{color:#167152}.single-question .qwrap{min-height:390px;flex:1}.single-question .qcard{min-height:390px}.single-question .qtext{font-size:clamp(40px,2.8vw,54px)}.single-question .ans{font-size:clamp(31px,1.95vw,39px)}
+.demo-controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.action{border:1px solid #b8d2e2;background:white;color:#082a46;border-radius:10px;padding:10px 15px;font-size:clamp(22px,1.22vw,26px);font-weight:850}.action.primary{background:#0b3a6e;color:white;border-color:#0b3a6e}.action.s2{background:var(--s2);color:white;border-color:var(--s2)}.action.s3{background:var(--s3);color:white;border-color:var(--s3)}.action.warn{background:#b87500;color:white;border-color:#b87500}.status{margin-top:14px;padding:13px 15px;border-radius:12px;background:#edf5fa;border:1px dashed #b8d0df;font-size:clamp(22px,1.2vw,27px);min-height:60px;line-height:1.27}
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.choice{min-height:92px;border:2px solid #cbdde9;border-radius:15px;background:white;color:var(--ink);padding:14px 16px;text-align:left;font-size:clamp(22px,1.25vw,27px);font-weight:800;line-height:1.18}.choice.ok{background:#e9f8f1;border-color:#4eb286}.choice.bad{background:#fff0f0;border-color:#d98080}.choice.neutral{background:#f8fafc;border-color:#95c7e9}
+.truth{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.truth .cell{padding:14px;border-radius:12px;background:#fff;border:2px solid #dbe6ef;text-align:center;font-size:clamp(20px,1.15vw,24px);font-weight:850}.truth .head{background:#0b3a6e;color:white;border-color:#0b3a6e}.truth .yes{background:#e9f8f1;border-color:#4eb286;color:#176f51}.truth .no{background:#fff0f0;border-color:#d98080;color:#a12f2f}
+.tracebox{display:grid;grid-template-columns:1fr 1fr;gap:16px}.varbox{border:3px solid #b8d2e2;border-radius:18px;background:#fff;min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}.varbox b{font-size:clamp(30px,2vw,40px);color:#082a46}.varbox span{font-size:clamp(25px,1.5vw,32px);color:#0b78b8;font-weight:950;margin-top:8px}.decision-diamond{width:220px;height:220px;background:#fff;border:3px solid #0ea5e9;transform:rotate(45deg);margin:32px auto;display:grid;place-items:center}.decision-diamond span{transform:rotate(-45deg);font-size:clamp(22px,1.3vw,27px);font-weight:900;text-align:center;color:#082a46}
+.inputrow{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.inputrow input,.inputrow select{padding:10px 12px;border:2px solid #cbdde9;border-radius:12px;background:white;color:#0f172a;font-size:clamp(20px,1.15vw,24px);width:150px}.small-input{width:110px!important}.menu-box{display:grid;grid-template-columns:1fr 1fr;gap:12px}.menu-item{border:2px solid #cbdde9;border-radius:14px;padding:16px;background:white;text-align:left;font-size:clamp(22px,1.25vw,27px);font-weight:850}.menu-item.selected{border-color:#14856b;background:#eefaf6}.badge{display:inline-block;margin-top:8px;border-radius:999px;padding:6px 11px;background:#e8f8ff;border:1px solid #b9e9fb;color:#0b4773;font-size:clamp(18px,1vw,22px);font-weight:850}
+.footer{position:absolute;left:58px;right:58px;bottom:18px;display:flex;justify-content:space-between;align-items:center;font-size:15px;color:#6e8191}.dark .footer,.s2dark .footer,.s3dark .footer{color:#d2e1ec}.counter{font-variant-numeric:tabular-nums}.time{font-variant-numeric:tabular-nums;font-weight:800;color:#455d74}.dark .time,.s2dark .time,.s3dark .time{color:#d6e8f5}.note{position:absolute;left:58px;right:58px;bottom:52px;padding:10px 13px;border-radius:11px;background:#fff5c7;border:1px solid #e7cb66;color:#4d3b00;font-size:18px;display:none;z-index:15}.note.show{display:block}.dark .note,.s2dark .note,.s3dark .note{background:rgba(255,227,125,.16);border-color:rgba(255,227,125,.42);color:#fff3c3}.progress{position:fixed;bottom:0;left:0;right:0;height:6px;background:rgba(6,42,70,.12);z-index:45}.progress>div{height:100%;background:linear-gradient(90deg,var(--au2),var(--au));width:0;transition:width .2s}.overlay{position:fixed;inset:0;z-index:80;background:rgba(4,20,34,.95);display:none;overflow:auto;padding:34px}.overlay.open{display:block}.overlay-inner{max-width:1250px;margin:auto;color:white}.overlay h2{color:white}.ovgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.ov{border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);color:white;padding:14px;border-radius:13px;text-align:left;min-height:82px}.ov small{display:block;color:#94ddf5;margin-bottom:4px}.close{float:right;border:0;background:white;color:#082a46;border-radius:9px;padding:8px 12px;font-weight:900}.helpbox{background:white;color:var(--ink);border-radius:18px;padding:26px;max-width:780px;margin:60px auto}.helpbox h2{color:#082a46}.helpgrid{display:grid;grid-template-columns:150px 1fr;gap:12px 18px;font-size:22px}kbd{background:#edf4f8;border:1px solid #b7cad7;border-bottom-width:3px;border-radius:6px;padding:3px 8px;font-weight:850}.timerpanel{position:fixed;right:20px;top:20px;z-index:70;background:white;border:1px solid #bed3e0;border-radius:14px;padding:15px;width:280px;box-shadow:0 10px 30px rgba(16,51,78,.18);display:none}.timerpanel.open{display:block}.timerdigits{font-size:42px;font-weight:950;color:#082a46;text-align:center;font-variant-numeric:tabular-nums;margin:8px 0}.timerbtns{display:flex;gap:7px;flex-wrap:wrap;justify-content:center}.timerbtns button{border:1px solid #bfd2df;background:#f5fafc;border-radius:8px;padding:7px 10px;font-weight:800;color:#082a46}
+.reveal-step{opacity:0;transform:translateY(18px) scale(.985);pointer-events:none;visibility:hidden}.reveal-step.revealed{visibility:visible;pointer-events:auto;animation:softPop .38s cubic-bezier(.2,.8,.2,1) both}@keyframes softPop{0%{opacity:0;transform:translateY(18px) scale(.985)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@media(max-width:1100px){#shell{padding:0}#stage{width:100vw;height:100vh;max-width:none;max-height:none}.slide{padding:32px 34px 56px;overflow:auto}.grid3,.grid4,.grid2,.split,.splitwide{grid-template-columns:1fr}.flow{grid-template-columns:1fr}.step:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-30px;transform:translateX(-50%)}.footer{left:34px;right:34px}.note{left:34px;right:34px}.ovgrid{grid-template-columns:repeat(2,1fr)}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}.reveal-step{transform:none}}
+</style>
+</head>
+<body>
+<div id="shell"><main id="stage" tabindex="0">
+<section class="slide dark center" data-session="0" data-title="Week 3 Welcome">
+  <div class="kicker">CS111 · Programming Fundamentals</div>
+  <h1>Week 3</h1>
+  <p class="lead"><b>Making Decisions in C++</b></p>
+  <p class="lead muted"><b>Relational Operators · if/else · Nested Conditions · Logical Operators · switch</b></p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:18px"><span class="pill">CLO-02</span><span class="pill">Live Tracing</span><span class="pill">Cyber Security Context</span></div>
+  <p class="small muted" style="margin-top:22px"><b>Dr. Zakir Khan</b><br/>Assistant Professor · Department of Computer Science<br/>Air University Aerospace &amp; Aviation Campus, Kamra</p>
+  <div class="note">Opening cue: Begin with the idea that programs become useful when they can choose different paths based on data.</div>
+</section>
+<section class="slide" data-session="0" data-title="Week 3 Map">
+  <div class="kicker">Three-session roadmap</div><h2>From yes/no decisions to complete decision systems</h2>
+  <div class="grid3">
+    <div class="card"><div class="icon">⚖️</div><h3>Session 7</h3><p><b>Relational Operators &amp; Simple if</b></p><p>Boolean expressions, relational operators, decision flow, and basic conditions.</p></div>
+    <div class="card"><div class="icon">🔀</div><h3>Session 8</h3><p><b>if/else, Nested if &amp; else-if</b></p><p>Two-way decisions, multi-branch logic, and dangling else.</p></div>
+    <div class="card"><div class="icon">🧭</div><h3>Session 9</h3><p><b>Advanced Decision Making</b></p><p>Flags, logical operators, ranges, menus, validation, conditional operator, and switch.</p></div>
+  </div>
+  <div class="highlight" style="margin-top:18px"><p style="margin:0"><b>Week 3 goal:</b> Students should read a decision-based program, trace the condition, identify the executed branch, and explain why.</p></div>
+</section>
+<section class="slide single-question" data-session="0" data-title="Bridge from Week 2">
+  <div class="kicker">Bridge from Week 2</div><h2>Data is useful only when the program can reason about it</h2>
+  <div class="qwrap"><div class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Ask Students</div><div class="qtext">Last week we stored values in variables. What should a program do when different values require different actions?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Suggested Answer</div><div class="ans">The program must <b>make a decision</b>. It evaluates a condition and then executes the appropriate branch.</div><span class="flipcue">↻</span></div></div></div>
+</section>
+<section class="slide dark center" data-session="1" data-title="Session 7 Start">
+  <div class="kicker">Session 7</div><h1>Relational Operators &amp; Simple if</h1>
+  <div class="grid3" style="width:100%;margin-top:14px">
+    <div class="card"><div class="icon">❓</div><h3>Question</h3><p>Can the program test a condition?</p></div>
+    <div class="card"><div class="icon">✅</div><h3>Boolean Result</h3><p>Every condition becomes true or false.</p></div>
+    <div class="card"><div class="icon">▶️</div><h3>Branch</h3><p>The program runs selected statements.</p></div>
+  </div>
+</section>
+<section class="slide" data-session="1" data-title="Why Decisions Matter">
+  <div class="kicker">Concept first</div><h2>A program sometimes needs to choose a path</h2>
+  <div class="split">
+    <div class="card"><h3>Real-life analogy</h3><p>At a security checkpoint, entry depends on a rule:</p><div class="highlight"><p style="margin:0"><b>If</b> ID is valid → allow entry<br/><b>Otherwise</b> → deny entry</p></div></div>
+    <div class="card"><h3>Programming idea</h3><p>A program evaluates a <b>condition</b>. Based on the result, it decides which statement or block to execute.</p><div class="code">if (condition) {
+    // execute when condition is true
+}</div></div>
+  </div>
+</section>
+<section class="slide" data-session="1" data-title="Decision Flow Visual">
+  <div class="kicker">Decision flow</div><h2>Condition → true/false → executed path</h2>
+  <div class="flow" style="grid-template-columns:repeat(4,1fr)">
+    <div class="step"><div class="icon">📥</div><b>Input</b><span>marks = 72</span></div>
+    <div class="step"><div class="icon">❓</div><b>Condition</b><span>marks ≥ 50?</span></div>
+    <div class="step"><div class="icon">✅</div><b>Result</b><span>true</span></div>
+    <div class="step"><div class="icon">📤</div><b>Action</b><span>Print Pass</span></div>
+  </div>
+  <div class="note">Emphasize that a condition is not a command; it is a question the computer can answer as true or false.</div>
+</section>
+<section class="slide" data-session="1" data-title="Boolean Expressions">
+  <div class="kicker">Boolean expressions</div><h2>A condition produces a Boolean result</h2>
+  <div class="grid3">
+    <div class="card center"><div class="icon">✅</div><h3>true</h3><p>The condition is satisfied.</p></div>
+    <div class="card center"><div class="icon">❌</div><h3>false</h3><p>The condition is not satisfied.</p></div>
+    <div class="card"><h3>Example</h3><div class="code">int attempts = 2;
+attempts &lt; 3</div><p>This expression evaluates to <b>true</b>.</p></div>
+  </div>
+</section>
+<section class="slide" data-session="1" data-title="Relational Operators">
+  <div class="kicker">Relational operators</div><h2>Operators used to compare values</h2>
+  <div class="grid3">
+    <div class="card center"><h3>&lt;</h3><p>less than</p></div><div class="card center"><h3>&lt;=</h3><p>less than or equal</p></div><div class="card center"><h3>&gt;</h3><p>greater than</p></div>
+    <div class="card center"><h3>&gt;=</h3><p>greater than or equal</p></div><div class="card center"><h3>==</h3><p>equal to</p></div><div class="card center"><h3>!=</h3><p>not equal to</p></div>
+  </div>
+</section>
+<section class="slide single-question" data-session="1" data-title="Assignment vs Equality">
+  <div class="kicker">Common beginner mistake</div><h2>= and == are not the same</h2>
+  <div class="qwrap"><div class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Predict</div><div class="qtext">Which one checks whether x is equal to 10?<br/><br/><span style="font-family:Consolas">x = 10</span> &nbsp; or &nbsp; <span style="font-family:Consolas">x == 10</span></div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans"><b>x == 10</b> checks equality.<br/><br/><b>x = 10</b> assigns 10 to x. In C++, using assignment inside a condition can cause serious logic errors.</div><span class="flipcue">↻</span></div></div></div>
+</section>
+<section class="slide" data-session="1" data-title="Relational Evaluator">
+  <div class="kicker">Interactive evaluator</div><h2>Evaluate a relational expression</h2>
+  <div class="split">
+    <div class="card">
+      <h3>Try values</h3>
+      <div class="inputrow"><label>left</label><input id="relA" type="number" value="7" class="small-input"/><select id="relOp"><option>&lt;</option><option>&lt;=</option><option selected>&gt;</option><option>&gt;=</option><option>==</option><option>!=</option></select><label>right</label><input id="relB" type="number" value="3" class="small-input"/></div>
+      <div class="demo-controls"><button class="action primary" id="relEval">Evaluate</button></div><div class="status" id="relStatus">Press Evaluate.</div>
+    </div>
+    <div class="card"><h3>Teaching point</h3><p>The computer does not “guess”. It compares exact values using the chosen operator and returns <b>true</b> or <b>false</b>.</p><div class="highlight"><p style="margin:0">Conditions are the foundation of decision making.</p></div></div>
+  </div>
+</section>
+<section class="slide" data-session="1" data-title="Simple if Syntax">
+  <div class="kicker">C++ syntax</div><h2>The simple if statement</h2>
+  <div class="splitwide">
+    <div class="code"><span class="kw">if</span> (condition) {
+    statement1;
+    statement2;
+}</div>
+    <div class="card"><h3>Meaning</h3><ul class="clean"><li>Evaluate the condition.</li><li>If true, execute the block.</li><li>If false, skip the block.</li><li>Then continue with the next statement.</li></ul></div>
+  </div>
+</section>
+<section class="slide" data-session="1" data-title="if Trace">
+  <div class="kicker">Interactive trace</div><h2>Trace a simple if statement</h2>
+  <div class="split">
+    <div class="code" id="ifCode"><span class="code-line">int marks = 72;</span><span class="code-line">if (marks &gt;= 50) {</span><span class="code-line">    cout &lt;&lt; "Pass";</span><span class="code-line">}</span><span class="code-line">cout &lt;&lt; "Done";</span></div>
+    <div class="card"><h3>Execution state</h3><div class="tracebox"><div class="varbox"><b>marks</b><span id="ifVar">?</span></div><div class="varbox"><b>Output</b><span id="ifOut">—</span></div></div><div class="demo-controls"><button class="action primary" id="ifNext">Next Step</button><button class="action" id="ifReset">Reset</button></div><div class="status" id="ifStatus">Start tracing.</div></div>
+  </div>
+</section>
+<section class="slide single-question" data-session="1" data-title="Simple if Prediction">
+  <div class="kicker">Predict the output</div><h2>What will be printed?</h2>
+  <div class="qwrap"><div class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Predict</div><div class="qtext"><span style="font-family:Consolas">int attempts = 4;<br/>if (attempts &lt; 3)<br/>&nbsp;&nbsp;cout &lt;&lt; "Allowed";<br/>cout &lt;&lt; "Checked";</span></div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans"><b>Checked</b><br/><br/>The condition <span style="font-family:Consolas">4 &lt; 3</span> is false, so <span style="font-family:Consolas">Allowed</span> is skipped. The final cout is outside the if and always executes.</div><span class="flipcue">↻</span></div></div></div>
+</section>
+<section class="slide" data-session="1" data-title="Braces Matter">
+  <div class="kicker">Error-based learning</div><h2>Without braces, only one statement belongs to if</h2>
+  <div class="grid2">
+    <div class="card"><h3>Risky style</h3><div class="code">if (isAdmin)
+    cout &lt;&lt; "Access granted";
+    cout &lt;&lt; "Log entry";</div><p>Only the first cout is controlled by the if.</p></div>
+    <div class="card"><h3>Safer style</h3><div class="code">if (isAdmin) {
+    cout &lt;&lt; "Access granted";
+    cout &lt;&lt; "Log entry";
+}</div><p>Both statements are part of the block.</p></div>
+  </div>
+</section>
+<section class="slide" data-session="1" data-title="Cyber Example Simple if">
+  <div class="kicker">Cyber security context</div><h2>Password length validation</h2>
+  <div class="splitwide">
+    <div class="code">int length = 6;
+
+if (length &lt; 8) {
+    cout &lt;&lt; "Weak password";
+}</div>
+    <div class="card"><h3>Concept</h3><p>This is a simple decision: one condition is tested, and one action is performed only when the condition is true.</p><div class="badge">Beginner-level input validation</div></div>
+  </div>
+</section>
+<section class="slide" data-session="1" data-title="Session 7 Checkpoint">
+  <div class="kicker">Session 7 checkpoint</div><h2>Can students explain the decision?</h2>
+  <div class="grid2">
+    <div class="qwrap"><div class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Q1</div><div class="qtext">What does a Boolean expression produce?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans">It produces either <b>true</b> or <b>false</b>.</div><span class="flipcue">↻</span></div></div></div>
+    <div class="qwrap"><div class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Q2</div><div class="qtext">Which operator checks equality in C++?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans"><b>==</b> checks equality. <b>=</b> performs assignment.</div><span class="flipcue">↻</span></div></div></div>
+  </div>
+</section>
+<section class="slide s2dark center" data-session="2" data-title="Session 8 Start">
+  <div class="kicker">Session 8</div><h1>if/else, Nested if &amp; else-if</h1>
+  <div class="grid3" style="width:100%;margin-top:14px"><div class="card"><div class="icon">↔️</div><h3>Two-way choice</h3><p>if/else</p></div><div class="card"><div class="icon">🪜</div><h3>Multiple choices</h3><p>else-if ladder</p></div><div class="card"><div class="icon">🧩</div><h3>Layered checks</h3><p>nested if</p></div></div>
+</section>
+<section class="slide" data-session="2" data-title="if/else Concept">
+  <div class="kicker">Two-way decisions</div><h2>Sometimes both outcomes need a defined action</h2>
+  <div class="splitwide">
+    <div class="code">if (marks &gt;= 50) {
+    cout &lt;&lt; "Pass";
+} else {
+    cout &lt;&lt; "Fail";
+}</div>
+    <div class="card"><h3>Meaning</h3><p>If the condition is true, execute the if block. Otherwise, execute the else block.</p><div class="highlight"><p style="margin:0">Exactly one of the two branches executes.</p></div></div>
+  </div>
+</section>
+<section class="slide" data-session="2" data-title="if/else Flow">
+  <div class="kicker">Control flow</div><h2>One condition · two possible paths</h2>
+  <div class="flow" style="grid-template-columns:repeat(4,1fr)"><div class="step"><b>Input</b><span>marks</span></div><div class="step"><b>Decision</b><span>marks ≥ 50?</span></div><div class="step"><b>True</b><span>Pass branch</span></div><div class="step"><b>False</b><span>Fail branch</span></div></div>
+</section>
+<section class="slide single-question" data-session="2" data-title="Branch Prediction">
+  <div class="kicker">Which branch executes?</div><h2>Predict before revealing</h2>
+  <div class="qwrap"><div class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Predict</div><div class="qtext"><span style="font-family:Consolas">int pin = 1234;<br/>if (pin == 1111)<br/>&nbsp;&nbsp;cout &lt;&lt; "Access";<br/>else<br/>&nbsp;&nbsp;cout &lt;&lt; "Denied";</span></div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans"><b>Denied</b><br/>The condition <span style="font-family:Consolas">1234 == 1111</span> is false, so the else branch executes.</div><span class="flipcue">↻</span></div></div></div>
+</section>
+<section class="slide" data-session="2" data-title="else-if Ladder">
+  <div class="kicker">Multi-branch logic</div><h2>else-if checks conditions in order</h2>
+  <div class="splitwide"><div class="code">if (marks &gt;= 85) {
+    grade = 'A';
+} else if (marks &gt;= 70) {
+    grade = 'B';
+} else if (marks &gt;= 50) {
+    grade = 'C';
+} else {
+    grade = 'F';
+}</div><div class="card"><h3>Important rule</h3><p>Once a true condition is found, its block executes and the remaining conditions are skipped.</p><div class="badge">Order matters</div></div></div>
+</section>
+<section class="slide" data-session="2" data-title="Grade Ladder Demo">
+  <div class="kicker">Interactive ladder</div><h2>Trace an else-if ladder</h2>
+  <div class="split"><div class="card"><h3>Enter marks</h3><div class="inputrow"><input id="gradeMarks" type="number" value="72" min="0" max="100"/><button class="action s2" id="gradeRun">Run Ladder</button></div><div class="status" id="gradeStatus">Run the ladder to see which condition is first true.</div></div><div class="card"><h3>Decision checks</h3><div id="gradeChecks" class="choice-grid"><button class="choice neutral">marks ≥ 85</button><button class="choice neutral">marks ≥ 70</button><button class="choice neutral">marks ≥ 50</button><button class="choice neutral">else</button></div></div></div>
+</section>
+<section class="slide" data-session="2" data-title="Nested if Concept">
+  <div class="kicker">Nested decisions</div><h2>Some decisions happen only after another decision succeeds</h2>
+  <div class="splitwide"><div class="code">if (usernameOK) {
+    if (passwordOK) {
+        cout &lt;&lt; "Login allowed";
+    } else {
+        cout &lt;&lt; "Wrong password";
+    }
+} else {
+    cout &lt;&lt; "Unknown user";
+}</div><div class="card"><h3>Meaning</h3><p>A nested if places one decision inside another. It is useful for multi-stage checks.</p><div class="badge">Login verification example</div></div></div>
+</section>
+<section class="slide" data-session="2" data-title="Access Control Trace">
+  <div class="kicker">Interactive trace</div><h2>Multi-stage login decision</h2>
+  <div class="split"><div class="card"><h3>Choose input state</h3><div class="inputrow"><select id="userOK"><option value="true" selected>username OK</option><option value="false">username wrong</option></select><select id="passOK"><option value="true">password OK</option><option value="false" selected>password wrong</option></select></div><div class="demo-controls"><button class="action s2" id="loginNext">Next Step</button><button class="action" id="loginReset">Reset</button></div><div class="status" id="loginStatus">Start the trace.</div></div><div class="card"><h3>Current decision</h3><div class="decision-diamond"><span id="loginDecision">Start</span></div><p class="lead" id="loginOutput" style="text-align:center;margin:0">Output: —</p></div></div>
+</section>
+<section class="slide" data-session="2" data-title="Dangling else">
+  <div class="kicker">Common confusion</div><h2>Dangling else attaches to the nearest unmatched if</h2>
+  <div class="grid2"><div class="card"><h3>Ambiguous-looking code</h3><div class="code">if (a)
+    if (b)
+        cout &lt;&lt; "X";
+    else
+        cout &lt;&lt; "Y";</div></div><div class="card"><h3>How C++ reads it</h3><div class="code">if (a) {
+    if (b) {
+        cout &lt;&lt; "X";
+    } else {
+        cout &lt;&lt; "Y";
+    }
+}</div></div></div>
+</section>
+<section class="slide single-question" data-session="2" data-title="Dangling else Question">
+  <div class="kicker">Predict</div><h2>Which if does the else belong to?</h2>
+  <div class="qwrap"><div class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Ask Students</div><div class="qtext">In nested if statements without braces, an else is matched with which if?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans">It is matched with the <b>nearest unmatched if</b>. To avoid confusion, use braces and indentation clearly.</div><span class="flipcue">↻</span></div></div></div>
+</section>
+<section class="slide" data-session="2" data-title="Comparing Approaches">
+  <div class="kicker">Design choice</div><h2>Nested if vs else-if ladder</h2>
+  <div class="grid2"><div class="card"><h3>Use nested if when...</h3><ul class="clean"><li>Checks are dependent.</li><li>Later checks matter only if earlier checks pass.</li><li>Example: username → password → 2FA.</li></ul></div><div class="card"><h3>Use else-if when...</h3><ul class="clean"><li>Choices are alternatives.</li><li>Only one category should be selected.</li><li>Example: grade A/B/C/F.</li></ul></div></div>
+</section>
+<section class="slide" data-session="2" data-title="Find the Logic Error">
+  <div class="kicker">Error-based learning</div><h2>Find the error in range classification</h2>
+  <div class="splitwide"><div class="code">if (marks &gt;= 50) {
+    cout &lt;&lt; "Pass";
+} else if (marks &gt;= 85) {
+    cout &lt;&lt; "Excellent";
+}</div><div class="card"><h3>Question</h3><p>Why will “Excellent” never print?</p><div class="qwrap" style="min-height:190px"><div class="qcard" tabindex="0" style="min-height:190px"><div class="qface"><div class="qlabel">Reason?</div><div class="qtext" style="font-size:30px">Think about condition order.</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans">Any mark ≥ 85 is also ≥ 50, so the first branch captures it. Check the stricter condition first.</div><span class="flipcue">↻</span></div></div></div></div></div>
+</section>
+<section class="slide" data-session="2" data-title="Session 8 Checkpoint">
+  <div class="kicker">Session 8 checkpoint</div><h2>Can students choose the right structure?</h2>
+  <div class="grid2"><div class="qwrap"><div class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Q1</div><div class="qtext">When should we use if/else?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans">When there are two alternative paths and exactly one should execute.</div><span class="flipcue">↻</span></div></div></div><div class="qwrap"><div class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Q2</div><div class="qtext">Why are braces recommended?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans">They clearly define the block and prevent logic errors, especially in nested decisions.</div><span class="flipcue">↻</span></div></div></div></div>
+</section>
+<section class="slide s3dark center" data-session="3" data-title="Session 9 Start">
+  <div class="kicker">Session 9</div><h1>Advanced Decision Making</h1>
+  <div class="grid3" style="width:100%;margin-top:14px"><div class="card"><div class="icon">🚩</div><h3>Flags</h3><p>Store decision state</p></div><div class="card"><div class="icon">🔗</div><h3>Logical operators</h3><p>Combine conditions</p></div><div class="card"><div class="icon">📋</div><h3>Menus &amp; switch</h3><p>Select one option</p></div></div>
+</section>
+<section class="slide" data-session="3" data-title="Flags">
+  <div class="kicker">Flags</div><h2>A flag remembers a true/false state</h2>
+  <div class="splitwide"><div class="code">bool isLocked = false;
+
+if (failedAttempts &gt;= 3) {
+    isLocked = true;
+}</div><div class="card"><h3>Why use a flag?</h3><p>A flag is a Boolean variable used to remember whether a condition has occurred.</p><div class="badge">Example: account locked or not locked</div></div></div>
+</section>
+<section class="slide" data-session="3" data-title="Logical Operators">
+  <div class="kicker">Combining conditions</div><h2>Logical operators connect Boolean expressions</h2>
+  <div class="grid3"><div class="card center"><h3>&amp;&amp;</h3><p><b>AND</b></p><p>Both conditions must be true.</p></div><div class="card center"><h3>||</h3><p><b>OR</b></p><p>At least one condition must be true.</p></div><div class="card center"><h3>!</h3><p><b>NOT</b></p><p>Reverses true/false.</p></div></div>
+</section>
+<section class="slide" data-session="3" data-title="Truth Table">
+  <div class="kicker">Reasoning table</div><h2>AND and OR behave differently</h2>
+  <div class="truth"><div class="cell head">A</div><div class="cell head">B</div><div class="cell head">A && B</div><div class="cell head">A || B</div><div class="cell yes">true</div><div class="cell yes">true</div><div class="cell yes">true</div><div class="cell yes">true</div><div class="cell yes">true</div><div class="cell no">false</div><div class="cell no">false</div><div class="cell yes">true</div><div class="cell no">false</div><div class="cell yes">true</div><div class="cell no">false</div><div class="cell yes">true</div><div class="cell no">false</div><div class="cell no">false</div><div class="cell no">false</div><div class="cell no">false</div></div>
+</section>
+<section class="slide" data-session="3" data-title="Logical Evaluator">
+  <div class="kicker">Interactive evaluator</div><h2>Combine security conditions</h2>
+  <div class="split"><div class="card"><h3>Access rule</h3><div class="inputrow"><label><input id="idValid" type="checkbox" checked/> ID valid</label><label><input id="pinValid" type="checkbox"/> PIN valid</label><select id="logicOp"><option value="&&">AND</option><option value="||">OR</option></select><button class="action s3" id="logicRun">Evaluate</button></div><div class="status" id="logicStatus">Evaluate the access rule.</div></div><div class="card"><h3>Formal expression</h3><div class="code" id="logicExpr">idValid && pinValid</div><p>Use <b>&amp;&amp;</b> when both checks are required. Use <b>||</b> when either check is acceptable.</p></div></div>
+</section>
+<section class="slide" data-session="3" data-title="Numeric Ranges">
+  <div class="kicker">Checking numeric ranges</div><h2>Range checks need logical AND</h2>
+  <div class="splitwide"><div class="code">if (marks &gt;= 0 &amp;&amp; marks &lt;= 100) {
+    cout &lt;&lt; "Valid marks";
+} else {
+    cout &lt;&lt; "Invalid marks";
+}</div><div class="card"><h3>Why AND?</h3><p>Marks must satisfy both boundaries: not below 0 and not above 100.</p><div class="highlight"><p style="margin:0">Range condition = lower limit + upper limit.</p></div></div></div>
+</section>
+<section class="slide" data-session="3" data-title="Range Demo">
+  <div class="kicker">Interactive range check</div><h2>Is the value inside the valid range?</h2>
+  <div class="split"><div class="card"><h3>Enter marks</h3><div class="inputrow"><input id="rangeMarks" type="number" value="105"/><button class="action s3" id="rangeRun">Check</button></div><div class="status" id="rangeStatus">Check the value.</div></div><div class="card"><h3>Decision expression</h3><div class="code">marks &gt;= 0 &amp;&amp; marks &lt;= 100</div><p>Both parts must be true for valid marks.</p></div></div>
+</section>
+<section class="slide" data-session="3" data-title="Menus">
+  <div class="kicker">Menus</div><h2>A menu lets the user select an action</h2>
+  <div class="split"><div class="card"><h3>Example menu</h3><div class="menu-box"><button class="menu-item" data-menu="1">1 · Scan file</button><button class="menu-item" data-menu="2">2 · View report</button><button class="menu-item" data-menu="3">3 · Settings</button><button class="menu-item" data-menu="4">4 · Exit</button></div><div class="status" id="menuStatus">Select an option.</div></div><div class="card"><h3>Concept</h3><p>Menu programs use decision logic to execute different actions based on the user's choice.</p><div class="badge">Beginner-level security utility example</div></div></div>
+</section>
+<section class="slide" data-session="3" data-title="Input Validation">
+  <div class="kicker">Validating user input</div><h2>Do not trust input blindly</h2>
+  <div class="splitwide"><div class="code">if (choice &lt; 1 || choice &gt; 4) {
+    cout &lt;&lt; "Invalid choice";
+}</div><div class="card"><h3>Important idea</h3><p>Input validation checks whether the entered value is acceptable before the program uses it.</p><div class="highlight"><p style="margin:0">Invalid input should be rejected or requested again.</p></div></div></div>
+</section>
+<section class="slide" data-session="3" data-title="Comparing Characters and Strings">
+  <div class="kicker">Characters and strings</div><h2>C++ can compare characters and string objects</h2>
+  <div class="grid2"><div class="card"><h3>Character comparison</h3><div class="code">char choice = 'Y';
+if (choice == 'Y') {
+    cout &lt;&lt; "Continue";
+}</div></div><div class="card"><h3>String comparison</h3><div class="code">string role = "admin";
+if (role == "admin") {
+    cout &lt;&lt; "Admin area";
+}</div></div></div>
+</section>
+<section class="slide" data-session="3" data-title="Conditional Operator">
+  <div class="kicker">Conditional operator</div><h2>A compact form of simple if/else</h2>
+  <div class="splitwide"><div class="code">string status;
+status = (attempts &lt; 3) ? "Allowed" : "Locked";</div><div class="card"><h3>Pattern</h3><div class="code">condition ? value_if_true : value_if_false</div><p>Use it for simple selections, not complex multi-line logic.</p></div></div>
+</section>
+<section class="slide single-question" data-session="3" data-title="Conditional Operator Prediction">
+  <div class="kicker">Predict</div><h2>What value is assigned?</h2>
+  <div class="qwrap"><div class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Predict</div><div class="qtext"><span style="font-family:Consolas">int attempts = 4;<br/>string status = (attempts &lt; 3) ? "Allowed" : "Locked";</span></div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans"><b>Locked</b><br/>Because <span style="font-family:Consolas">4 &lt; 3</span> is false, the value after the colon is selected.</div><span class="flipcue">↻</span></div></div></div>
+</section>
+<section class="slide" data-session="3" data-title="switch Statement">
+  <div class="kicker">switch statement</div><h2>switch is useful for fixed menu choices</h2>
+  <div class="splitwide"><div class="code">switch (choice) {
+case 1:
+    cout &lt;&lt; "Scan";
+    break;
+case 2:
+    cout &lt;&lt; "Report";
+    break;
+default:
+    cout &lt;&lt; "Invalid";
+}</div><div class="card"><h3>Key points</h3><ul class="clean"><li>Use cases for fixed values.</li><li><b>break</b> stops fall-through.</li><li><b>default</b> handles unmatched choices.</li></ul></div></div>
+</section>
+<section class="slide" data-session="3" data-title="switch Demo">
+  <div class="kicker">Interactive switch</div><h2>Run a menu choice through switch</h2>
+  <div class="split"><div class="card"><h3>Choose an option</h3><div class="inputrow"><select id="switchChoice"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="9">9</option></select><button class="action s3" id="switchRun">Run switch</button></div><div class="status" id="switchStatus">Run the switch statement.</div></div><div class="card"><h3>Cases</h3><div class="choice-grid" id="switchCases"><button class="choice neutral">case 1: Scan</button><button class="choice neutral">case 2: Report</button><button class="choice neutral">case 3: Settings</button><button class="choice neutral">default: Invalid</button></div></div></div>
+</section>
+<section class="slide single-question" data-session="3" data-title="Missing break Question">
+  <div class="kicker">Common mistake</div><h2>What happens if break is missing?</h2>
+  <div class="qwrap"><div class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Ask Students</div><div class="qtext">In a switch statement, why is <span style="font-family:Consolas">break</span> usually written after each case?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans">Without <b>break</b>, execution can continue into the next case. This is called <b>fall-through</b>. Sometimes it is intentional, but beginners should avoid it unless clearly required.</div><span class="flipcue">↻</span></div></div></div>
+</section>
+<section class="slide" data-session="3" data-title="Mini Case Study">
+  <div class="kicker">Case study</div><h2>Beginner security menu utility</h2>
+  <div class="grid3"><div class="card"><h3>1. Validate</h3><p>Check whether input choice is in range.</p></div><div class="card"><h3>2. Decide</h3><p>Use if/else or switch to select the operation.</p></div><div class="card"><h3>3. Respond</h3><p>Print the selected action or an invalid-choice message.</p></div></div>
+  <div class="highlight" style="margin-top:18px"><p style="margin:0">This combines Week 3 ideas: relational operators, logical operators, validation, menu decisions, and clear branch output.</p></div>
+</section>
+<section class="slide" data-session="3" data-title="Week 3 Summary">
+  <div class="kicker">Week summary</div><h2>What did we learn?</h2>
+  <div class="grid3"><div class="card"><h3>Conditions</h3><p>Boolean expressions and relational operators produce true/false results.</p></div><div class="card"><h3>Branches</h3><p>if, if/else, nested if, and else-if control program paths.</p></div><div class="card"><h3>Advanced Decisions</h3><p>Flags, logical operators, validation, conditional operator, and switch support richer decision logic.</p></div></div>
+</section>
+<section class="slide" data-session="3" data-title="Concept Connections">
+  <div class="kicker">Concept connections</div><h2>Week 3 decision-making chain</h2>
+  <div class="flow"><div class="step"><b>Data</b><span>variables hold values</span></div><div class="step"><b>Compare</b><span>relational operators</span></div><div class="step"><b>Combine</b><span>logical operators</span></div><div class="step"><b>Decide</b><span>if/else or switch</span></div><div class="step"><b>Act</b><span>execute branch</span></div></div>
+</section>
+<section class="slide" data-session="3" data-title="Week Concept Check">
+  <div class="kicker">Week concept check</div><h2>Quick review questions</h2>
+  <div class="grid2"><div class="qwrap" style="min-height:190px"><div class="qcard" tabindex="0" style="min-height:190px"><div class="qface"><div class="qlabel">Q1</div><div class="qtext" style="font-size:30px">What is the result of 5 != 5?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans">false</div><span class="flipcue">↻</span></div></div></div><div class="qwrap" style="min-height:190px"><div class="qcard" tabindex="0" style="min-height:190px"><div class="qface"><div class="qlabel">Q2</div><div class="qtext" style="font-size:30px">Which operator means AND?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans">&&</div><span class="flipcue">↻</span></div></div></div><div class="qwrap" style="min-height:190px"><div class="qcard" tabindex="0" style="min-height:190px"><div class="qface"><div class="qlabel">Q3</div><div class="qtext" style="font-size:30px">Why use default in switch?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans">To handle values that match no case.</div><span class="flipcue">↻</span></div></div></div><div class="qwrap" style="min-height:190px"><div class="qcard" tabindex="0" style="min-height:190px"><div class="qface"><div class="qlabel">Q4</div><div class="qtext" style="font-size:30px">What is input validation?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans">Checking input before using it.</div><span class="flipcue">↻</span></div></div></div></div>
+</section>
+<section class="slide s3dark center" data-session="3" data-title="Next Week Preview">
+  <div class="kicker">Week 4 preview</div><h1>Next: Loops</h1><p class="lead">while loop · validation loops · counters · do-while · for loop · sentinels · nested loops</p><div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:20px"><span class="pill">Decision once</span><span class="pill">Loop repeatedly</span></div>
+</section>
+<section class="slide s3dark center" data-session="3" data-title="Thank You">
+  <div class="kicker">Week 3 complete</div><h1>Thank You</h1><p class="lead"><b>Any Questions?</b></p>
+  <p class="small muted" style="margin-top:22px"><b>Dr. Zakir Khan</b><br/>Assistant Professor<br/>Department of Computer Science<br/>Air University Aerospace &amp; Aviation Campus, Kamra</p>
+</section>
+<div class="footer"><span id="footerSession">Week 3</span><span>CS111 · Programming Fundamentals</span><span class="time" id="clock">--:--</span><span class="counter" id="counter">1 / 1</span></div><div class="note" id="globalNote"></div>
+</main></div>
+<div class="progress"><div id="progress"></div></div>
+<div class="overlay" id="overview"><div class="overlay-inner"><button class="close" id="ovClose">Close</button><h2>Week 3 Slide Overview</h2><div class="ovgrid" id="ovgrid"></div></div></div>
+<div class="overlay" id="help"><div class="helpbox"><button class="close" id="helpClose">Close</button><h2>Presentation Controls</h2><div class="helpgrid"><kbd>→ / Space / Enter</kbd><span>Reveal next item or move forward</span><kbd>←</kbd><span>Previous slide</span><kbd>PgDn / N</kbd><span>Next slide</span><kbd>PgUp / P</kbd><span>Previous slide</span><kbd>A</kbd><span>Reveal all</span><kbd>S</kbd><span>Next session</span><kbd>Shift+S</kbd><span>Previous session</span><kbd>I</kbd><span>Instructor cue</span><kbd>T</kbd><span>Timer</span><kbd>O</kbd><span>Overview</span><kbd>F</kbd><span>Full screen</span><kbd>Esc</kbd><span>Close overlay</span></div></div></div>
+<div class="timerpanel" id="timerPanel"><div class="tiny muted">Class Activity Timer</div><div class="timerdigits" id="timerDigits">05:00</div><div class="timerbtns"><button data-min="2">2 min</button><button data-min="5">5 min</button><button data-min="10">10 min</button><button data-min="15">15 min</button><button id="timerStart">Start/Pause</button><button id="timerReset">Reset</button></div></div>
+<script>
+(function(){
+const stage=document.getElementById('stage');const slides=[...document.querySelectorAll('.slide')];const counter=document.getElementById('counter');const progress=document.getElementById('progress');const footerSession=document.getElementById('footerSession');const globalNote=document.getElementById('globalNote');const clock=document.getElementById('clock');let current=0;
+function labelSession(s){return s==='1'?'Session 7 · Relational Operators & Simple if':s==='2'?'Session 8 · if/else, Nested if & else-if':s==='3'?'Session 9 · Advanced Decision Making':'Week 3 · Overview'}
+const sessionStarts={1:slides.findIndex(s=>s.dataset.session==='1'),2:slides.findIndex(s=>s.dataset.session==='2'),3:slides.findIndex(s=>s.dataset.session==='3')};
+function tickClock(){const d=new Date();clock.textContent=d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});}tickClock();setInterval(tickClock,15000);
+function markRevealSteps(){slides.forEach(slide=>{const chosen=[];const add=el=>{if(!el||chosen.includes(el))return;if(el.classList.contains('note')||el.classList.contains('footer'))return;if(el.closest('.qback'))return;chosen.push(el)};['.grid2','.grid3','.grid4','.flow','.split','.splitwide','.choice-grid','.truth','.menu-box'].forEach(sel=>slide.querySelectorAll(sel).forEach(g=>[...g.children].forEach(add)));[...slide.children].forEach(el=>{if(el.matches('.qwrap,.highlight,.code,.status,.demo-controls,.card'))add(el)});chosen.slice(0,8).forEach((el,idx)=>{el.classList.add('reveal-step');el.dataset.revealIndex=idx})})}
+function getRevealSteps(slide=slides[current]){return [...slide.querySelectorAll('.reveal-step')]}
+function revealNext(){const next=getRevealSteps().find(x=>!x.classList.contains('revealed'));if(!next)return false;next.classList.add('revealed');return true}
+function revealAll(){getRevealSteps().forEach(x=>x.classList.add('revealed'))}
+function show(i){current=Math.max(0,Math.min(slides.length-1,i));slides.forEach((s,k)=>s.classList.toggle('active',k===current));counter.textContent=(current+1)+' / '+slides.length;progress.style.width=((current+1)/slides.length*100)+'%';footerSession.textContent=labelSession(slides[current].dataset.session);globalNote.classList.remove('show');globalNote.textContent='';stage.focus({preventScroll:true})}
+function next(){if(!revealNext())show(current+1)}function prev(){show(current-1)}function forceNext(){show(current+1)}function forcePrev(){show(current-1)}
+document.querySelectorAll('.qcard').forEach(c=>{c.addEventListener('click',e=>{e.stopPropagation();c.classList.toggle('flipped')});c.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();c.classList.toggle('flipped')}})});
+function toggleNote(){const n=slides[current].querySelector('.note');const txt=n?n.textContent.trim():'Instructor cue: Ask students to predict before showing the branch or output.';globalNote.textContent=txt;globalNote.classList.toggle('show')}
+async function fullscreen(){try{if(!document.fullscreenElement)await document.documentElement.requestFullscreen();else await document.exitFullscreen()}catch(e){}}
+const overview=document.getElementById('overview'),ovgrid=document.getElementById('ovgrid');slides.forEach((s,i)=>{const b=document.createElement('button');b.className='ov';b.innerHTML='<small>'+labelSession(s.dataset.session)+' · Slide '+(i+1)+'</small>'+s.dataset.title;b.addEventListener('click',()=>{show(i);overview.classList.remove('open')});ovgrid.appendChild(b)});document.getElementById('ovClose').addEventListener('click',()=>overview.classList.remove('open'));const help=document.getElementById('help');document.getElementById('helpClose').addEventListener('click',()=>help.classList.remove('open'));
+const timerPanel=document.getElementById('timerPanel'),timerDigits=document.getElementById('timerDigits');let timerSeconds=300,timerRun=false,timerId=null;function drawTimer(){const m=Math.floor(timerSeconds/60),s=timerSeconds%60;timerDigits.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}function toggleTimerPanel(){timerPanel.classList.toggle('open')}document.querySelectorAll('[data-min]').forEach(b=>b.addEventListener('click',()=>{timerSeconds=+b.dataset.min*60;timerRun=false;clearInterval(timerId);drawTimer()}));document.getElementById('timerStart').addEventListener('click',()=>{timerRun=!timerRun;clearInterval(timerId);if(timerRun)timerId=setInterval(()=>{if(timerSeconds>0){timerSeconds--;drawTimer()}else{timerRun=false;clearInterval(timerId);timerDigits.textContent='TIME!'}},1000)});document.getElementById('timerReset').addEventListener('click',()=>{timerRun=false;clearInterval(timerId);timerSeconds=300;drawTimer()});drawTimer();
+function switchSession(dir=1){const raw=slides[current].dataset.session;const s=(raw==='1'||raw==='2'||raw==='3')?Number(raw):0;let target;if(s===0)target=dir<0?3:1;else if(dir>0)target=s===3?1:s+1;else target=s===1?3:s-1;show(sessionStarts[target])}
+// Relational evaluator
+function evalRel(){const a=Number(document.getElementById('relA').value),b=Number(document.getElementById('relB').value),op=document.getElementById('relOp').value;let r=false;if(op==='<')r=a<b;else if(op==='<=')r=a<=b;else if(op==='>')r=a>b;else if(op==='>=')r=a>=b;else if(op==='==')r=a==b;else if(op==='!=')r=a!=b;document.getElementById('relStatus').innerHTML='<b>'+a+' '+op+' '+b+'</b> evaluates to <b style="color:'+(r?'#16845f':'#b84444')+'">'+r+'</b>.'}document.getElementById('relEval').addEventListener('click',evalRel);
+// if trace
+const ifLines=[...document.querySelectorAll('#ifCode .code-line')];let ifStep=0;function resetIf(){ifStep=0;ifLines.forEach(x=>x.classList.remove('active'));document.getElementById('ifVar').textContent='?';document.getElementById('ifOut').textContent='—';document.getElementById('ifStatus').textContent='Start tracing.'}function nextIf(){ifLines.forEach(x=>x.classList.remove('active'));if(ifStep===0){ifLines[0].classList.add('active');document.getElementById('ifVar').textContent='72';document.getElementById('ifStatus').textContent='The variable marks receives 72.'}else if(ifStep===1){ifLines[1].classList.add('active');document.getElementById('ifStatus').innerHTML='Condition: <b>72 >= 50</b> is <b>true</b>.'}else if(ifStep===2){ifLines[2].classList.add('active');document.getElementById('ifOut').textContent='Pass';document.getElementById('ifStatus').textContent='The if block executes.'}else if(ifStep===3){ifLines[4].classList.add('active');document.getElementById('ifOut').textContent='PassDone';document.getElementById('ifStatus').textContent='The next statement executes after the if.'}else{document.getElementById('ifStatus').textContent='Trace complete.'}ifStep++}document.getElementById('ifNext').addEventListener('click',nextIf);document.getElementById('ifReset').addEventListener('click',resetIf);resetIf();
+// grade ladder
+function runGrade(){const m=Number(document.getElementById('gradeMarks').value);const checks=[...document.querySelectorAll('#gradeChecks .choice')];checks.forEach(c=>{c.className='choice neutral'});let idx,grade;if(m>=85){idx=0;grade='A'}else if(m>=70){idx=1;grade='B'}else if(m>=50){idx=2;grade='C'}else{idx=3;grade='F'}checks[idx].className='choice ok';document.getElementById('gradeStatus').innerHTML='First true branch gives grade <b>'+grade+'</b>. Later conditions are skipped.'}document.getElementById('gradeRun').addEventListener('click',runGrade);
+// login trace
+let loginStep=0;function resetLogin(){loginStep=0;document.getElementById('loginDecision').textContent='Start';document.getElementById('loginOutput').textContent='Output: —';document.getElementById('loginStatus').textContent='Start the trace.'}function nextLogin(){const u=document.getElementById('userOK').value==='true',p=document.getElementById('passOK').value==='true';if(loginStep===0){document.getElementById('loginDecision').textContent='usernameOK?';document.getElementById('loginStatus').innerHTML='Check username: <b>'+u+'</b>.'}else if(loginStep===1){if(!u){document.getElementById('loginOutput').textContent='Output: Unknown user';document.getElementById('loginStatus').textContent='Username failed, so password is not checked.';loginStep++;return}else{document.getElementById('loginDecision').textContent='passwordOK?';document.getElementById('loginStatus').innerHTML='Username passed. Now check password: <b>'+p+'</b>.'}}else if(loginStep===2){document.getElementById('loginOutput').textContent='Output: '+(p?'Login allowed':'Wrong password');document.getElementById('loginStatus').textContent='Nested decision complete.'}else{document.getElementById('loginStatus').textContent='Trace complete.'}loginStep++}document.getElementById('loginNext').addEventListener('click',nextLogin);document.getElementById('loginReset').addEventListener('click',resetLogin);resetLogin();
+// logical evaluator
+function logicRun(){const a=document.getElementById('idValid').checked,b=document.getElementById('pinValid').checked,op=document.getElementById('logicOp').value;const r=op==='&&'?(a&&b):(a||b);document.getElementById('logicExpr').textContent='idValid '+op+' pinValid';document.getElementById('logicStatus').innerHTML='Expression result: <b style="color:'+(r?'#16845f':'#b84444')+'">'+r+'</b>. '+(r?'Access condition satisfied.':'Access condition not satisfied.')}document.getElementById('logicRun').addEventListener('click',logicRun);
+function rangeRun(){const m=Number(document.getElementById('rangeMarks').value),r=(m>=0&&m<=100);document.getElementById('rangeStatus').innerHTML='<b>'+m+'</b> is '+(r?'<b style="color:#16845f">valid</b>':'<b style="color:#b84444">invalid</b>')+'. Condition: '+m+' >= 0 && '+m+' <= 100.'}document.getElementById('rangeRun').addEventListener('click',rangeRun);
+// menu buttons
+const menuMsgs={1:'Scan file selected.',2:'View report selected.',3:'Settings selected.',4:'Exit selected.'};document.querySelectorAll('.menu-item').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.menu-item').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');document.getElementById('menuStatus').textContent=menuMsgs[b.dataset.menu]}));
+function switchRun(){const v=document.getElementById('switchChoice').value;const cases=[...document.querySelectorAll('#switchCases .choice')];cases.forEach(c=>c.className='choice neutral');let idx=v==='1'?0:v==='2'?1:v==='3'?2:3;cases[idx].className='choice ok';document.getElementById('switchStatus').textContent=(idx===3?'No case matched; default executes.':'Matching case '+v+' executes, then break exits switch.')}document.getElementById('switchRun').addEventListener('click',switchRun);
+function closeOverlays(){overview.classList.remove('open');help.classList.remove('open')}
+document.addEventListener('keydown',e=>{const tag=(e.target.tagName||'').toUpperCase();if(['INPUT','TEXTAREA','SELECT'].includes(tag))return;if(e.key==='ArrowRight'||e.key===' '||e.key==='Enter'){e.preventDefault();next()}else if(e.key==='ArrowLeft'){e.preventDefault();prev()}else if(e.key==='PageDown'||e.key.toLowerCase()==='n'){e.preventDefault();forceNext()}else if(e.key==='PageUp'||e.key.toLowerCase()==='p'){e.preventDefault();forcePrev()}else if(e.key==='Home'){show(0)}else if(e.key==='End'){show(slides.length-1)}else if(e.key.toLowerCase()==='s'){e.preventDefault();switchSession(e.shiftKey?-1:1)}else if(e.key.toLowerCase()==='a'){e.preventDefault();revealAll()}else if(e.key.toLowerCase()==='f'){fullscreen()}else if(e.key.toLowerCase()==='o'){overview.classList.toggle('open')}else if(e.key.toLowerCase()==='i'){toggleNote()}else if(e.key.toLowerCase()==='t'){toggleTimerPanel()}else if(e.key==='?'){help.classList.add('open')}else if(e.key==='Escape'){closeOverlays();timerPanel.classList.remove('open')}});
+stage.addEventListener('click',e=>{if(e.target.closest('button,input,select,.qcard,.overlay,.timerpanel'))return;next()});
+markRevealSteps();show(0);
+})();
+</script>
+</body>
+</html>
