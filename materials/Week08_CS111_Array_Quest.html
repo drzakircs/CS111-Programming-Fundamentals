@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#09142c">
+<title>CS111 · Week 08 | Array Quest — Interactive Classroom Game</title>
+<style>
+:root{--bg:#070e22;--surface:#111d37;--surface2:#172744;--surface3:#223657;--stroke:#324766;--ink:#f0f7ff;--muted:#b0c4dc;--accent:#6ee7f0;--green:#91f1b7;--yellow:#ffe29a;--violet:#c6aaff;--danger:#ff9c9d;--fontscale:1}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 17% 0%,#17264d 0%,#0a1429 48%,var(--bg) 100%);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:calc(16px * var(--fontscale));line-height:1.44}
+button{font:inherit;cursor:pointer;border:0}button:focus-visible,a:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}button:disabled{cursor:not-allowed;opacity:.42}.wrap{max-width:1740px;margin:auto;padding:14px 22px 30px}
+.topbar{display:flex;align-items:center;gap:14px;padding:11px 15px;background:#0e1b34eb;border:1px solid var(--stroke);border-radius:18px;position:sticky;top:8px;z-index:20;box-shadow:0 9px 26px #0006;flex-wrap:wrap}.logo{background:linear-gradient(140deg,#70ddec,#7c9dff);color:#071932;border-radius:12px;font-size:1.1em;font-weight:900;padding:10px 15px;letter-spacing:.5px}.brand{flex:1;min-width:210px}.brand strong{font-size:1.12em;display:block;line-height:1.1}.brand small{display:block;color:var(--muted);font-size:.78em;margin-top:4px}.pill{border:1px solid #45628b;border-radius:999px;padding:7px 12px;color:var(--yellow);font-size:.84em;font-weight:800;white-space:nowrap;background:#172846}.top-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.top-actions button,.small-btn{background:#253858;color:var(--ink);border:1px solid #425a79;border-radius:10px;padding:8px 11px;font-weight:700}.top-actions button:hover,.small-btn:hover{background:#344e76}
+.headline{display:flex;justify-content:space-between;align-items:center;gap:22px;padding:23px 5px 20px;flex-wrap:wrap}.eyebrow{text-transform:uppercase;letter-spacing:.13em;font-size:.72em;font-weight:900;color:var(--accent)}h1{font-size:clamp(1.75em,3vw,2.65em);line-height:1.13;margin:5px 0 8px;font-weight:900}h1 span{color:var(--yellow)}.headline p{color:var(--muted);margin:0;max-width:880px;font-size:1em}.hero-stat{display:flex;gap:12px}.stat{background:var(--surface);border:1px solid var(--stroke);border-radius:13px;padding:12px 17px;text-align:center;min-width:95px}.stat strong{font-size:1.55em;color:var(--green);display:block;line-height:1.15}.stat span{color:var(--muted);font-size:.75em}
+.layout{display:grid;grid-template-columns:250px minmax(350px,1fr) minmax(385px,1.12fr);gap:14px;align-items:start}.card{background:linear-gradient(145deg,#12203d,#111b32);border:1px solid var(--stroke);border-radius:16px;overflow:hidden;box-shadow:0 6px 22px #0206173a}.side{padding:13px;position:sticky;top:100px}.side h2{margin:7px 8px 11px;font-size:.94em;letter-spacing:.02em;color:var(--muted)}.mission-list{display:grid;gap:7px}.mission-button{display:flex;gap:10px;align-items:center;width:100%;text-align:left;background:transparent;color:var(--ink);padding:10px 9px;border-radius:11px;border:1px solid transparent}.mission-button:hover{background:#203354}.mission-button.active{background:#203a5e;border-color:#6dc7ef;box-shadow:inset 3px 0 var(--accent)}.mission-icon{font-size:1.35em;flex:0 0 32px;text-align:center}.mission-button .name{display:block;font-size:.86em;font-weight:800}.mission-button .subtitle{display:block;color:var(--muted);font-size:.71em;margin-top:2px}.mission-done{margin-left:auto;color:var(--green);font-weight:900}.side-tip{margin-top:14px;background:#0f2940;border:1px solid #2d6f80;padding:12px;border-radius:12px;font-size:.82em;color:#d8f5ff}.side-tip strong{color:var(--accent)}
+.center,.right{display:grid;gap:13px;min-width:0}.mission-info{padding:18px}.session-tag{display:inline-flex;gap:6px;align-items:center;color:var(--accent);font-weight:900;font-size:.77em;text-transform:uppercase;letter-spacing:.07em}.mission-info h2{font-size:1.35em;margin:7px 0}.mission-info p{margin:6px 0;color:var(--muted);font-size:.88em}.mission-info .analogy{margin-top:11px;background:#203453;border-left:3px solid var(--yellow);padding:10px 12px;border-radius:5px;color:#f4f7ff;font-size:.84em}.codehead,.section-head{display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:1px solid var(--stroke);gap:8px;flex-wrap:wrap}.section-head strong,.codehead strong{font-size:.95em}.tiny{font-size:.74em;color:var(--muted)}.code-list{padding:10px 0 12px;max-height:455px;overflow:auto;background:#0b162b;font-size:.88em}.code-line{display:grid;grid-template-columns:38px minmax(0,1fr);padding:1px 12px 1px 0;min-height:1.55em;white-space:pre;line-height:1.55;font-family:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;color:#dfedff;transition:background .12s}.code-line .num{text-align:right;padding-right:12px;color:#718da9;user-select:none}.code-line.active{background:#204d72;border-left:4px solid var(--yellow);padding-left:0;color:#fff}.code-line.active .num{color:var(--yellow)}.code-line code{overflow-x:auto;display:block;scrollbar-width:thin}.code-line.blank{opacity:.6}.game-controls{padding:13px 15px;display:grid;gap:11px}.progress-track{height:9px;border-radius:10px;background:#304766;overflow:hidden}.progress-fill{height:100%;width:0;background:linear-gradient(90deg,#65dbe6,#a2f6b8);transition:width .2s}.controls-row{display:flex;align-items:center;flex-wrap:wrap;justify-content:space-between;gap:9px}.controls-row .group{display:flex;gap:8px;flex-wrap:wrap}.bigbtn{background:#68d7e6;color:#082035;border-radius:10px;padding:11px 17px;font-weight:900;border:1px solid #b9f9ff}.bigbtn:hover{background:#9ae8f1}.secondary-btn{background:#253b5b;color:#f0f7ff;border:1px solid #496384;border-radius:10px;padding:11px 14px;font-weight:800}.secondary-btn:hover{background:#355278}.stepbadge{font-weight:900;color:var(--yellow);white-space:nowrap;font-size:.9em}
+.explain{padding:17px 19px;border-color:#56759a;background:linear-gradient(110deg,#152a49,#162b43)}.explain-label{color:var(--accent);font-weight:900;letter-spacing:.08em;font-size:.72em;text-transform:uppercase}.explain h3{margin:5px 0 8px;font-size:1.2em;color:var(--yellow)}.explain p{margin:0;color:#ecf5ff;font-size:.99em;min-height:2.5em}.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px}.chip{font-family:ui-monospace,Consolas,monospace;font-size:.75em;background:#243c5d;border:1px solid #527397;border-radius:8px;padding:6px 9px;color:#e0f6ff}.flowline{display:flex;align-items:center;gap:9px;color:#d5edff;font-weight:700;font-size:.8em;margin-top:12px}.flow-label{padding:5px 9px;border-radius:7px;background:#0a1b33;border:1px solid #456485}
+.visual-container{padding:15px;display:grid;gap:13px}.viz-header{display:flex;justify-content:space-between;align-items:baseline;gap:12px}.viz-header h3{font-size:1.08em;margin:0}.viz-header span{color:var(--muted);font-size:.76em}.matrices{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start}.matrix-pane{min-width:145px;flex:1}.matrix-pane h4{margin:0 0 7px;font-size:.81em;color:#d4e9ff}.matbox{display:grid;grid-template-columns:23px 1fr;grid-template-rows:20px 1fr;gap:4px}.col-index{grid-column:2;display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr));text-align:center;color:#b7cce7;font-family:monospace;font-size:.72em}.row-index{grid-column:1;grid-row:2;display:grid;grid-template-rows:repeat(var(--rows),minmax(0,1fr));align-items:center;text-align:center;color:#b7cce7;font-family:monospace;font-size:.72em}.cells{grid-column:2;grid-row:2;display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr));gap:5px}.cell{min-height:49px;display:flex;align-items:center;justify-content:center;border-radius:9px;background:#21395b;border:2px solid #445c7c;color:#fff;font-size:1.2em;font-weight:900;font-family:ui-monospace,Consolas,monospace;transition:background .16s,transform .16s;position:relative}.cell.focus{background:#f7d784;border-color:#fff4c5;color:#18263d;transform:scale(1.04);z-index:1}.cell.changed{background:#1d745c;border-color:#88f5b5;color:#fff}.cell.focus.changed{background:#f7d784;color:#18263d}.cell.muted{opacity:.62}.layer-tabs{display:flex;gap:8px}.layer-tab{color:#ecfaff;background:#263d5a;border:1px solid #55718f;border-radius:8px;padding:7px 13px;font-weight:800;font-size:.83em}.layer-tab.active{background:#4bbfc7;color:#082635}.note{font-size:.78em;color:#b6c9e3;margin:0}.flow-card{padding:13px 15px}.flow-stack{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}.frame{padding:7px 10px;border-radius:8px;background:#213858;border:1px solid #547095;font-size:.8em;font-weight:800}.frame:last-child{background:#234b58;border-color:#74d8c5;color:#ddfff0}.memory-header{padding-bottom:6px}.memory-slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(48px,1fr));gap:6px;margin:10px 0}.slot{border:1px solid #456182;background:#18304e;border-radius:8px;text-align:center;padding:5px 2px;min-width:0}.slot small{display:block;color:#9bb6d3;font-size:.66em}.slot b{display:block;font-size:.89em}.slot.focus{border-color:var(--yellow);background:#5e512d}.slot.focus b,.slot.focus small{color:#fff3b6}.console{background:#081323;border-radius:10px;border:1px solid #385171;padding:13px 15px;font-family:ui-monospace,Consolas,monospace;white-space:pre-wrap;min-height:66px;color:#a9fbb7;font-size:.91em;overflow:auto}.console:empty:before{content:'(Output appears as the program executes)';color:#738da8}.modepill{border-radius:7px;padding:5px 9px;background:#1a4761;color:#d7f7ff;font-size:.73em;font-weight:900}
+.quiz{padding:16px;border:1px solid #637a98;background:linear-gradient(145deg,#1b2947,#1b3048)}.quiz .qtitle{font-size:1.05em;font-weight:900;margin:8px 0 12px}.quiz-options{display:grid;grid-template-columns:1fr 1fr;gap:9px}.quiz-opt{padding:12px;text-align:left;background:#253959;color:white;border:1px solid #4c6587;border-radius:10px;font-weight:700;min-height:53px}.quiz-opt:hover{background:#304d71}.quiz-opt.correct{background:#155741;border-color:#8effb5}.quiz-opt.wrong{background:#66343d;border-color:#ff9d9e}.quiz-feedback{min-height:26px;margin-top:10px;font-size:.87em;color:#fff1c9}.bottom-note{margin:15px 0;padding:13px 17px;background:#0e2039;border:1px solid #365676;border-radius:12px;color:var(--muted);font-size:.83em}.bottom-note strong{color:var(--ink)}
+.projector{--fontscale:1.18}.projector .wrap{max-width:100%;padding:9px 13px 22px}.projector .layout{grid-template-columns:230px minmax(400px,1fr) minmax(440px,1.1fr)}.projector .topbar{top:4px}.projector .cell{min-height:61px}.projector .code-list{max-height:520px}.projector .game-controls{position:sticky;bottom:6px;z-index:8;box-shadow:0 -8px 22px #061427d9;background:#142b49}
+@media (max-width:1200px){.layout{grid-template-columns:200px minmax(320px,1fr) minmax(350px,1fr);gap:10px}.wrap{padding:10px}.mission-button{padding:9px 6px}.cell{min-height:42px}.projector .layout{grid-template-columns:200px minmax(320px,1fr) minmax(350px,1fr)}}
+@media (max-width:1030px){.layout,.projector .layout{grid-template-columns:200px minmax(0,1fr)}.right{grid-column:2}.side{grid-row:1 / span 2}.headline{padding:16px 4px}}
+@media (max-width:650px){.topbar{position:static}.layout,.projector .layout{display:block}.side{position:static;margin-bottom:12px}.mission-list{grid-template-columns:1fr 1fr}.center,.right{margin-bottom:12px}.headline{display:block}.hero-stat{margin-top:13px}.quiz-options{grid-template-columns:1fr}.matrix-pane{min-width:150px}.code-list{max-height:370px}.controls-row .group{gap:5px}.wrap{padding:8px}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="topbar">
+    <div class="logo">CS111</div>
+    <div class="brand"><strong>ARRAY QUEST · Week 08</strong><small>Programming Fundamentals · Air University A&amp;A Campus, Kamra</small></div>
+    <div class="pill">🏆 <span id="xpTop">0</span> / 900 XP</div>
+    <div class="top-actions"><button id="smaller" title="Decrease text size">A−</button><button id="bigger" title="Increase text size">A+</button><button id="projector" title="Larger classroom display">⛶ Projector</button></div>
+  </header>
+  <section class="headline">
+    <div><div class="eyebrow">9 interactive missions · Revised Week 08 · Sessions 22–24</div><h1>Learn Arrays by <span>Playing &amp; Tracing</span></h1><p>Predict → step through the C++ statements → watch control and memory → solve a 100-XP challenge.</p></div>
+    <div class="hero-stat"><div class="stat"><strong id="completedCount">0/9</strong><span>Missions cleared</span></div><div class="stat"><strong id="stepGlobal">01</strong><span>Current step</span></div></div>
+  </section>
+  <div class="layout">
+    <aside class="card side" aria-label="Choose a learning mission"><h2>CHOOSE A MISSION</h2><div class="mission-list" id="missionList"></div><div class="side-tip"><strong>🎓 Instructor tip</strong><div>Ask students: “Which cell, line, or variable changes next?” Then click <b>Next step</b>.</div></div></aside>
+    <main class="center">
+      <section class="card mission-info"><div class="session-tag" id="sessionTag">SESSION 22</div><h2 id="missionTitle">2-D arrays</h2><p id="missionGoal"></p><div class="analogy" id="analogy"></div></section>
+      <section class="card"><div class="codehead"><strong>🧩 C++ CODE · highlighted execution</strong><button id="copyCode" class="small-btn">⧉ Copy code</button></div><div class="code-list" id="codeList" aria-label="C plus plus code listing"></div></section>
+      <section class="card game-controls"><div class="controls-row"><strong class="stepbadge" id="stepCounter">Step 1 of 1</strong><span class="tiny">Keyboard: ← Previous · → Next · Space Play/Pause</span></div><div class="progress-track"><div class="progress-fill" id="progressFill"></div></div><div class="controls-row"><div class="group"><button id="prev" class="secondary-btn">← Previous</button><button id="next" class="bigbtn">Next step →</button></div><div class="group"><button id="play" class="secondary-btn">▶ Auto</button><button id="restart" class="secondary-btn">↺ Restart</button></div></div></section>
+      <section class="card explain" aria-live="polite"><div class="explain-label">🔎 What happens now?</div><h3 id="stepTitle"></h3><p id="stepDesc"></p><div class="chips" id="variables"></div><div class="flowline"><span>Control</span><span class="flow-label" id="controlFlow">main()</span></div></section>
+      <section class="card quiz" id="quizCard"><div class="session-tag">🎯 CHECKPOINT · +100 XP</div><div class="qtitle" id="quizQuestion"></div><div class="quiz-options" id="quizOptions"></div><div id="quizFeedback" class="quiz-feedback" aria-live="polite"></div></section>
+    </main>
+    <section class="right" aria-label="Execution visualization">
+      <div class="card"><div class="section-head"><strong>🟦 LIVE ARRAY / MATRIX VIEW</strong><span class="modepill" id="vizMode">2-D grid</span></div><div class="visual-container"><div class="viz-header"><h3 id="vizTitle">Matrix</h3><span id="vizHint">row, column</span></div><div id="layerTabs" class="layer-tabs"></div><div id="matrices" class="matrices"></div><p class="note" id="arrayNote">Yellow = current memory cell. Green = updated cell.</p></div></div>
+      <div class="card flow-card"><div class="section-head" style="padding:0 0 8px;border:0"><strong>🔀 CONTROL FLOW / CALL STACK</strong><span class="tiny">Conceptual illustration</span></div><div class="flow-stack" id="callStack"></div><div class="note" id="flowNote" style="margin-top:9px"></div></div>
+      <div class="card flow-card"><div class="section-head" style="padding:0 0 8px;border:0"><strong>🧠 RESERVED MEMORY CELLS</strong><span class="tiny" id="memoryAmount"></span></div><div class="memory-slots" id="memorySlots"></div><p class="note" id="memoryNote"></p></div>
+      <div class="card flow-card"><div class="section-head" style="padding:0 0 8px;border:0"><strong>🖥️ PROGRAM OUTPUT</strong><span class="tiny">stdout</span></div><pre class="console" id="output" aria-live="polite"></pre></div>
+    </section>
+  </div>
+  <footer class="bottom-note"><strong>Teaching model:</strong> Arrays show logical contiguous <code>int</code> elements in row-major order, with zero-based indexing. Offsets are shown in elements, <b>not real machine addresses</b>. Local arrays are illustrated in a <code>main()</code> frame for teaching; actual storage and optimizations depend on the C++ implementation. <b>Heap allocation (<code>new</code>/<code>delete</code>) is reserved for Week 11.</b> Each code sample is a separate standalone C++ program. · Revised course guide, Week 08: two-dimensional arrays, matrix manipulation, 3-D arrays, parallel arrays, midterm review.</footer>
+</div>
+<script>
+'use strict';
+const A23=[[2,4,6],[1,3,5]];
+function st(line,title,desc,extra={}){return {line,title,desc,flow:'main()',vars:{},stack:['main()'],...extra};}
+const missions=[];
+function addMission(m){missions.push(m)}
+
+// 01: declaration, indexing, assignment
+addMission({id:'grid',icon:'🧱',title:'Build a 2-D Grid',short:'Rows, columns & slots',session:22,goal:'Declare a 2 × 3 array, read a cell, then update a cell.',analogy:'Think of an airplane seating map: [row][seat]. Row 0, seat 2 is the third seat in the first row.',visual:{kind:'matrix',title:'Seat grid · 2 rows × 3 columns',matrices:[{name:'seat',values:[[1,0,1],[0,1,0]]}]},code:String.raw`#include <iostream>
+using namespace std;
+int main() {
+    int seat[2][3] = {{1,0,1},{0,1,0}};
+    cout << seat[0][2] << "\n";
+    seat[1][0] = 1;
+    cout << seat[1][0] << "\n";
+    return 0;
+}`,steps:[
+ st(3,'Enter main()','Execution starts in main().', {vars:{phase:'starting'}}),
+ st(4,'Reserve 6 integer cells','seat[2][3] creates 2 × 3 = 6 int elements. Indices begin at 0.',{vars:{rows:2,cols:3,slots:6},flow:'declare → reserve'}),
+ st(5,'Read seat[0][2]','Row 0, column 2 contains 1. The row-major element offset is 0×3+2=2.',{focus:[['seat',0,2]],vars:{r:0,c:2,value:1},flow:'array read',output:'1\n'}),
+ st(6,'Write seat[1][0] = 1','Row 1, column 0 changes from 0 to 1. Offset is 1×3+0=3.',{focus:[['seat',1,0]],changes:{seat:{'1,0':1}},vars:{r:1,c:0,newValue:1},flow:'array write',output:'1\n'}),
+ st(7,'Print the updated cell','Reading seat[1][0] now gives 1.',{focus:[['seat',1,0]],changes:{seat:{'1,0':1}},vars:{value:1},flow:'array read',output:'1\n1\n'}),
+ st(8,'Return to the caller','main() returns 0. Its local array lifetime ends as main() exits.',{changes:{seat:{'1,0':1}},flow:'return 0',output:'1\n1\n'})
+],quiz:{q:'What is the element offset of seat[1][2] in a 2 × 3 array?',options:['2','3','5','6'],answer:2,why:'Offset = row × number_of_columns + column = 1×3+2 = 5.'}});
+
+// 02: nested loop traversal
+{
+const steps=[st(4,'Create a 2-D matrix','Two rows and three columns store six integers.',{vars:{rows:2,cols:3},flow:'allocate'})];
+let out='';
+for(let r=0;r<2;r++){
+ steps.push(st(5,'Outer loop chooses row '+r,'The outer for loop sets r = '+r+'. It controls which row we are reading.',{vars:{r},focus:[['grid',r,0]],flow:'outer loop → row'}));
+ for(let c=0;c<3;c++){
+  out+=A23[r][c]+' ';
+  steps.push(st(7,`Read grid[${r}][${c}] = ${A23[r][c]}`,`The inner loop selects column ${c}. This prints one element.`,{vars:{r,c,value:A23[r][c]},focus:[['grid',r,c]],flow:'inner loop → column',output:out}));
+ }
+ out+='\n';steps.push(st(9,'Finish row '+r,'The inner loop stops after c reaches 3. Print a newline; the outer loop moves to the next row.',{vars:{r,c:3},flow:'inner loop ends → outer loop',output:out}));
+}
+steps.push(st(11,'Traversal is complete','All six elements have been visited row by row.',{vars:{r:2},flow:'return 0',output:out}));
+addMission({id:'loops',icon:'🔁',title:'Nested Loop Scanner',short:'Move through every cell',session:22,goal:'Watch the outer loop switch rows and the inner loop scan columns.',analogy:'A classroom supervisor checks every seat in row 0 before moving to row 1.',visual:{kind:'matrix',title:'Scanner · row-major order',matrices:[{name:'grid',values:A23}]},code:String.raw`#include <iostream>
+using namespace std;
+int main() {
+    int grid[2][3] = {{2,4,6},{1,3,5}};
+    for (int r = 0; r < 2; r++) {
+        for (int c = 0; c < 3; c++) {
+            cout << grid[r][c] << " ";
+        }
+        cout << "\n";
+    }
+    return 0;
+}`,steps,quiz:{q:'Which loop should normally move to the next ROW?',options:['The inner loop (c)','The outer loop (r)','The cout statement','No loop is needed'],answer:1,why:'The outer loop varies r. The inner loop varies c within each row.'}});
+}
+
+//03 matrix addition
+{
+const A=[[1,2],[3,4]],B=[[5,6],[7,8]],C=[[0,0],[0,0]];
+let changes={};const steps=[st(4,'Reserve A','First 2 × 2 matrix: 4 integer elements.',{vars:{'A slots':4},flow:'allocate'}),st(5,'Reserve B','Second 2 × 2 matrix: another 4 integer elements.',{vars:{'B slots':4},flow:'allocate'}),st(6,'Reserve C','Result matrix C[2][2] is initialized to zero.',{vars:{'C slots':4},flow:'allocate'})];
+for(let r=0;r<2;r++)for(let c=0;c<2;c++){
+ const val=A[r][c]+B[r][c];changes={...changes,[r+','+c]:val};
+ steps.push(st(9,`C[${r}][${c}] = ${A[r][c]} + ${B[r][c]} = ${val}`,'The same row and column are read from A and B; their sum is written into C.',{focus:[['A',r,c],['B',r,c],['C',r,c]],changes:{C:{...changes}},vars:{r,c,left:A[r][c],right:B[r][c],sum:val},flow:'read A,B → write C'}));
+}
+steps.push(st(12,'Print selected answers','C[0][0] is 6 and C[1][1] is 12.',{changes:{C:{...changes}},focus:[['C',0,0],['C',1,1]],output:'6 12\n',flow:'output'}));
+addMission({id:'addition',icon:'➕',title:'Matrix Addition Lab',short:'Two inputs → one result',session:23,goal:'Add two 2 × 2 matrices cell by cell and store the answer in C.',analogy:'Two departments report deliveries in the same table positions; combine corresponding cells for the total.',visual:{kind:'matrix',title:'Matrix addition · A + B = C',matrices:[{name:'A',values:A},{name:'B',values:B},{name:'C',values:C}]},code:String.raw`#include <iostream>
+using namespace std;
+int main() {
+    int A[2][2] = {{1,2},{3,4}};
+    int B[2][2] = {{5,6},{7,8}};
+    int C[2][2] = {};
+    for (int r = 0; r < 2; r++) {
+        for (int c = 0; c < 2; c++) {
+            C[r][c] = A[r][c] + B[r][c];
+        }
+    }
+    cout << C[0][0] << " " << C[1][1] << "\n";
+    return 0;
+}`,steps,quiz:{q:'What is C[1][0] for A={{1,2},{3,4}} and B={{5,6},{7,8}}?',options:['7','8','10','12'],answer:2,why:'A[1][0] + B[1][0] = 3 + 7 = 10.'}});
+}
+
+//04 row/column totals
+{
+const steps=[st(4,'Prepare the array','Row totals and column totals will be calculated using loops.',{vars:{rows:2,cols:3},flow:'declare'})];let out='';
+for(let r=0;r<2;r++){
+ let sum=0;steps.push(st(6,'Start row '+r+' total','Create a fresh local accumulator total = 0 for this row.',{vars:{r,total:0},flow:'initialize total'}));
+ for(let c=0;c<3;c++){sum+=A23[r][c];steps.push(st(7,`Row ${r}: add ${A23[r][c]}`,'total becomes '+sum+'.',{vars:{r,c,total:sum},focus:[['grid',r,c]],flow:'row addition'}));}
+ out+=`Row ${r}: ${sum}\n`;steps.push(st(8,'Output row '+r,'The row sum is '+sum+'.',{vars:{r,total:sum},flow:'print row total',output:out}));
+}
+for(let c=0;c<3;c++){
+ let sum=0;steps.push(st(11,'Start column '+c+' total','Reset total to 0, and use the inner loop to move down this column.',{vars:{c,total:0},flow:'column loop',output:out}));
+ for(let r=0;r<2;r++){sum+=A23[r][c];steps.push(st(12,`Column ${c}: add ${A23[r][c]}`,'total becomes '+sum+'.',{vars:{r,c,total:sum},focus:[['grid',r,c]],flow:'column addition',output:out}));}
+ out+=`Col ${c}: ${sum}\n`;steps.push(st(13,'Output column '+c,'The column sum is '+sum+'.',{vars:{c,total:sum},flow:'print column total',output:out}));
+}
+addMission({id:'totals',icon:'📊',title:'Row & Column Totals',short:'Accumulators & loop control',session:23,goal:'Use loops and an accumulator to calculate row sums and column sums.',analogy:'A class score sheet can total each student’s row and each subject’s column.',visual:{kind:'matrix',title:'Row totals / column totals',matrices:[{name:'grid',values:A23}]},code:String.raw`#include <iostream>
+using namespace std;
+int main() {
+    int grid[2][3] = {{2,4,6},{1,3,5}};
+    for (int r=0; r<2; r++) {
+        int total=0;
+        for (int c=0; c<3; c++) total += grid[r][c];
+        cout << "Row " << r << ": " << total << "\n";
+    }
+    for (int c=0; c<3; c++) {
+        int total=0;
+        for (int r=0; r<2; r++) total += grid[r][c];
+        cout << "Col " << c << ": " << total << "\n";
+    }
+    return 0;
+}`,steps,quiz:{q:'What is the total for COLUMN 1 (the middle column)?',options:['5','7','9','12'],answer:1,why:'Column 1 contains 4 and 3, so the total is 7.'}});
+}
+
+//05 passing matrix to function
+{
+const steps=[st(13,'Create the matrix in main()','main() owns a 2 × 3 local array.',{vars:{rows:2,cols:3},flow:'main() → initialize'}),st(14,'Call printRowTotals(a, 2)','Control transfers to the called function. Its parameter refers to the same array elements; no full array copy is made.',{stack:['main()','printRowTotals()'],vars:{rows:2},flow:'CALL → function'}),st(3,'Enter the function','A new function call is active. grid refers to the caller’s array data; rows = 2.',{stack:['main()','printRowTotals()'],vars:{rows:2,'grid':'same array'},flow:'function entered'})];let out='';
+for(let r=0;r<2;r++){
+ let sum=0;steps.push(st(5,'Start accumulator for row '+r,'The function uses a local total variable for this row.',{stack:['main()','printRowTotals()'],vars:{r,total:0},flow:'local variable'}));
+ for(let c=0;c<3;c++){sum+=A23[r][c];steps.push(st(7,`Read grid[${r}][${c}]`,'Add '+A23[r][c]+'; total = '+sum+'.',{stack:['main()','printRowTotals()'],focus:[['grid',r,c]],vars:{r,c,total:sum},flow:'read caller array',output:out}));}
+ out+=`Row ${r}: ${sum}\n`;steps.push(st(9,'Print total for row '+r,'The function prints the accumulated value '+sum+'.',{stack:['main()','printRowTotals()'],vars:{r,total:sum},flow:'cout',output:out}));
+}
+steps.push(st(15,'Return to main()','The called function finishes; control returns to the statement after printRowTotals(a, 2).',{vars:{rows:2},flow:'RETURN → main()',output:out}));
+addMission({id:'function',icon:'📞',title:'Pass a Matrix to a Function',short:'Control transfer & memory',session:23,goal:'See the call stack and understand why a raw 2-D array is not copied when passed as a parameter.',analogy:'A librarian shares the location of a book shelf with another worker—not a duplicate of every book.',visual:{kind:'matrix',title:'One matrix · seen by two functions',matrices:[{name:'grid',values:A23}]},code:String.raw`#include <iostream>
+using namespace std;
+void printRowTotals(const int grid[][3], int rows) {
+    for (int r=0; r<rows; r++) {
+        int total=0;
+        for (int c=0; c<3; c++) {
+            total += grid[r][c];
+        }
+        cout << "Row " << r << ": " << total << "\n";
+    }
+}
+int main() {
+    int a[2][3] = {{2,4,6},{1,3,5}};
+    printRowTotals(a, 2);
+    return 0;
+}`,steps,quiz:{q:'When a built-in 2-D array is passed as const int grid[][3], what happens?',options:['All 6 ints are copied','The function receives access to the original elements','The original array is deleted','The number of columns is ignored'],answer:1,why:'The parameter is adjusted to a pointer to rows of 3 ints. The array elements are not duplicated.'}});
+}
+
+//06 search
+{
+const V=[[3,7,1],[9,5,8]],target=5,steps=[st(4,'Store 6 numbers','The array contains 3,7,1,9,5,8.',{vars:{rows:2,cols:3},flow:'declare'}),st(5,'Choose target = 5','We want to locate the value 5.',{vars:{target},flow:'target selected'}),st(6,'Set found = false','The Boolean flag starts as false.',{vars:{target,found:false},flow:'initialize flag'})];
+let done=false;
+for(let r=0;r<2&&!done;r++)for(let c=0;c<3;c++){
+ const match=V[r][c]===target;
+ steps.push(st(9,`Compare ${V[r][c]} with ${target}`,match?'TRUE: the value is found at ('+r+','+c+').':'FALSE: continue to the next column.',{vars:{r,c,target,found:false,condition:match},focus:[['values',r,c]],flow:match?'if → TRUE':'if → FALSE'}));
+ if(match){steps.push(st(10,'Print matching location','The program reports row '+r+', column '+c+'.',{vars:{r,c,target,found:false},focus:[['values',r,c]],output:`Found at (${r},${c})\n`,flow:'cout'}));steps.push(st(11,'Set found = true','Now the outer loop condition !found will become false.',{vars:{r,c,target,found:true},focus:[['values',r,c]],output:`Found at (${r},${c})\n`,flow:'update flag'}));steps.push(st(12,'Break from inner loop','break exits the INNER loop only. The outer loop then stops because found is true.',{vars:{r,c,target,found:true},output:`Found at (${r},${c})\n`,flow:'break inner → stop outer'}));done=true;break;}
+}
+addMission({id:'search',icon:'🔍',title:'Search the Matrix',short:'if, flag & break',session:23,goal:'Use nested loops and a decision to find a value in a 2-D array.',analogy:'A teacher checks each desk until student ID 5 is found, then stops searching.',visual:{kind:'matrix',title:'Search value = 5',matrices:[{name:'values',values:V}]},code:String.raw`#include <iostream>
+using namespace std;
+int main() {
+    int values[2][3] = {{3,7,1},{9,5,8}};
+    int target = 5;
+    bool found = false;
+    for (int r=0; r<2 && !found; r++) {
+        for (int c=0; c<3; c++) {
+            if (values[r][c] == target) {
+                cout << "Found at (" << r << "," << c << ")\n";
+                found = true;
+                break;
+            }
+        }
+    }
+    return 0;
+}`,steps,quiz:{q:'Why does this example use BOTH break and !found?',options:['break exits the whole program','break exits the inner loop; !found stops the outer loop','!found copies the matrix','Both are needed to allocate memory'],answer:1,why:'break affects the nearest loop; the outer loop condition checks the found flag.'}});
+}
+
+// 07 cube
+{
+const cube=[[[1,2,3],[4,5,6]],[[7,8,9],[10,11,12]]];
+const changes={layers:{'0,1,1':50}};
+addMission({id:'cube',icon:'🧊',title:'Explore a 3-D Array',short:'Layers × rows × columns',session:24,goal:'Visualize 2 layers of 2 × 3 integers and their element offsets.',analogy:'Imagine a building with 2 floors, 2 rows of rooms per floor, and 3 rooms per row: [floor][row][room].',visual:{kind:'cube',title:'Two layers · 2 × 2 × 3',matrices:[{name:'layers',values:cube}]},code:String.raw`#include <iostream>
+using namespace std;
+int main() {
+    int layers[2][2][3] = {
+        {{1,2,3},{4,5,6}},
+        {{7,8,9},{10,11,12}}
+    };
+    cout << layers[1][0][2] << "\n";
+    layers[0][1][1] = 50;
+    cout << layers[0][1][1] << "\n";
+    return 0;
+}`,steps:[
+ st(4,'Reserve a 3-D array','2 layers × 2 rows × 3 columns = 12 integer elements.',{vars:{layers:2,rows:2,cols:3,slots:12},flow:'reserve 3-D array',layer:0}),
+ st(5,'Initialize layer 0','First six values are stored in layer 0.',{layer:0,vars:{layer:0},flow:'layer initialization'}),
+ st(6,'Initialize layer 1','The next six values belong to layer 1.',{layer:1,vars:{layer:1},flow:'layer initialization'}),
+ st(8,'Read layers[1][0][2]','Layer 1, row 0, column 2 contains 9. Element offset = 1×(2×3)+0×3+2=8.',{layer:1,focus:[['layers',1,0,2]],vars:{layer:1,r:0,c:2,offset:8},output:'9\n',flow:'3-D read'}),
+ st(9,'Modify layers[0][1][1]','The value 5 becomes 50 at layer 0, row 1, column 1.',{layer:0,focus:[['layers',0,1,1]],changes,vars:{layer:0,r:1,c:1,newValue:50},output:'9\n',flow:'3-D write'}),
+ st(10,'Read updated element','The value in layer 0, row 1, column 1 is now 50.',{layer:0,focus:[['layers',0,1,1]],changes,vars:{value:50},output:'9\n50\n',flow:'3-D read'})
+],quiz:{q:'How many integer elements are in int cube[2][2][3]?',options:['6','7','12','24'],answer:2,why:'Multiply the three dimensions: 2 × 2 × 3 = 12.'}});
+}
+
+// 08 parallel arrays
+{
+const ids=[101,102,103],marks=[77,92,85],steps=[st(4,'Store student IDs','The first array holds IDs of three students.',{vars:{length:3},flow:'declare ids'}),st(5,'Store corresponding marks','Each mark at index i belongs to the ID at the same index i.',{vars:{length:3},flow:'declare marks'})];let out='';
+for(let i=0;i<3;i++){
+ const pass=marks[i]>=90;steps.push(st(7,`Check marks[${i}] = ${marks[i]}`,pass?`Condition TRUE: ID ${ids[i]} earns a top-student message.`:'Condition FALSE: do not print this student.',{focus:[['ids',0,i],['marks',0,i]],vars:{i,id:ids[i],mark:marks[i],'mark≥90':pass},flow:pass?'if → TRUE':'if → FALSE',output:out}));
+ if(pass){out+=`Top: ${ids[i]}\n`;steps.push(st(8,'Print linked ID '+ids[i],'ids['+i+'] and marks['+i+'] refer to the same student.',{focus:[['ids',0,i],['marks',0,i]],vars:{i,id:ids[i]},flow:'matching indices → output',output:out}));}
+}
+addMission({id:'parallel',icon:'👥',title:'Parallel Student Arrays',short:'Match data by index',session:24,goal:'Store IDs and marks separately, and use matching indices to connect them.',analogy:'Two synchronized attendance sheets: line 0 on both sheets describes the same student.',visual:{kind:'parallel',title:'Same index = same student',matrices:[{name:'ids',values:[ids]},{name:'marks',values:[marks]}]},code:String.raw`#include <iostream>
+using namespace std;
+int main() {
+    int ids[3] = {101,102,103};
+    int marks[3] = {77,92,85};
+    for (int i=0; i<3; i++) {
+        if (marks[i] >= 90)
+            cout << "Top: " << ids[i] << "\n";
+    }
+    return 0;
+}`,steps,quiz:{q:'If marks[1] = 92, which ID belongs to that mark?',options:['101','102','103','92'],answer:1,why:'Parallel arrays share the same index, so ids[1] = 102.'}});
+}
+
+// 09 mini project seat reservation
+{
+const seats=[[1,0,0],[0,1,0]],modified={seats:{'1,0':1}};
+addMission({id:'booking',icon:'🎫',title:'Mini Game: Book a Seat',short:'Mid-review challenge',session:24,goal:'Combine function calls, array indexing, bounds checking, if/else and updates.',analogy:'A theatre booking system checks whether a seat exists and is free before writing 1 (occupied) into its memory cell.',visual:{kind:'matrix',title:'0 = free · 1 = occupied',matrices:[{name:'seats',values:seats}]},code:String.raw`#include <iostream>
+using namespace std;
+void book(int seats[][3], int row, int col) {
+    if (row<0 || row>=2 || col<0 || col>=3) {
+        cout << "Invalid seat\n";
+        return;
+    }
+    if (seats[row][col] == 0) {
+        seats[row][col] = 1;
+        cout << "Booked\n";
+    } else {
+        cout << "Already taken\n";
+    }
+}
+int main() {
+    int seats[2][3] = {{1,0,0},{0,1,0}};
+    book(seats, 1, 0);
+    book(seats, 0, 0);
+    return 0;
+}`,steps:[
+ st(16,'Reserve six seat cells','A 2 × 3 array stores free seats as 0 and occupied seats as 1.',{vars:{rows:2,cols:3,slots:6},flow:'main() allocates'}),
+ st(17,'Call book(seats,1,0)','Control moves to book(). The array data is shared through the parameter.',{stack:['main()','book()'],vars:{row:1,col:0},flow:'CALL → book()'}),
+ st(4,'Check valid indices','Row 1 is within [0,1] and column 0 is within [0,2]; the bounds condition is false.',{stack:['main()','book()'],focus:[['seats',1,0]],vars:{row:1,col:0,invalid:false},flow:'if → FALSE'}),
+ st(8,'Check if seat is free','seats[1][0] is 0, so the free-seat condition is true.',{stack:['main()','book()'],focus:[['seats',1,0]],vars:{value:0,isFree:true},flow:'if → TRUE'}),
+ st(9,'Reserve seat (1,0)','Change seats[1][0] from 0 to 1; the caller sees this update.',{stack:['main()','book()'],focus:[['seats',1,0]],changes:modified,vars:{row:1,col:0,newValue:1},flow:'write shared array'}),
+ st(10,'Print confirmation','The seat was successfully booked.',{stack:['main()','book()'],changes:modified,output:'Booked\n',flow:'cout'}),
+ st(18,'Return and call book(seats,0,0)','The first call ends; main makes a second function call.',{stack:['main()','book()'],changes:modified,focus:[['seats',0,0]],vars:{row:0,col:0},output:'Booked\n',flow:'RETURN → CALL'}),
+ st(4,'Check valid indices again','Row 0 and column 0 are within the legal range.',{stack:['main()','book()'],changes:modified,focus:[['seats',0,0]],vars:{invalid:false},output:'Booked\n',flow:'bounds → valid'}),
+ st(8,'Find an occupied seat','seats[0][0] is already 1, so seats[row][col] == 0 is false.',{stack:['main()','book()'],changes:modified,focus:[['seats',0,0]],vars:{isFree:false,value:1},output:'Booked\n',flow:'if → FALSE'}),
+ st(12,'Print already taken','The else branch runs; no memory cell is changed.',{stack:['main()','book()'],changes:modified,focus:[['seats',0,0]],output:'Booked\nAlready taken\n',flow:'else → cout'}),
+ st(19,'Return to main()','The function ends and main() finishes. The booked seat remains 1 until the local array’s lifetime ends.',{changes:modified,output:'Booked\nAlready taken\n',flow:'RETURN → main()'})
+],quiz:{q:'Which operation changes the array in main() after the function is called?',options:['cout << "Booked"','seats[row][col] = 1','return 0','int row = 1'],answer:1,why:'The function parameter accesses the same array data, so assigning seats[row][col] changes the caller’s element.'}});
+}
+
+let selected=0,stepIndex=0,earned=new Set(),answered={},layerOverride=null,timer=null,fontScale=1,projector=false;
+const $=id=>document.getElementById(id);
+function h(text){return String(text).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;')}
+function current(){return missions[selected]}
+function step(){return current().steps[stepIndex]}
+function clearAuto(){if(timer!==null){clearInterval(timer);timer=null;}$('play').textContent='▶ Auto'}
+function countCorrect(){return earned.size}
+function updateHeader(){ $('xpTop').textContent=100*countCorrect();$('completedCount').textContent=countCorrect()+'/9';$('stepGlobal').textContent=String(stepIndex+1).padStart(2,'0') }
+function renderNav(){const root=$('missionList');root.innerHTML='';missions.forEach((m,i)=>{let b=document.createElement('button');b.className='mission-button'+(selected===i?' active':'');b.setAttribute('aria-current',selected===i?'step':'false');b.innerHTML=`<span class="mission-icon">${m.icon}</span><span><span class="name">${h(m.title)}</span><span class="subtitle">S${m.session} · ${h(m.short)}</span></span>${earned.has(m.id)?'<span class="mission-done">✓</span>':''}`;b.addEventListener('click',()=>choose(i));root.appendChild(b)})}
+function renderCode(){let m=current(),s=step(),root=$('codeList');root.innerHTML='';m.code.split('\n').forEach((text,i)=>{const div=document.createElement('div');div.className='code-line'+(s.line===i+1?' active':'')+(text===''?' blank':'');div.innerHTML=`<span class="num">${i+1}</span><code></code>`;div.querySelector('code').textContent=text||' ';root.appendChild(div)});const active=root.querySelector('.active');if(active){const top=active.offsetTop-root.offsetTop;const target=top-root.clientHeight/2+active.clientHeight/2;root.scrollTop=Math.max(0,target)}}
+function cellData(g,coords,s){let key=coords.join(',');return s.changes?.[g.name]?.[key]??getArrayValue(g.values,coords)}
+function getArrayValue(values,coords){let v=values;for(const c of coords){v=v?.[c]}return v}
+function isFocused(name,coords,s){return !!s.focus?.some(f=>f[0]===name&&f.slice(1).every((v,i)=>v===coords[i]))}
+function matrixPanel(g,values,layer,s){const rows=values.length,cols=values[0].length;const div=document.createElement('div');div.className='matrix-pane';div.innerHTML=`<h4>${h(g.name)}${layer===null?'':`[${layer}]`} · ${rows}×${cols}</h4>`;let box=document.createElement('div');box.className='matbox';box.style.setProperty('--cols',cols);box.style.setProperty('--rows',rows);let colsRow=document.createElement('div');colsRow.className='col-index';for(let c=0;c<cols;c++){let x=document.createElement('span');x.textContent='c'+c;colsRow.appendChild(x)}let rowsCol=document.createElement('div');rowsCol.className='row-index';for(let r=0;r<rows;r++){let x=document.createElement('span');x.textContent='r'+r;rowsCol.appendChild(x)}let cells=document.createElement('div');cells.className='cells';for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){let coords=layer===null?[r,c]:[layer,r,c],val=cellData(g,coords,s),focus=isFocused(g.name,coords,s),changed=Object.hasOwn(s.changes?.[g.name]||{},coords.join(','));let x=document.createElement('div');x.className='cell'+(focus?' focus':'')+(changed?' changed':'');x.textContent=val;x.title=`${g.name}[${coords.join('][')}] = ${val}`;cells.appendChild(x)}box.append(colsRow,rowsCol,cells);div.appendChild(box);return div}
+function renderVisual(){let m=current(),s=step(),v=m.visual,root=$('matrices'),tabs=$('layerTabs');root.innerHTML='';tabs.innerHTML='';$('vizTitle').textContent=v.title;$('vizMode').textContent=v.kind==='cube'?'3-D array':v.kind==='parallel'?'Parallel arrays':'2-D matrix';$('vizHint').textContent=v.kind==='cube'?'[layer][row][column]':v.kind==='parallel'?'Same index ↔ same student':'[row][column]';
+if(v.kind==='cube'){
+ const g=v.matrices[0],numLayers=g.values.length,which=layerOverride??s.layer??0;
+ for(let l=0;l<numLayers;l++){let b=document.createElement('button');b.className='layer-tab'+(l===which?' active':'');b.textContent='Layer '+l;b.setAttribute('aria-pressed',l===which?'true':'false');b.addEventListener('click',()=>{layerOverride=l;renderVisual();renderMemory()});tabs.appendChild(b)}
+ root.appendChild(matrixPanel(g,g.values[which],which,s));$('arrayNote').textContent=`Layer ${which}. Relative element offset = layer × (rows × columns) + row × columns + column. Yellow = accessed; green = changed.`;
+}else{
+ for(const g of v.matrices)root.appendChild(matrixPanel(g,g.values,null,s));$('arrayNote').textContent=v.kind==='parallel'?'Matching index i links ids[i] with marks[i]. Yellow = the currently checked student.':'Yellow = current cell; green = updated cell. Indices start at 0.';
+}}
+function renderFlow(){const s=step(),root=$('callStack');root.innerHTML='';const stacks=s.stack||['main()'];stacks.forEach((name,i)=>{let box=document.createElement('span');box.className='frame';box.textContent=(i?'↳ ':'')+name;root.appendChild(box)});$('flowNote').textContent=stacks.length>1?'The called function has its own parameters/local variables, but the raw array parameter accesses the original elements.':'The conceptual active call is main(). Loops do not create new function call frames.'}
+function renderMemory(){const m=current(),s=step(),v=m.visual,root=$('memorySlots');root.innerHTML='';let grids=v.matrices;let focus=s.focus||[];let layer=v.kind==='cube'?(layerOverride??s.layer??0):null;
+let flat=[];
+for(const g of grids){if(v.kind==='cube'){
+ for(let r=0;r<g.values[0].length;r++)for(let c=0;c<g.values[0][0].length;c++){let coords=[layer,r,c];let off=layer*(g.values[0].length*g.values[0][0].length)+r*g.values[0][0].length+c;flat.push({label:g.name[0]+off,value:cellData(g,coords,s),on:isFocused(g.name,coords,s),offset:off})}
+}else{for(let r=0;r<g.values.length;r++)for(let c=0;c<g.values[0].length;c++){let coords=[r,c],off=r*g.values[0].length+c;flat.push({label:g.name[0]+off,value:cellData(g,coords,s),on:isFocused(g.name,coords,s),offset:off})}}}
+for(const slot of flat){let div=document.createElement('div');div.className='slot'+(slot.on?' focus':'');div.innerHTML=`<small>${h(slot.label)} · +${slot.offset}</small><b>${h(slot.value)}</b>`;root.appendChild(div)}
+let count=grids.reduce((a,g)=>a+(v.kind==='cube'?g.values.length*g.values[0].length*g.values[0][0].length:g.values.length*g.values[0].length),0);$('memoryAmount').textContent=count+' int elements';$('memoryNote').textContent=v.kind==='cube'?'Showing selected layer only. All '+count+' elements belong to one 3-D array; offsets are measured in elements.':'The boxes are logical contiguous int slots; +0, +1, ... are element offsets, not actual memory addresses. All arrays shown reserve '+count+' integer elements.'}
+function renderQuiz(){let m=current(),s=step(),done=stepIndex===m.steps.length-1,q=m.quiz,root=$('quizOptions');$('quizCard').style.display=done?'block':'none';if(!done)return;$('quizQuestion').textContent=q.q;root.innerHTML='';q.options.forEach((option,i)=>{let b=document.createElement('button');b.textContent=String.fromCharCode(65+i)+'. '+option;b.className='quiz-opt';b.disabled=earned.has(m.id);if(b.disabled&&i===q.answer)b.classList.add('correct');if(b.disabled&&answered[m.id]===i&&i!==q.answer)b.classList.add('wrong');b.addEventListener('click',()=>answer(i));root.appendChild(b)});$('quizFeedback').textContent=Object.hasOwn(answered,m.id)?(answered[m.id]===q.answer?'✅ Correct! +100 XP. ':'💡 Not quite — try again! ') +q.why:'Choose an answer. A correct answer earns 100 XP; retry if needed.'}
+function answer(i){let m=current();if(earned.has(m.id))return;answered[m.id]=i;if(i===m.quiz.answer)earned.add(m.id);renderQuiz();renderNav();updateHeader()}
+function render(){let m=current(),s=step();$('sessionTag').textContent=`SESSION ${m.session} · MISSION ${selected+1}/9`;$('missionTitle').textContent=m.icon+' '+m.title;$('missionGoal').textContent=m.goal;$('analogy').textContent='💡 Real-life analogy: '+m.analogy;$('stepTitle').textContent=s.title;$('stepDesc').textContent=s.desc;$('controlFlow').textContent=s.flow||'main()';$('stepCounter').textContent=`Step ${stepIndex+1} of ${m.steps.length}`;$('progressFill').style.width=((stepIndex+1)/m.steps.length*100)+'%';$('prev').disabled=stepIndex===0;$('next').disabled=stepIndex===m.steps.length-1;$('next').textContent=stepIndex===m.steps.length-1?'Checkpoint ↓':'Next step →';$('variables').innerHTML='';Object.entries(s.vars||{}).forEach(([k,v])=>{let e=document.createElement('span');e.className='chip';e.textContent=`${k} = ${v}`;$('variables').appendChild(e)});$('output').textContent=s.output||'';renderCode();renderVisual();renderFlow();renderMemory();renderQuiz();updateHeader()}
+function choose(i){clearAuto();selected=i;stepIndex=0;layerOverride=null;renderNav();render()}
+function move(n){let upper=current().steps.length-1,at=Math.min(upper,Math.max(0,stepIndex+n));if(at===stepIndex){if(n>0)clearAuto();return}stepIndex=at;layerOverride=null;render();if(stepIndex===upper)clearAuto()}
+function auto(){if(timer!==null){clearAuto();return}if(stepIndex>=current().steps.length-1){stepIndex=0;render()}$('play').textContent='Ⅱ Pause';timer=setInterval(()=>{if(stepIndex>=current().steps.length-1){clearAuto();return}move(1)},1800)}
+$('prev').addEventListener('click',()=>move(-1));$('next').addEventListener('click',()=>move(1));$('play').addEventListener('click',auto);$('restart').addEventListener('click',()=>{clearAuto();stepIndex=0;layerOverride=null;render()});$('copyCode').addEventListener('click',async()=>{const text=current().code;try{await navigator.clipboard.writeText(text);$('copyCode').textContent='✓ Copied';setTimeout(()=>$('copyCode').textContent='⧉ Copy code',1500)}catch(err){const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();$('copyCode').textContent='✓ Copied';setTimeout(()=>$('copyCode').textContent='⧉ Copy code',1500)}});
+$('bigger').addEventListener('click',()=>{fontScale=Math.min(1.5,fontScale+.1);document.body.style.setProperty('--fontscale',fontScale)});$('smaller').addEventListener('click',()=>{fontScale=Math.max(.85,fontScale-.1);document.body.style.setProperty('--fontscale',fontScale)});$('projector').addEventListener('click',()=>{projector=!projector;document.body.classList.toggle('projector',projector);$('projector').textContent=projector?'⤢ Normal view':'⛶ Projector'});
+document.addEventListener('keydown',e=>{if(['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)||e.ctrlKey||e.metaKey||e.altKey)return;if(e.key==='ArrowRight'){e.preventDefault();move(1)}else if(e.key==='ArrowLeft'){e.preventDefault();move(-1)}else if(e.key===' '&&document.activeElement===document.body){e.preventDefault();auto()}});
+renderNav();render();
+</script>
+</body>
+</html>
